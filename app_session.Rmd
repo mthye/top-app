@@ -1,0 +1,313 @@
+---
+title: "Transparency Report"
+subtitle: "`r params$ms_id`"
+output: pdf_document
+date: "`r Sys.Date()`"
+params:
+  ms_id: NA
+  Q2: NA
+  Q2a: NA
+  Q2b_eval: NA
+  Q2b_input: NA
+  Q2b_complete: NA
+  Q2b_partial: NA
+  Q2b_none: NA
+  Q2c_input: NA
+  S2_output: NA
+  Q3: NA
+  Q3a: NA
+  Q3b_eval: NA
+  Q3b_input: NA
+  Q3b_complete: NA
+  Q3b_partial: NA
+  Q3b_none: NA
+  Q3c_input: NA
+  S3_output: NA
+  Q4: NA
+  Q4a: NA
+  Q4b_eval: NA
+  Q4b_input: NA
+  Q4b_complete: NA
+  Q4b_partial: NA
+  Q4b_none: NA
+  Q4c_input: NA
+  S4_output: NA
+  Q5: NA
+  Q5_eval: NA
+  Q5_text: NA
+  S5_output: NA
+  Q5_popup: NA
+  Q6: NA
+  Q6a: NA
+  S6_url: NA
+  S6_output: NA
+  Q7: NA
+  Q7a: NA
+  Q7b: NA
+  Q7c: NA
+  S7_url: NA
+  S7_output: NA
+  Q7_popup: NA
+
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, results='asis')
+library(pander)
+panderOptions('table.continues', '')
+
+```
+
+
+```{r captions, include=FALSE}
+# data
+caption_2a = "• This research did not involve collection or analysis of data."
+
+caption_2b = "• All raw and processed data supporting this research are publicly available:"
+
+caption_2c = "• Some raw and processed data supporting this research are publicly available, while some are subject to restrictions:"
+
+caption_2d = "• No raw or processed data supporting this research are publicly available."
+
+# code
+caption_3a = "• This research did not make use of any analysis code."
+
+caption_3b = "• All analysis code supporting this research is publicly available:"
+
+caption_3c = "• Some analysis code supporting this research is publicly available, while some are subject to restrictions:"
+
+caption_3d = "• No analysis code supporting this research is publicly available."
+
+# materials
+caption_4a = "• This research did not make use of any materials to generate or acquire data."
+
+caption_4c = "• All study materials supporting this research are publicly available."
+
+caption_4d = "• Some study materials supporting this research are publicly available, while some are subject to restrictions."
+
+caption_4e = "• No study materials supporting this research are publicly available."
+
+# design
+caption_5a = "• The manuscript does not report any data presentation or analysis of any kind."
+
+caption_5b = "• This article reports, for all studies, how the author(s) determined all sample sizes, all data exclusions, all data inclusion/exclusion criteria, whether inclusion/exclusion criteria were established prior to data analysis, all manipulations, and all measures."
+
+caption_5popup = "• The authors indicated that reporting the sample size determination, inclusion and exclusion criteria, manipulations and measures was not applicable to this research. They provided the following justification:"
+
+# preregistration
+caption_6a = "• No part of the study procedures was pre-registered in a time-stamped, institutional registry prior to the research being conducted."
+
+caption_6b = "• At least part of the study procedures was pre-registered in a time-stamped, institutional registry prior to the research being conducted."
+
+caption_7a = "• No part of the analysis plans was pre-registered in a time-stamped, institutional registry prior to the research being conducted."
+
+caption_7b = "• At least part of the analysis plans was pre-registered in a time-stamped, institutional registry prior to the research being conducted."
+
+caption_7c = "• At least part of the analysis plans was pre-registered in a time-stamped, institutional registry prior to the research being conducted. The analyses that were undertaken deviated from the preregistered analysis plans. All such deviations are fully disclosed in the manuscript."
+
+caption_7d = "• At least part of the analysis plans was pre-registered in a time-stamped, institutional registry prior to the research being conducted. The analyses that were undertaken deviated from the preregistered analysis plans. These deviations are not fully disclosed in the manuscript."
+
+# data
+dataURLs=""
+if (!is.null(params$Q2b_input)){ # if access conditions were provided
+  if (any(!is.na(params$Q2b_input$X6))){ # check whether URL was provided
+    dataURLs = filter(params$Q2b_input, !is.na(X6))$X6 #params$Q2b_input$X6
+  }
+}
+
+# code
+codeURLs=""
+if (!is.null(params$Q3b_input)){ # if access conditions were provided
+  if (any(!is.na(params$Q3b_input$X5))){ # check whether URL was provided
+    codeURLs =  filter(params$Q3b_input, !is.na(X5))$X5 # params$Q3b_input$X5
+  }
+}
+
+# materials
+matsURLs=""
+if (!is.null(params$Q4b_input)){ # if access conditions were provided
+  if (any(!is.na(params$Q4b_input$X5))){ # check whether URL was provided
+    matsURLs = filter(params$Q4b_input, !is.na(X5))$X5  # params$Q4b_input$X5
+  }
+}
+
+```
+
+<!-- data -->
+
+`r if(params$S2_output == "A"){"• This research did not involve collection or analysis of data."}`
+`r if(params$S2_output == "B"){"• All raw and processed data supporting this research are publicly available:"}`
+`r if(params$S2_output == "C"){"• Some raw and processed data supporting this research are publicly available, while some are subject to restrictions:"}` `r unique(dataURLs)`
+`r if(params$S2_output == "D"){"• No raw or processed data supporting this research are publicly available."}`
+
+<!-- code -->
+`r if(params$S3_output == "A"){"• This research did not make use of any analysis code."}`
+`r if(params$S3_output == "B"){"• All analysis code supporting this research is publicly available:"}`
+`r if(params$S3_output == "C"){"• Some analysis code supporting this research is publicly available, while some are subject to restrictions:"}` `r unique(codeURLs)`
+`r if(params$S3_output == "D"){"• No analysis code supporting this research is publicly available."}`
+
+<!-- materials -->
+`r if(params$S4_output == "A" | params$S4_output == "B"){"• This research did not make use of any materials to generate or acquire data."}`
+`r if(params$S4_output == "C"){"• All study materials supporting this research are publicly available:"}`
+`r if(params$S4_output == "D"){"• Some study materials supporting this research are publicly available, while some are subject to restrictions:"}` `r unique(matsURLs)`
+`r if(params$S4_output == "E"){"• No study materials supporting this research are publicly available."}`
+
+<!-- design -->
+`r if(params$Q5 == "No"){"• The manuscript does not report any data presentation or analysis of any kind. The authors provided the following explanation:"}`
+`r if(params$Q5 == "Not Applicable"){"• The authors indicated that reporting the sample size determination, inclusion and exclusion criteria, manipulations and measures was not applicable to this research. They provided the following justification:"}` `r params$Q5_popup`
+`r if(params$Q5 == "Yes"){"• This article reports, for all studies, how the author(s) determined all sample sizes, all data exclusions, all data inclusion/exclusion criteria, whether inclusion/exclusion criteria were established prior to data analysis, all manipulations, and all measures."}`
+
+<!-- preregistration -->
+`r if(params$Q6 == "No"){"• No part of the study procedures was pre-registered in a time-stamped, institutional registry prior to the research being conducted."}`
+`r if(params$Q6 != "No"){"• At least part of the study procedures was pre-registered in a time-stamped, institutional registry prior to the research being conducted:"}` `r trimws(params$Q6a)`
+
+`r if(params$Q7 == "No"){"• No part of the analysis plans was pre-registered in a time-stamped, institutional registry prior to the research being conducted."}`
+`r if(params$S7_output == "B" | params$S7_output == "C" | params$S7_output == "D"){"• At least part of the analysis plans was pre-registered in a time-stamped, institutional registry prior to the research being conducted:"}` `r trimws(params$Q7a)`
+
+`r if(params$S7_output == "C"){"• The analyses that were undertaken deviated from the preregistered analysis plans. All such deviations are fully disclosed in the manuscript:"}`
+
+`r if(params$S7_output == "D"){"• The analyses that were undertaken deviated from the preregistered analysis plans. These deviations are not fully disclosed in the manuscript. The authors provided the following justification:"}` `r params$Q7_popup`
+
+<!-- `r if(params$Q6 != "No"){"Pre-registered study procedures:"}` `r trimws(params$Q6a)` -->
+
+<!-- `r if(params$Q7 != "No"){"Pre-registered analysis plans:"}` `r trimws(params$Q7a)` -->
+
+\newpage
+
+### Data
+`r if(params$S2_output == "A"){"The manuscript does not report any data analyses."}`
+
+`r if(params$S2_output == "B"){"In this section authors indicate the access route(s) for all data categories that will be fully shared. All data will be publicly available and no barriers have been reported."}`
+
+`r if(params$S2_output == "C"){"In this section authors indicate the public availability and access route(s) for all selected data categories as well as any barriers for data that cannot be fully shared."}`
+
+`r if(params$S2_output == "D"){"In this section authors explain how readers can access the data that are not publicly available and under what conditions. No data will be publicly available."}`
+
+
+```{r Q2b}
+if (params$Q2b_eval==1 & !is_empty(params$Q2a)) {
+  Q2b <- params$Q2b_input
+  names(Q2b) <- c(
+    "Data category",
+    "Data type",
+    "Public availability",
+    "Availability barrier",
+    "Public access route",
+    "URL"
+  )
+  #kable(Q2b)
+  pander(Q2b)
+}
+```
+
+
+
+```{r Q2c}
+if (params$Q2b_complete==1 & (params$Q2b_partial==1 | params$Q2b_none==1)) {
+  Q2c <- params$Q2c_input
+  names(Q2c) <- c(
+    "Data category",
+    "Data type",
+    "Public availability",
+    "Restricted access route",
+    "Restricted access conditions"
+  )
+  #kable(Q2c)
+  pander(Q2c)
+}
+```
+
+
+### Analytic Methods (Code)
+
+`r if(params$S3_output == "A"){"The manuscript does not report any data analyses undertaken using code or scripts."}`
+
+`r if(params$S3_output == "B"){"In this section authors indicate the access route(s) for all types of analysis code that will be fully shared. All code will be publicly available and no barriers have been reported."}`
+
+`r if(params$S3_output == "C"){"In this section authors indicate the public availability and access route(s) for all selected analysis code types as well as any barriers for code that cannot be fully shared."}`
+
+`r if(params$S3_output == "D"){"In this section authors explain how readers can access the analysis code that is not publicly available and under what conditions. No code will be publicly available."}`
+
+
+```{r Q3b}
+if (params$Q3b_eval==1 & !is_empty(params$Q3a)) {
+  Q3b <- params$Q3b_input
+  names(Q3b) <- c(
+    "Code type",
+    "Public availability",
+    "Availability barrier",
+    "Public access route",
+    "URL (if applicable)"
+  )
+  #kable(Q3b)
+  pander(Q3b)
+
+}
+```
+
+
+```{r Q3c}
+if (params$Q3b_complete==1 & (params$Q3b_partial==1 | params$Q3b_none==1)) {
+  Q3c <- params$Q3c_input
+  names(Q3c) <- c(
+    "Code type",
+    "Public availability",
+    "Restricted access route",
+    "Restricted access conditions"
+  )
+  kable(Q3c)
+}
+```
+
+### Research Materials
+
+`r if(params$S4_output == "A"){"The manuscript does not report data analysis of any kind."}`
+
+`r if(params$S4_output == "B"){"The manuscript only reports analysis of data that already existed prior to the research being undertaken."}`
+
+`r if(params$S4_output == "C"){"In this section authors indicate the access route(s) for all types of research materials that will be fully shared. All materials will be publicly available and no barriers have been reported."}`
+
+`r if(params$S4_output == "D"){"In this section authors indicate the public availability and access route(s) for all selected types of research materials as well as any barriers for materials that cannot be fully shared."}`
+
+`r if(params$S4_output == "E"){"In this section authors explain how readers can access the research materials that are not publicly available and under what conditions. No materials will be publicly available."}`
+
+
+```{r Q4b}
+if (params$Q4b_eval==1 & !is_empty(params$Q4a)) {
+  Q4b <- params$Q4b_input
+  names(Q4b) <- c(
+    "Type of research materials",
+    "Public availability",
+    "Availability barrier",
+    "Public access route",
+    "URL (if applicable)"
+  )
+  kable(Q4b)
+}
+```
+
+
+```{r Q4c}
+if (params$Q4b_complete==1 & (params$Q4b_partial==1 | params$Q4b_none==1)) {
+  Q4c <- params$Q4c_input
+  names(Q4c) <- c(
+    "Type of research materials",
+    "Public availability",
+    "Restricted access route",
+    "Restricted access conditions"
+  )
+  kable(Q4c)
+}
+```
+
+
+### Preregistration
+
+`r if(params$Q6 == "No"){"The study procedures were not pre-registered."}`
+
+`r if(params$Q6 != "No"){"Study procedures were pre-registered at"}` `r trimws(params$Q6a)`
+
+`r if(params$Q7 == "No"){"The study analysis plans were not pre-registered."}`
+
+`r if(params$Q7 != "No"){"Study analysis plans were pre-registered at"}` `r trimws(params$Q7a)`
+
