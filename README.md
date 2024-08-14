@@ -21,15 +21,10 @@ main server file; example command from the script:
 source(file.path("server", "data_server.R"), local = TRUE)$value
 
 data_server.R
-
 code_server.R
-
 materials_server.R
-
 design_server.R
-
 prereg_server.R
-
 download_TOP.R
 
 
@@ -38,13 +33,13 @@ download_TOP.R
 Consistent with the R code for the server functions, the ui code for the transparency standards is also split 
 into separate files and we also have a ui file for the Home section and the FAQ section.
 
-home_ui.R
-data_ui.R
-code_ui.R
-materials_ui.R
-design_ui.R
-prereg_ui.R
-faq_ui.R
+- home_ui.R
+- data_ui.R
+- code_ui.R
+- materials_ui.R
+- design_ui.R
+- prereg_ui.R
+- faq_ui.R
 
 ## rsconnect
 
