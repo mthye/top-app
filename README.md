@@ -8,25 +8,25 @@ The main file for running the shiny app with required R packages, sourced main f
 
 All the other files with the shiny code and relevant R code are included in three folders, which include primary files for the shiny app server and ui as well as server and ui files that correspond to specific transparency standards (i.e., app sections):
 
-## global 
+### global 
 
 server. R and ui.R: main files that are read by app.R file to compile the shiny app
+
 other.R: other independent custom R functions that are saved here to save space 
+
 values.R: editable content for interactive tables (dropdowns) and other elements in the app
 
 ### server 
 
 The server code for the transparency standards has been split into different files. These are sourced in the 
-main server file; example command from the script:   
-source(file.path("server", "data_server.R"), local = TRUE)$value
+main server file; example command from the script: source(file.path("server", "data_server.R"), local = TRUE)$value
 
-data_server.R
-code_server.R
-materials_server.R
-design_server.R
-prereg_server.R
-download_TOP.R
-
+- data_server.R
+- code_server.R
+- materials_server.R
+- design_server.R
+- prereg_server.R
+- download_TOP.R
 
 ### ui
 
