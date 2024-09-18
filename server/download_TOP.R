@@ -64,7 +64,7 @@ observeEvent(input$sidebar, {
             collapsed = FALSE,
             "In this section you can generate and download a report with your Scientific Transparency Assessment.",
             "Report generation requires successful completion of all app sections and the report cannot be created yet.",
-            "The Transparency Statement will be appended to your article, please make sure your article does not contain additional sections that will duplicate this material.",
+            "The Scientific Transparency Statement will be appended to your article, please make sure your article does not contain additional sections that will duplicate this material.",
             
             br(),
             br(),
@@ -90,7 +90,7 @@ observeEvent(input$sidebar, {
             collapsed = FALSE,
             "In this section you can generate and download a report with your Scientific Transparency Assessment.",
             "You have successfully completed all app sections. ",
-            "The Transparency Statement will be appended to your article, please make sure your article does not contain additional sections that will duplicate this material.",
+            "The Scientific Transparency Statement will be appended to your article, please make sure your article does not contain additional sections that will duplicate this material.",
             
             br(),
             br(),

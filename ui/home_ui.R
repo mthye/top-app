@@ -61,7 +61,7 @@ fluidPage(
                         The session will time out after an hour, so remember to save your work periodically by clicking the <b>Save Progress</b> button at the top of the page.<br><br>
                         To start a new session and clear all responses, refresh your browser.<br>
                        <br></h5>"),
-             subtitle = actionButton("goData", "Start here", status = "primary", 
+             subtitle = actionButton("goData", "Start Here", status = "primary", 
                                      style = "color: #fff; background-color: #fe9923; border-color: #f3f6f4; font-size: 20px"),
              icon = icon("circle-play", style = "color: #fff"),
              tabName = "homeBox"

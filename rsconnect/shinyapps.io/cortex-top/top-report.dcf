@@ -5,6 +5,6 @@ account: cortex-top
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 12045067
-bundleId: 9117336
+bundleId:
 url: https://cortex-top.shinyapps.io/top-report/
 version: 1
