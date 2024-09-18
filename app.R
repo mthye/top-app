@@ -45,7 +45,6 @@ library(emojifont)
 library(rmarkdown)
 library(knitr)
 
-
 # Main R files ------------------------------------------------------------
 
 # Local (non-reactive) values

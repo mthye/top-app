@@ -546,13 +546,14 @@ observeEvent(input$Q7b, {
       Authors often under-report deviations from protocol, such as changes in analysis parameters, 
       the addition or replacement of analyses, or more detailed descriptions of analysis steps in 
       the manuscript than in the protocol. If you are sure there were no deviations, this will be 
-      noted in the Transparency statement.",
+      noted in the Transparency Statement.",
       btn_labels = c("No", "Yes I am sure"),
       btn_colors = c("#04B404", "#FE642E")
     )
     preregValues$analysisDevs = 0
     preregValues$Q7b_complete = 0
     preregValues$Q7b = ""
+    
   } else if (input$Q7b=="Yes") {
     preregValues$analysisDevs = 1
     fullReport$S7_complete = 0
@@ -630,6 +631,9 @@ observeEvent(input$Q7c, {
     preregValues$analysisRep = 0
     preregValues$Q7c_complete = 0
     preregValues$Q7c = ""
+    fullReport$editor$Note[6] <- "Yes"
+    fullReport$editor$Note[7] <- "Yes"
+    
   } else if (input$Q7c=="Yes") {
     preregValues$analysisRep = 0
     

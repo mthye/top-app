@@ -1,5 +1,5 @@
 ---
-title: "Transparency Report"
+title: "Scientific Transparency Report"
 subtitle: "`r params$ms_id`"
 output: pdf_document
 date: "`r Sys.Date()`"
@@ -48,12 +48,14 @@ params:
   S7_url: NA
   S7_output: NA
   Q7_popup: NA
+  editor: NA
 
 ---
   
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, results='asis')
 library(pander)
+library(tidyverse)
 panderOptions('table.continues', '')
 
 ```
@@ -131,7 +133,38 @@ if (!is.null(params$Q4b_input)){ # if access conditions were provided
   }
 }
 
+# process editor notes indicating where authors aren't compliant with standards
+if ("Yes" %in% params$editor$Note) {
+  standards <- subset(params$editor, Note == "Yes") %>% 
+    mutate(Standard = case_when(Standard == "2" ~ "Data",
+                                Standard == "3" ~ "Analytic Methods (Code)",
+                                Standard == "4" ~ "Research Materials",
+                                Standard == "5" ~ "Design Transparency",
+                                Standard == "6" ~ "Pre-registration of Study Procedures",
+                                Standard == "7" ~ "Pre-registration of Analysis Plans"))
+  
+  # if only 1 standard has been failed
+  if (nrow(standards) < 2) {
+    note = paste("The responses provided regarding",
+                 standards$Standard,
+                 "are not yet compliant with the transparency guidelines. This is likely to result in delays and additional inquiries unless changes are made to the manuscript and/or the Scientific Transparency Report.")
+    
+    # if multiple standards have been failed
+  } else {
+    note = paste(
+      "The responses provided regarding",
+      paste0(as.character(standards$Standard), collapse = ", "),
+      "are not yet compliant with the transparency guidelines. This is likely to result in delays and additional inquiries unless changes are made to the manuscript and/or the Scientific Transparency Report.")
+  }
+}
+
 ```
+
+The *Scientific Transparency Statement* below will be appended to your article, please make sure your article does not contain additional sections that will duplicate this material.
+
+For full information, see the *Scientific Transparency Supplement* in the online version of this article.
+
+`r note`
 
 <!-- data -->
 
@@ -153,8 +186,8 @@ if (!is.null(params$Q4b_input)){ # if access conditions were provided
 `r if(params$S4_output == "E"){"• No study materials supporting this research are publicly available."}`
 
 <!-- design -->
-`r if(params$Q5 == "No"){"• The manuscript does not report any data presentation or analysis of any kind. The authors provided the following explanation:"}`
-`r if(params$Q5 == "Not Applicable"){"• The authors indicated that reporting the sample size determination, inclusion and exclusion criteria, manipulations and measures was not applicable to this research. They provided the following justification:"}` `r params$Q5_popup`
+`r if(params$Q5 == "No"){"• The authors indicated that aspects of the sample size determination, inclusion and exclusion criteria, manipulations or measures were not reported in the article. The authors provided the following explanation:"}`
+`r if(params$Q5 == "Not Applicable"){"• The authors indicated that reporting the sample size determination, inclusion and exclusion criteria, manipulations and measures was not applicable to this research. They provided the following justification:"}` `r shQuote(params$Q5_popup)`
 `r if(params$Q5 == "Yes"){"• This article reports, for all studies, how the author(s) determined all sample sizes, all data exclusions, all data inclusion/exclusion criteria, whether inclusion/exclusion criteria were established prior to data analysis, all manipulations, and all measures."}`
 
 <!-- preregistration -->
@@ -164,15 +197,19 @@ if (!is.null(params$Q4b_input)){ # if access conditions were provided
 `r if(params$Q7 == "No"){"• No part of the analysis plans was pre-registered in a time-stamped, institutional registry prior to the research being conducted."}`
 `r if(params$S7_output == "B" | params$S7_output == "C" | params$S7_output == "D"){"• At least part of the analysis plans was pre-registered in a time-stamped, institutional registry prior to the research being conducted:"}` `r trimws(params$Q7a)`
 
-`r if(params$S7_output == "C"){"• The analyses that were undertaken deviated from the preregistered analysis plans. All such deviations are fully disclosed in the manuscript:"}`
+`r if(params$S7_output == "C"){"• The analyses that were undertaken deviated from the preregistered analysis plans. All such deviations are fully disclosed in the manuscript."}`
 
-`r if(params$S7_output == "D"){"• The analyses that were undertaken deviated from the preregistered analysis plans. These deviations are not fully disclosed in the manuscript. The authors provided the following justification:"}` `r params$Q7_popup`
+`r if(params$S7_output == "D"){"• The analyses that were undertaken deviated from the preregistered analysis plans. These deviations are not fully disclosed in the manuscript. The authors provided the following justification:"}` `r shQuote(params$Q7_popup)`
 
 <!-- `r if(params$Q6 != "No"){"Pre-registered study procedures:"}` `r trimws(params$Q6a)` -->
 
 <!-- `r if(params$Q7 != "No"){"Pre-registered analysis plans:"}` `r trimws(params$Q7a)` -->
 
 \newpage
+
+## Scientific Transparency Supplement
+
+The information below will be added as an online *Scientific Transparency Supplement* linked to the online version of your article.
 
 ### Data
 `r if(params$S2_output == "A"){"The manuscript does not report any data analyses."}`
@@ -301,6 +338,13 @@ if (params$Q4b_complete==1 & (params$Q4b_partial==1 | params$Q4b_none==1)) {
 ```
 
 
+### Design Transparency
+`r if(params$Q5 == "No"){"The authors indicated that aspects of the sample size determination, inclusion and exclusion criteria, manipulations or measures were not reported in the article. The authors provided the following explanation:"}`
+
+`r if(params$Q5 == "Not Applicable"){"The authors indicated that reporting the sample size determination, inclusion and exclusion criteria, manipulations and measures was not applicable to this research. They provided the following justification:"}` `r shQuote(params$Q5_popup)`
+
+`r if(params$Q5 == "Yes"){"This article reports, for all studies, how the author(s) determined all sample sizes, all data exclusions, all data inclusion/exclusion criteria, whether inclusion/exclusion criteria were established prior to data analysis, all manipulations, and all measures."}`
+
 ### Preregistration
 
 `r if(params$Q6 == "No"){"The study procedures were not pre-registered."}`
@@ -310,4 +354,8 @@ if (params$Q4b_complete==1 & (params$Q4b_partial==1 | params$Q4b_none==1)) {
 `r if(params$Q7 == "No"){"The study analysis plans were not pre-registered."}`
 
 `r if(params$Q7 != "No"){"Study analysis plans were pre-registered at"}` `r trimws(params$Q7a)`
+
+`r if(params$S7_output == "C"){"The analyses that were undertaken deviated from the preregistered analysis plans. All such deviations are fully disclosed in the manuscript."}`
+
+`r if(params$S7_output == "D"){"The analyses that were undertaken deviated from the preregistered analysis plans. These deviations are not fully disclosed in the manuscript. The authors provided the following justification:"}` `r shQuote(params$Q7_popup)`
 

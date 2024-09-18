@@ -59,11 +59,12 @@ observeEvent(input$sidebar, {
         fluidPage(accordion(
           id = "TOPresults1",
           accordionItem(
-            title = HTML("<h5 style='color: white;'><b>Transparency Assessment Report</b></h5>"),
+            title = HTML("<h5 style='color: white;'><b>Scientific Transparency Assessment Report</b></h5>"),
             status = "success",
             collapsed = FALSE,
-            "In this section you can generate and download a report with your Transparency Assessment.",
+            "In this section you can generate and download a report with your Scientific Transparency Assessment.",
             "Report generation requires successful completion of all app sections and the report cannot be created yet.",
+            "The Transparency Statement will be appended to your article, please make sure your article does not contain additional sections that will duplicate this material.",
             
             br(),
             br(),
@@ -84,12 +85,12 @@ observeEvent(input$sidebar, {
         fluidPage(accordion(
           id = "TOPresults1",
           accordionItem(
-            title = HTML("<h5 style='color: white;'>Transparency Assessment Report</h5>"),
+            title = HTML("<h5 style='color: white;'>Scientific Transparency Assessment Report</h5>"),
             status = "purple",
             collapsed = FALSE,
-            "In this section you can generate and download a report with your Transparency Assessment.",
+            "In this section you can generate and download a report with your Scientific Transparency Assessment.",
             "You have successfully completed all app sections. ",
-            "The Transparency Statement will be appended to your article, please make sure your article does not contain additional sections that will duplicate this material",
+            "The Transparency Statement will be appended to your article, please make sure your article does not contain additional sections that will duplicate this material.",
             
             br(),
             br(),
@@ -185,7 +186,9 @@ output$downloadReport <- downloadHandler(
       Q7c = preregValues$Q7c,
       S7_url = input$S7_url,
       S7_output = fullReport$S7_output,
-      Q7_popup = input$popupQ7c
+      Q7_popup = input$popupQ7c,
+      
+      editor = isolate(fullReport$editor)
     )
     
     # Copy the report file to a temporary directory before processing it, in
@@ -214,7 +217,7 @@ observeEvent(input$generateReport, {
   
   #Note to Editor
   #editor <- isolate(fullReport$editor)
-  
+
   # Try to put in reverse order so that when you add to statement we add standard 2 last and it appears first
   
   # #Standard 7

@@ -3,7 +3,7 @@ server <- function(input, output, session) {
   # Increase the limit for file uploads
   options(shiny.maxRequestSize = 10000 * 1024 ^ 2)
   
-  # Reactive values ---------------------------------------------------------
+# Reactive values ---------------------------------------------------------
   
   dataValues <- reactiveValues(
     ID = "",
@@ -318,7 +318,6 @@ server <- function(input, output, session) {
   observeEvent(input$goData, {
     updateTabsetPanel(session, "sidebar", selected = "data")
   })
-  
   
   # Data download function --------------------------------------------------
   
