@@ -134,6 +134,7 @@ if (!is.null(params$Q4b_input)){ # if access conditions were provided
 }
 
 # process editor notes indicating where authors aren't compliant with standards
+note<-''
 if ("Yes" %in% params$editor$Note) {
   standards <- subset(params$editor, Note == "Yes") %>% 
     mutate(Standard = case_when(Standard == "2" ~ "Data",

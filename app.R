@@ -5,7 +5,7 @@
 #rsconnect::setAccountInfo(name='cortex-top',
 #                           token='',
 #                           secret='')
-# rsconnect::deployApp("P:/Editorial_Roles/Cortex/top-report/")
+# rsconnect::deployApp("path/to/app_files")
 #
 # redeploy:
 # rsconnect::deployApp()
