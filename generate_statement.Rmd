@@ -1,0 +1,145 @@
+---
+title: "Scientific Transparency Statement"
+output: word_document
+params:
+  ms_id: NA
+  Q2: NA
+  Q2a: NA
+  Q2b_eval: NA
+  Q2b_input: NA
+  Q2b_complete: NA
+  Q2b_partial: NA
+  Q2b_none: NA
+  Q2c_input: NA
+  S2_output: NA
+  Q3: NA
+  Q3a: NA
+  Q3b_eval: NA
+  Q3b_input: NA
+  Q3b_complete: NA
+  Q3b_partial: NA
+  Q3b_none: NA
+  Q3c_input: NA
+  S3_output: NA
+  Q4: NA
+  Q4a: NA
+  Q4b_eval: NA
+  Q4b_input: NA
+  Q4b_complete: NA
+  Q4b_partial: NA
+  Q4b_none: NA
+  Q4c_input: NA
+  S4_output: NA
+  Q5: NA
+  Q5_eval: NA
+  Q5_text: NA
+  S5_output: NA
+  Q5_popup: NA
+  Q6: NA
+  Q6a: NA
+  S6_url: NA
+  S6_output: NA
+  Q7: NA
+  Q7a: NA
+  Q7b: NA
+  Q7c: NA
+  S7_url: NA
+  S7_output: NA
+  Q7_popup: NA
+  editor: NA
+
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, results='asis')
+library(pander)
+library(tidyverse)
+panderOptions('table.continues', '')
+
+```
+
+
+```{r wrangling, include=FALSE}
+# data
+dataURLs=""
+if (!is.null(params$Q2b_input)){ # if access conditions were provided
+  if (any(!is.na(params$Q2b_input$X6))){ # check whether URL was provided
+    dataURLs = filter(params$Q2b_input, !is.na(X6))$X6 #params$Q2b_input$X6
+  }
+}
+
+# code
+codeURLs=""
+if (!is.null(params$Q3b_input)){ # if access conditions were provided
+  if (any(!is.na(params$Q3b_input$X5))){ # check whether URL was provided
+    codeURLs =  filter(params$Q3b_input, !is.na(X5))$X5 # params$Q3b_input$X5
+  }
+}
+
+# materials
+matsURLs=""
+if (!is.null(params$Q4b_input)){ # if access conditions were provided
+  if (any(!is.na(params$Q4b_input$X5))){ # check whether URL was provided
+    matsURLs = filter(params$Q4b_input, !is.na(X5))$X5  # params$Q4b_input$X5
+  }
+}
+
+# process editor notes indicating where authors aren't compliant with standards
+note<-''
+if ("Yes" %in% params$editor$Note) {
+  standards <- subset(params$editor, Note == "Yes") %>% 
+    mutate(Standard = case_when(Standard == "2" ~ "Data",
+                                Standard == "3" ~ "Analytic Methods (Code)",
+                                Standard == "4" ~ "Research Materials",
+                                Standard == "5" ~ "Design Transparency",
+                                Standard == "6" ~ "Pre-registration of Study Procedures",
+                                Standard == "7" ~ "Pre-registration of Analysis Plans"))
+  
+  # if only 1 standard has been failed
+  if (nrow(standards) < 2) {
+    note = paste("The responses provided regarding",
+                 standards$Standard,
+                 "are not yet compliant with the transparency guidelines. This is likely to result in delays and additional inquiries unless changes are made to the manuscript and/or the Scientific Transparency Report.")
+    
+    # if multiple standards have been failed
+  } else {
+    note = paste(
+      "The responses provided regarding",
+      paste0(as.character(standards$Standard), collapse = ", "),
+      "are not yet compliant with the transparency guidelines. This is likely to result in delays and additional inquiries unless changes are made to the manuscript and/or the Scientific Transparency Report.")
+  }
+}
+
+```
+
+`r note`
+
+<!-- data -->
+
+`r if(params$S2_output == "A"){"DATA: This research did not involve collection or analysis of data."}`
+`r if(params$S2_output == "B"){"DATA: All raw and processed data supporting this research are publicly available:"}`
+`r if(params$S2_output == "C"){"DATA: Some raw and processed data supporting this research are publicly available, while some are subject to restrictions:"}` `r unique(dataURLs)`
+`r if(params$S2_output == "D"){"DATA: No raw or processed data supporting this research are publicly available."}`
+
+<!-- code -->
+`r if(params$S3_output == "A"){"CODE: This research did not make use of any analysis code."}`
+`r if(params$S3_output == "B"){"CODE: All analysis code supporting this research is publicly available:"}`
+`r if(params$S3_output == "C"){"CODE: Some analysis code supporting this research is publicly available, while some are subject to restrictions:"}` `r unique(codeURLs)`
+`r if(params$S3_output == "D"){"CODE: No analysis code supporting this research is publicly available."}`
+
+<!-- materials -->
+`r if(params$S4_output == "A" | params$S4_output == "B"){"MATERIALS: This research did not make use of any materials to generate or acquire data."}`
+`r if(params$S4_output == "C"){"MATERIALS: All study materials supporting this research are publicly available:"}`
+`r if(params$S4_output == "D"){"MATERIALS: Some study materials supporting this research are publicly available, while some are subject to restrictions:"}` `r unique(matsURLs)`
+`r if(params$S4_output == "E"){"MATERIALS: No study materials supporting this research are publicly available."}`
+
+<!-- design -->
+`r if(params$Q5 == "No"){"DESIGN: The authors indicated that aspects of the sample size determination, data exclusions, and inclusion or exclusion criteria were not reported in the article. The authors provided the following explanation:"}`
+`r if(params$Q5 == "Not Applicable"){"DESIGN: The authors indicated that reporting the sample size determination, data exclusions, and inclusion and exclusion criteria was not applicable to this research. They provided the following justification:"}` `r shQuote(params$Q5_popup)`
+`r if(params$Q5 == "Yes"){"DESIGN: This article reports, for all studies, how the author(s) determined all sample sizes, all data exclusions, all data inclusion and exclusion criteria, and whether inclusion and exclusion criteria were established prior to data analysis."}`
+
+<!-- preregistration -->
+`r if(params$Q6 == "No"){"PRE-REGISTRATION: No part of the study procedures was pre-registered in a time-stamped, institutional registry prior to the research being conducted."}` `r if(params$Q6 != "No"){"PRE-REGISTRATION: At least part of the study procedures was pre-registered in a time-stamped, institutional registry prior to the research being conducted:"}` `r trimws(params$Q6a)` `r if(params$Q7 == "No"){"No part of the analysis plans was pre-registered in a time-stamped, institutional registry prior to the research being conducted."}` `r if(params$S7_output == "B" | params$S7_output == "C" | params$S7_output == "D"){"At least part of the analysis plans was pre-registered in a time-stamped, institutional registry prior to the research being conducted:"}` `r trimws(params$Q7a)` `r if(params$S7_output == "C"){"The analyses that were undertaken deviated from the preregistered analysis plans. All such deviations are fully disclosed in the manuscript."}` `r if(params$S7_output == "D"){"The analyses that were undertaken deviated from the preregistered analysis plans. These deviations are not fully disclosed in the manuscript. The authors provided the following justification:"}` `r shQuote(params$Q7_popup)`
+
+
+For full details, see the *Scientific Transparency Supplement* in the online version of this article.
