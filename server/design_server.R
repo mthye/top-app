@@ -1,19 +1,14 @@
 output$insertQ5 <- renderUI({
   fluidPage(
-    h5("5. If the manuscript reports any form of data presentation or analysis, either descriptive or inferential, please confirm that the following details are included in the manuscript."),
+    h5("5. If the manuscript reports any form of data presentation or analysis, either descriptive or inferential, please confirm that the following details are included in the manuscript:"),
     br(),
     h5("(1) You report how you determined your SAMPLE SIZE"),
     h6("This explanation could consist of a formal sampling plan (e.g. statistical power analysis) or an informal reason of any kind, including (but not limited to) a rule-of-thumb to achieve parity with previous studies, a determination based on the size of a pre-existing dataset, or a determination based on the maximum possible sample size given finite resources (e.g. patient availability, limited recruitment time, etc)."),
     br(),
-    h5("(2) The INCLUSION and EXCLUSION CRITERIA applied to data acquisition and analysis are reported"),
+    h5("(2) You report all DATA EXCLUSIONS (if any) and the INCLUSION and EXCLUSION CRITERIA applied to data acquisition and analysis"),
     h6("This is relevant for for any studies that involved the recruitment of a patient (or patients), participants, animals, biological samples, generation of simulated data, computational modelling, or the reanalysis of existing data (including meta-analysis, systematic reviews, or systematic maps)."),
     br(),
-    h5("(3) The manuscript reports whether the inclusion and exclusion criteria were established PRIOR to data analysis"),
-    br(),
-    h5("(4) All MANIPULATIONS of data or variables are reported"),
-    br(),
-    h5("(5) All MEASURES are reported, including one or more dependent variables or any other form of qualitative or quantitative observation"),
-    
+    h5("(3) You report whether the inclusion and exclusion criteria were established PRIOR to data analysis"),
     pickerInput(
       inputId = "Q5",
       label = "",
