@@ -2,12 +2,6 @@ observeEvent(input$sidebar, {
   if (input$sidebar == "results") {
     
     shinyjs::hide("generateReport")
-    # if (fullReport$S2_complete == 1 & fullReport$S3_complete == 1 &
-    #    fullReport$S4_complete == 1 & fullReport$S5_complete == 1 & fullReport$S6_complete == 1 & fullReport$S7_complete == 1) {
-    #    fullReport$sections_complete = 1
-    #  } else {
-    #   fullReport$sections_complete = 0
-    #  }
     
     if (fullReport$S2_complete == 1) {
       fullReport$sections_complete = 1
@@ -123,6 +117,23 @@ observeEvent(input$sidebar, {
       })
     }
     
+    if ("Yes" %in% isolate(fullReport$editor$Note)) {
+      standards <- subset(isolate(fullReport$editor), Note == "Yes") %>% 
+        mutate(Standard = case_when(Standard == "2" ~ "Data",
+                                    Standard == "3" ~ "Analytic Methods (Code)",
+                                    Standard == "4" ~ "Research Materials",
+                                    Standard == "5" ~ "Design Transparency",
+                                    Standard == "6" ~ "Pre-registration of Study Procedures",
+                                    Standard == "7" ~ "Pre-registration of Analysis Plans"))
+      sendSweetAlert(
+        session = session,
+        title = "Noncompliance",
+        text = paste("The responses provided regarding", paste0(as.character(standards$Standard), collapse = " and ") ,"may not yet be compliant with the transparency guidelines. This is likely to result in delays and additional inquiries unless changes are made to the manuscript and/or the responses provided in the transparency assessment."),
+        type = "warning"
+      )
+    }
+    
+    
   }
 })
 
@@ -223,8 +234,8 @@ observeEvent(input$generateReport, {
     session = session,
     title = "Success!",
     text = tagList(
-      "Please download the zipped report file and save the current session to your computer. 
-      Upload both the Transparency Statement (docx file) and Transparency Supplement (pdf file) with your resubmission. 
+      "Please download the zipped report file and save the current session to your computer.
+      Upload both the Transparency Statement (docx file) and Transparency Supplement (pdf file) with your resubmission.
       You can restore and modify the current session using the session file in the event edits to the report are requested.",
       br(),
       br(),
@@ -232,7 +243,7 @@ observeEvent(input$generateReport, {
                    label = "Download report",
                    color = "royal", icon = shiny::icon("file-arrow-down")),
       downloadBttn(outputId = "downloadData",
-                   label = "Save session", 
+                   label = "Save session",
                    color = "warning", icon = shiny::icon("download"))
     ),
     type = "success"
