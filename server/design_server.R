@@ -44,6 +44,10 @@ observeEvent(input$Q5, {
     
     fullReport$Standard5 = "The authors report how they determined their sample size, the inclusion and exclusion criteria, all measures, and all manipulations."
     fullReport$S5_complete = 1
+    fullReport$editor$Note[5] <- NA # explicitly set note to NA in case authors had previously provided a response to the pop-up but then changed their answer
+    
+    updateTextAreaInput(session, "popupQ5", value = NA)
+  
   }
 })
 
@@ -55,6 +59,7 @@ observeEvent(input$popupQ5, {
     desValues$YesQ5 = 0
     desValues$Q5_complete = 0
     desValues$Q5 = ""
+    
   } else if (input$popupQ5 == "") {
     sendSweetAlert(
       session = session,
@@ -69,6 +74,7 @@ observeEvent(input$popupQ5, {
     desValues$YesQ5 = 0
     desValues$Q5_complete = 0
     desValues$Q5 = ""
+    
   } else {
     desValues$measureStatus = 1
     fullReport$S5_output = "B"
@@ -76,13 +82,13 @@ observeEvent(input$popupQ5, {
     desValues$Q5_complete = 1
     fullReport$S5_complete = 1
     desValues$Q5 = "No"
-    
-    fullReport$Standard5 = paste(
-      "The manuscript does not report any measures, dependent variables, or other observations.",
-      "Note to Editor. The authors have described the nature of the data in the following statement.",
-      input$popupQ5)
-    
     desValues$YesQ5 = 2
+    
+    # fullReport$Standard5 = paste(
+    #   "The manuscript does not report any measures, dependent variables, or other observations.",
+    #   "Note to Editor. The authors have described the nature of the data in the following statement.",
+    #   input$popupQ5)
+    
   }
 })
 

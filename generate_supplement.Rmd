@@ -84,6 +84,18 @@ if (!is.null(params$Q4b_input)){ # if access conditions were provided
   }
 }
 
+# remove pop-up text responses if authors changed their answers
+design_text <- shQuote(params$Q5_popup)
+if (params$Q5 == "Yes") {
+  design_text <- ""
+}
+
+prereg_text <- shQuote(params$Q7_popup)
+if (params$Q7 == "No") {
+  prereg_text <- ""
+}
+
+
 ```
 
 ### Data
@@ -173,7 +185,7 @@ if (params$Q3b_complete==1 & (params$Q3b_partial==1 | params$Q3b_none==1)) {
 
 ### Research Materials
 
-`r if(params$S4_output == "A"){"The manuscript does not report data analysis of any kind."}`
+`r if(params$S4_output == "A"){"This research did not make use of any materials to generate or acquire data."}`
 
 `r if(params$S4_output == "B"){"The manuscript only reports analysis of data that already existed prior to the research being undertaken."}`
 
@@ -214,11 +226,11 @@ if (params$Q4b_complete==1 & (params$Q4b_partial==1 | params$Q4b_none==1)) {
 
 
 ### Design Transparency
+`r if(params$Q5 == "Yes"){"This article reports, for all studies, how the author(s) determined all sample sizes, all data exclusions, all data inclusion and exclusion criteria, and whether inclusion and exclusion criteria were established prior to data analysis."}`
+
 `r if(params$Q5 == "No"){"The authors indicated that aspects of the sample size determination, data exclusions, and inclusion or exclusion criteria were not reported in the article. The authors provided the following explanation:"}`
 
-`r if(params$Q5 == "Not Applicable"){"The authors indicated that reporting the sample size determination, data exclusions, and inclusion and exclusion criteria was not applicable to this research. They provided the following justification:"}` `r shQuote(params$Q5_popup)`
-
-`r if(params$Q5 == "Yes"){"This article reports, for all studies, how the author(s) determined all sample sizes, all data exclusions, all data inclusion and exclusion criteria, and whether inclusion and exclusion criteria were established prior to data analysis."}`
+`r if(params$Q5 == "Not Applicable"){"The authors indicated that reporting the sample size determination, data exclusions, and inclusion and exclusion criteria was not applicable to this research. They provided the following justification:"}` `r design_text`
 
 ### Preregistration
 
@@ -232,5 +244,5 @@ if (params$Q4b_complete==1 & (params$Q4b_partial==1 | params$Q4b_none==1)) {
 
 `r if(params$S7_output == "C"){"The analyses that were undertaken deviated from the preregistered analysis plans. All such deviations are fully disclosed in the manuscript."}`
 
-`r if(params$S7_output == "D"){"The analyses that were undertaken deviated from the preregistered analysis plans. These deviations are not fully disclosed in the manuscript. The authors provided the following justification:"}` `r shQuote(params$Q7_popup)`
+`r if(params$S7_output == "D"){"The analyses that were undertaken deviated from the preregistered analysis plans. These deviations are not fully disclosed in the manuscript. The authors provided the following justification:"}` `r prereg_text`
 

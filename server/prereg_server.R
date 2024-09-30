@@ -54,7 +54,8 @@ observeEvent(input$Q6, {
       preregValues$Q6_complete = 1
 
       preregValues$Q6 = "No"
-
+      
+      fullReport$editor$Note[6] <- NA # explicitly set note to NA in case authors had previously provided a response to the pop-up but then changed their answer
 
       #updateTabsetPanel(session, "sidebar", selected = "results")
     }
@@ -146,219 +147,6 @@ observeEvent(input$Q6a, {
   }
 })
 
-# Q6b  ---------------------------------------------------------------------
-
-# output$insertQ6b <- renderUI({
-#   if (preregValues$studyYes == 1) {
-#     fluidPage(
-#       h5("Did the study procedures in the manuscript or supplementary information deviate in 
-#          any way from those described  in the pre-registered protocol?"),
-#       p(em("For the purposes of this question, a 'deviation' is any explicit change from the 
-#          pre-registered procedures, as well as the reporting of any additional procedures 
-#          in the manuscript that were either missing from the protocol or were documented 
-#          with less precision in the protocol than in the manuscript.")),
-#       pickerInput(
-#         inputId = "Q6b",
-#         label = "",
-#         choices = c("Yes", "No"),
-#         multiple = FALSE,
-#         options = list(
-#           title = "Response required"
-#         )
-#       )
-#     )} 
-# })
-
-# observeEvent(input$Q6b, {
-#   if (input$Q6b=="No") {
-#     confirmSweetAlert(
-#       session = session,
-#       inputId = "popupQ6b",
-#       type = "warning",
-#       title = "Confirmation",
-#       text = "Are you sure there were no deviations from the pre-registered study 
-#       procedures? Authors often under-report deviations from protocol, such as the 
-#       incomplete reporting of study variables and more detailed descriptions of 
-#       procedures in the manuscript than in the protocol. If you are sure there 
-#       were no deviations, this will be noted in the TOP statement.",
-#       btn_labels = c("No", "Yes I am sure"),
-#       btn_colors = c("#04B404", "#FE642E")
-#     )
-#     preregValues$studyDevs = 0
-#     preregValues$Q6b_complete = 0
-#     preregValues$Q6b = ""
-#   } else if (input$Q6b=="Yes") {
-#     preregValues$studyDevs = 1
-#     fullReport$S6_complete = 0
-#     preregValues$Q6b_complete = 1
-#     preregValues$Q6b = "Yes"
-#   }
-# })
-
-# observeEvent(input$popupQ6b, {
-#   if (input$popupQ6b==TRUE) {
-#     preregValues$studyDevs = 2
-#     # sendSweetAlert(
-#     #   session = session, html = TRUE,
-#     #   title = "Section successfully completed!", 
-#     #   text = tagList(
-#     #     "Download your session responses to avoid potential data loss.",
-#     #     downloadBttn(
-#     #       outputId = "downloadRDS"
-#     #     )
-#     #   ),
-#     #   type = "success"
-#     # )
-#     
-#     #go to next section
-#     #updateTabsetPanel(session, "sidebar", selected = "results")
-#     fullReport$S6_complete = 1
-#     fullReport$S6_output = "B"
-#     
-#     
-#     fullReport$S6_url = as.character(input$Q6a)
-#     preregValues$Q6b_complete = 1
-#     preregValues$Q6b = "No"
-#  
-#   } else {
-#     updatePickerInput(
-#       session,
-#       inputId = "Q6b",
-#       selected = ""
-#     )
-#     
-#     preregValues$studyDevs = 0
-#     fullReport$S6_complete = 0
-#     preregValues$Q6b_complete = 0
-#     preregValues$Q6b = ""
-#   }
-# })
-
-# Q6c  ---------------------------------------------------------------------
-
-# output$insertQ6c <- renderUI({
-#   if (preregValues$studyDevs == 1) {
-#     fluidPage(
-#       h5("Are ALL deviations from the pre-registered study procedures reported in the 
-#          manuscript or supplementary information?"),
-#       pickerInput(
-#         inputId = "Q6c",
-#         label = "",
-#         choices = c("Yes", "No"),
-#         multiple = FALSE,
-#         options = list(
-#           title = "Response required"
-#         )
-#       )
-#     )} 
-# })
-
-# observeEvent(input$Q6c, {
-#   if (input$Q6c=="No") {
-#     inputSweetAlert(
-#       session = session,
-#       inputId = "popupQ6c",
-#       title = "Confirmation",
-#       text = "You have indicated that the reporting of study procedures deviated from 
-#       the pre-registered protocol, but that these deviations are not reported in the 
-#       manuscript or supplementary information. Is this correct? If so, this will be 
-#       noted in the TOP statement and you will be asked to provide an explanation for 
-#       the lack of disclosure.",
-#       input = "text",
-#       type = "question",
-#       btn_labels = c("Yes I am sure", "No, change my answer")
-#     )
-#     preregValues$studyRep = 0
-#     preregValues$Q6c_complete = 0
-#     preregValues$Q6c = ""
-#   } else if (input$Q6c=="Yes") {
-#     preregValues$studyRep = 1
-#     
-#      #   sendSweetAlert(
-#      #   session = session, html = TRUE,
-#      #   title = "Section successfully completed!", 
-#      #   text = tagList(
-#      #     "Download your session responses to avoid potential data loss.",
-#      #     downloadBttn(
-#      #       outputId = "downloadRDS"
-#      #     )
-#      #   ),
-#      #   type = "success"
-#      # )
-#     #updateTabsetPanel(session, "sidebar", selected = "results")
-#        
-#     fullReport$S6_complete = 1
-#     fullReport$S6_output = "C"
-# 
-#     fullReport$S6_url = as.character(input$Q6a)
-#   }
-# })
-
-#something is wrong here?
-# observeEvent(input$popupQ6c, {
-#   if (input$popupQ6c=="No, change my answer") {
-#     updatePickerInput(
-#       session,
-#       inputId = "Q6c",
-#       selected = ""
-#     )
-#     preregValues$studyRep = 0
-#     preregValues$Q6c_complete = 0
-#     preregValues$Q6c = ""
-#   } else if (input$popupQ6c=="") {
-#     sendSweetAlert(
-#       session = session,
-#       title = "No response in the text box",
-#       text = "You selected 'Yes I am sure' but did not provide the required details in the text box.
-#       Your answer to this question has been reset.",
-#       type = "error"
-#     )
-#     updatePickerInput(
-#       session,
-#       inputId = "Q6c",
-#       selected = ""
-#     )
-#     preregValues$studyRep = 0
-#     preregValues$Q6c_complete = 0
-#     preregValues$Q6c = ""
-#   } else {
-#     preregValues$studyRep = 2
-#     preregValues$Q6c_complete = 1
-#     preregValues$Q6c = "No"
-# 
-#       # sendSweetAlert(
-#       #   session = session, html = TRUE,
-#       #   title = "Section successfully completed!", 
-#       #   text = tagList(
-#       #     "Download your session responses to avoid potential data loss.",
-#       #     downloadBttn(
-#       #       outputId = "downloadRDS"
-#       #     )
-#       #   ),
-#       #   type = "success"
-#       # )
-#       #updateTabsetPanel(session, "sidebar", selected = "results")
-#     
-#     fullReport$S6_complete = 1
-#     fullReport$S6_output = "D"
-#     fullReport$S6_url = as.character(input$Q6a)
-#     fullReport$S6_explain = as.character(input$popupQ6c)
-#     
-#     preregValues$Q6c_complete = 1
-#     preregValues$Q6c = "No"
-#     doc <- isolate(fullReport$doc) %>%
-#       cursor_reach(keyword = "Study Preregistration") %>%
-#       body_add_par(paste("At least part of the study procedures was pre-registered in a time-stamped, institutional registry prior to the research being conducted.",
-#                          "Study procedures were preregistered at:",
-#                          as.character(input$Q6a), " ")) %>%
-#       body_add_par(paste("The actual study procedures deviated from the preregistered protocol. These deviations are not fully disclosed. The authors have provided the following explanation:", as.character(input$popupQ6c))) %>%
-#       body_add_par("")
-#     
-#     fullReport$doc <- doc
-#   }
-# })
-
-
 # Q7  ---------------------------------------------------------------------
 
 output$insertQ7 <- renderUI({
@@ -409,18 +197,9 @@ observeEvent(input$Q7, {
     preregValues$analysisYes = 2
     preregValues$Q7_complete = 1
     preregValues$Q7 = "No"
+    
+    fullReport$editor$Note[7] <- NA # explicitly set note to NA in case authors had previously provided a response to the pop-up but then changed their answer
 
-    # sendSweetAlert(
-    #   session = session, html = TRUE,
-    #   title = "Section successfully completed!",
-    #   text = tagList(
-    #     "Download your session responses to avoid potential data loss.",
-    #     downloadBttn(
-    #       outputId = "downloadRDS"
-    #     )
-    #   ),
-    #   type = "success"
-    # )
     updateTabsetPanel(session, "sidebar", selected = "results")
   }
 })
@@ -636,6 +415,7 @@ observeEvent(input$Q7c, {
     
   } else if (input$Q7c=="Yes") {
     preregValues$analysisRep = 0
+    
     
     # sendSweetAlert(
     #   session = session, html = TRUE,
