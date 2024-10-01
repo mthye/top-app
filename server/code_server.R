@@ -1,3 +1,7 @@
+observeEvent(input$previousS1, {
+  updateTabsetPanel(session, "sidebar", selected = "data")
+})
+
 output$insertQ3 <- renderUI({
   fluidPage(
     h5("3. Was any part of the data analysis reported in the manuscript (including data pre-processing) undertaken using code or scripts?"),
@@ -61,7 +65,8 @@ output$insertQ3a <- renderUI({
       div(style = "display: inline-block;", h6(
         "Add a type of analysis code that is not listed above"
       )),
-       br()
+      br(),
+      br()
     )
   }
 })
@@ -78,17 +83,7 @@ observeEvent(input$next3a, {
   }
   
   if (codeValues$codeYes == 2) {
-    # sendSweetAlert(
-    #   session = session, html = TRUE,
-    #   title = "Section successfully completed!", 
-    #   text = tagList(
-    #     "Download your session responses to avoid potential data loss.",
-    #     downloadBttn(
-    #       outputId = "downloadRDS"
-    #     )
-    #   ),
-    #   type = "success"
-    # )
+
     updateTabsetPanel(session, "sidebar", selected = "materials")
     
   }
@@ -97,19 +92,6 @@ observeEvent(input$next3a, {
       codeValues$codeYes == 1)) {
     codeValues$S3a_complete = 1
     
-    # sendSweetAlert(
-    #   session = session, html = TRUE,
-    #   title = "Data save reminder", 
-    #   text = tagList(
-    #     "You will now proceed to the next subsection. 
-    #     You can download your session responses now if you wish to pause or continue
-    #     to the end of this Standard.",
-    #     downloadBttn(
-    #       outputId = "downloadRDS"
-    #     )
-    #   ),
-    #   type = "info"
-    # )
     updateTabsetPanel(session, "S3_box", selected = "tab3b")
     
   }
@@ -666,18 +648,7 @@ observeEvent(input$next3b, {
       codeValues$Q3b_partialCode == 2 &
       codeValues$Q3b_noneCode == 2) {
     codeValues$S3b_complete = 1
-    # sendSweetAlert(
-    #   session = session, 
-    #   title = "Section successfully completed!", 
-    #   html = TRUE,
-    #   text = tagList(
-    #     "Download your session responses to avoid potential data loss.",
-    #     downloadBttn(
-    #       outputId = "downloadRDS"
-    #     )
-    #   ),
-    #   type = "success"
-    # )
+
     updateTabsetPanel(session, "sidebar", selected = "materials")
     fullReport$S3_complete = 1
     fullReport$S3_output = "B"
@@ -790,19 +761,7 @@ observeEvent(input$next3b, {
         hot_cols(colWidths = c(200, 200, 280, 350))
     })
     codeValues$S3b_complete = 1
-    # sendSweetAlert(
-    #   session = session, html = TRUE,
-    #   title = "Data save reminder", 
-    #   text = tagList(
-    #     "You will now proceed to the next subsection. 
-    #     You can download your session responses now if you wish to pause or continue
-    #     to the end of this Standard.",
-    #     downloadBttn(
-    #       outputId = "downloadRDS"
-    #     )
-    #   ),
-    #   type = "info"
-    # )
+
     updateTabsetPanel(session, "S3_box", selected = "tab3c")
     fullReport$S3_complete = 0
     
@@ -968,18 +927,6 @@ observeEvent(input$next3c, {
       "Restricted access conditions"
     )
     
-    # sendSweetAlert(
-    #   session = session,
-    #   title = "Section successfully completed!",
-    #   html = TRUE,
-    #   text = tagList(
-    #     "Download your session responses to avoid potential data loss.",
-    #     downloadBttn(
-    #       outputId = "downloadRDS"
-    #     )
-    #   ),
-    #   type = "success"
-    # )
     codeValues$S3c_complete = 1
     
     if (fullReport$S3_output == "D") {

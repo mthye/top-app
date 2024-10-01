@@ -1,3 +1,8 @@
+observeEvent(input$previousS4, {
+  updateTabsetPanel(session, "sidebar", selected = "design")
+})
+
+
 # Q6  ---------------------------------------------------------------------
 output$insertQ6 <- renderUI({
   fluidPage(

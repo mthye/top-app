@@ -7,18 +7,8 @@ observeEvent(input$next2, {
   }
   
   if (input$ms_id != "") {
-    # sendSweetAlert(
-    #   session = session, html = TRUE,
-    #   title = "Section successfully completed!",
-    #   text = tagList(
-    #     "Download your session responses to avoid potential data loss.",
-    #     downloadBttn(
-    #       outputId = "downloadRDS"
-    #     )
-    #   ),
-    #   type = "success"
-    # )
     dataValues$ID = input$ms_id
+    
     updateTabsetPanel(session, "S2_box", selected = "tab2a")
     
   }
@@ -104,17 +94,7 @@ observeEvent(input$next2a, {
   }
   
   if (dataValues$dataYes == 2) {
-    # sendSweetAlert(
-    #   session = session, html = TRUE,
-    #   title = "Section successfully completed!", 
-    #   text = tagList(
-    #     "Download your session responses to avoid potential data loss.",
-    #     downloadBttn(
-    #       outputId = "downloadRDS"
-    #     )
-    #   ),
-    #   type = "success"
-    # )
+
     updateTabsetPanel(session, "sidebar", selected = "code")
     
   }
@@ -122,19 +102,7 @@ observeEvent(input$next2a, {
   if ((length(dataValues$selectedDataTypes) > 0 &
        dataValues$dataYes == 1)) {
     dataValues$S2a_complete = 1
-    # sendSweetAlert(
-    #   session = session, html = TRUE,
-    #   title = "Data save reminder", 
-    #   text = tagList(
-    #     "You will now proceed to the next subsection. 
-    #     You can download your session responses now if you wish to pause or continue
-    #     to the end of this Standard.",
-    #     downloadBttn(
-    #       outputId = "downloadRDS"
-    #     )
-    #   ),
-    #   type = "info"
-    # )
+
     updateTabsetPanel(session, "S2_box", selected = "tab2b")
     
   }

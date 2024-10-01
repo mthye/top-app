@@ -1,3 +1,7 @@
+observeEvent(input$previousS3, {
+  updateTabsetPanel(session, "sidebar", selected = "materials")
+})
+
 output$insertQ5 <- renderUI({
   fluidPage(
     h5("5. If the manuscript reports any form of data presentation or analysis, either descriptive or inferential, please confirm that the following details are included in the manuscript:"),

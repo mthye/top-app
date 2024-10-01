@@ -7,6 +7,11 @@ tabBox(
     
     uiOutput("insertQ5"),
     
+    div(style = "display:table-row; float:left",
+        actionBttn("previousS3",
+                   icon = shiny::icon("backward"),
+                   label = "Back", color = "primary",  style = "jelly", size = "sm"),
+    ),
     div(style = "display:table-row; float:right", 
         actionBttn("next6", 
                    icon = shiny::icon("forward"), 

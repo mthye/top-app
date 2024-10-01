@@ -1,7 +1,12 @@
+observeEvent(input$previousS2, {
+  updateTabsetPanel(session, "sidebar", selected = "code")
+})
+
+
 output$insertQ4 <- renderUI({
   fluidPage(
     h5("4. Does the manuscript or supplementary information report any studies involving generation of original data?"),
-    p(em("Note."),"Data that existed prior to the research being undertaken includes data reported in meta-analyses and systematic reviews."),
+    h6("Data that existed prior to the research being undertaken includes data reported in meta-analyses and systematic reviews."),
     pickerInput(
       inputId = "Q4",
       label = "",
@@ -107,8 +112,9 @@ output$insertQ4a <- renderUI({
       ),
       div(
         style = "display: inline-block;",
-        h6("Add a type of research materials that is not listed above")
-      ),
+        h6("Add a type of research materials that is not listed above"
+        )),
+      br(),
       br()
     )
   }
@@ -126,17 +132,6 @@ observeEvent(input$next4a, {
   }
   
   if (matsValues$matsYes == 2) {
-    # sendSweetAlert(
-    #   session = session, html = TRUE,
-    #   title = "Section successfully completed!", 
-    #   text = tagList(
-    #     "Download your session responses to avoid potential data loss.",
-    #     downloadBttn(
-    #       outputId = "downloadRDS"
-    #     )
-    #   ),
-    #   type = "success"
-    # )
     updateTabsetPanel(session, "sidebar", selected = "design")
     
   }
@@ -144,18 +139,7 @@ observeEvent(input$next4a, {
   if ((length(input$Q4a) > 0 &
        matsValues$matsYes == 1)) {
     matsValues$S4a_complete = 1
-    # sendSweetAlert(
-    #   session = session, html = TRUE,
-    #   title = "Data save reminder", 
-    #   text = tagList(
-    #     "You will now proceed to the next subsection. 
-    #   You can download your session responses now if you wish to pause or continue to the end of this Standard.",
-    #     downloadBttn(
-    #       outputId = "downloadRDS"
-    #     )
-    #   ),
-    #   type = "info"
-    # )
+
     updateTabsetPanel(session, "S4_box", selected = "tab4b")
   }
 })

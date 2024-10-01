@@ -5,6 +5,13 @@ tabBox(
   tabPanel(
     "", value = "tab6",
     uiOutput("insertQ6"),
+    
+    div(style = "display:table-row; float:left",
+        actionBttn("previousS4",
+                   icon = shiny::icon("backward"),
+                   label = "Back", color = "primary",  style = "jelly", size = "sm"),
+    ),
+    
     # fluidPage(
     #   h5("6. Was any part of the study procedures pre-registered in a time-stamped, 
     #         institutional registry PRIOR to the research being conducted? "),
