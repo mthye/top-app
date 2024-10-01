@@ -1,6 +1,7 @@
 ---
 title: "Scientific Transparency Supplement"
 output: pdf_document
+classoption: landscape
 params:
   ms_id: NA
   Q2: NA
@@ -49,12 +50,13 @@ params:
   editor: NA
 
 ---
-  
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, results='asis')
 library(pander)
 library(tidyverse)
 panderOptions('table.continues', '')
+panderOptions('table.split.table', Inf)
 
 ```
 
@@ -225,7 +227,7 @@ if (params$Q4b_complete==1 & (params$Q4b_partial==1 | params$Q4b_none==1)) {
 ```
 
 
-### Design Transparency
+### Design and Analysis Transparency
 `r if(params$Q5 == "Yes"){"This article reports, for all studies, how the author(s) determined all sample sizes, all data exclusions, all data inclusion and exclusion criteria, and whether inclusion and exclusion criteria were established prior to data analysis."}`
 
 `r if(params$Q5 == "No"){"The authors indicated that aspects of the sample size determination, data exclusions, and inclusion or exclusion criteria were not reported in the article. The authors provided the following explanation:"}`
@@ -245,4 +247,3 @@ if (params$Q4b_complete==1 & (params$Q4b_partial==1 | params$Q4b_none==1)) {
 `r if(params$S7_output == "C"){"The analyses that were undertaken deviated from the preregistered analysis plans. All such deviations are fully disclosed in the manuscript."}`
 
 `r if(params$S7_output == "D"){"The analyses that were undertaken deviated from the preregistered analysis plans. These deviations are not fully disclosed in the manuscript. The authors provided the following justification:"}` `r prereg_text`
-

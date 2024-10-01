@@ -102,7 +102,7 @@ if ("Yes" %in% params$editor$Note) {
     mutate(Standard = case_when(Standard == "2" ~ "Data",
                                 Standard == "3" ~ "Analytic Methods (Code)",
                                 Standard == "4" ~ "Research Materials",
-                                Standard == "5" ~ "Design Transparency",
+                                Standard == "5" ~ "Design and Analysis Transparency",
                                 Standard == "6" ~ "Pre-registration of Study Procedures",
                                 Standard == "7" ~ "Pre-registration of Analysis Plans"))
   
@@ -121,6 +121,27 @@ if ("Yes" %in% params$editor$Note) {
   }
 }
 
+# process public access routes
+## data
+data_access <- ""
+if ("Data in Supplementary Information" %in% params$Q2b_input$X5 | "Data is contained in the paper" %in% params$Q2b_input$X5) {
+  data_access <- "Data contained in the manuscript or supplemental files. "
+}
+
+## code
+code_access <- ""
+if ("Code in Supplementary Information" %in% params$Q3b_input$X4 | "Code is contained in the paper" %in% params$Q3b_input$X4) {
+  code_access <- "Code contained in the manuscript or supplemental files. "
+}
+
+
+## materials
+mat_access <- ""
+if ("Materials are in Supplementary Information" %in% params$Q4b_input$X4 | "Materials are contained in the paper" %in% params$Q4b_input$X4) {
+  mat_access <- "Materials are contained in the manuscript or supplemental files. "
+}
+
+
 ```
 
 `r note`
@@ -129,19 +150,19 @@ if ("Yes" %in% params$editor$Note) {
 
 `r if(params$S2_output == "A"){"DATA: This research did not involve collection or analysis of data."}`
 `r if(params$S2_output == "B"){"DATA: All raw and processed data supporting this research are publicly available:"}`
-`r if(params$S2_output == "C"){"DATA: Some raw and processed data supporting this research are publicly available, while some are subject to restrictions:"}` `r unique(dataURLs)`
+`r if(params$S2_output == "C"){"DATA: Some raw and processed data supporting this research are publicly available, while some are subject to restrictions:"}` `r unique(dataURLs)` `r data_access`
 `r if(params$S2_output == "D"){"DATA: No raw or processed data supporting this research are publicly available."}`
 
 <!-- code -->
 `r if(params$S3_output == "A"){"CODE: This research did not make use of any analysis code."}`
 `r if(params$S3_output == "B"){"CODE: All analysis code supporting this research is publicly available:"}`
-`r if(params$S3_output == "C"){"CODE: Some analysis code supporting this research is publicly available, while some are subject to restrictions:"}` `r unique(codeURLs)`
+`r if(params$S3_output == "C"){"CODE: Some analysis code supporting this research is publicly available, while some are subject to restrictions:"}` `r unique(codeURLs)` `r code_access`
 `r if(params$S3_output == "D"){"CODE: No analysis code supporting this research is publicly available."}`
 
 <!-- materials -->
 `r if(params$S4_output == "A" | params$S4_output == "B"){"MATERIALS: This research did not make use of any materials to generate or acquire data."}`
 `r if(params$S4_output == "C"){"MATERIALS: All study materials supporting this research are publicly available:"}`
-`r if(params$S4_output == "D"){"MATERIALS: Some study materials supporting this research are publicly available, while some are subject to restrictions:"}` `r unique(matsURLs)`
+`r if(params$S4_output == "D"){"MATERIALS: Some study materials supporting this research are publicly available, while some are subject to restrictions:"}` `r unique(matsURLs)` `r mat_access`
 `r if(params$S4_output == "E"){"MATERIALS: No study materials supporting this research are publicly available."}`
 
 <!-- design -->
