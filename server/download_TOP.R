@@ -57,9 +57,7 @@ observeEvent(input$sidebar, {
             status = "success",
             collapsed = FALSE,
             HTML("<h5 style>Report generation requires successful completion of all app sections and the report cannot be created yet.<br><br>
-            In this section, you can download a zipped file with your Scientific Transparency Statement and Supplement. Both of these files should be uploaded alongside your manuscript files.<br><br>
-            The <b>Scientific Transparency Statement</b> will be appended to your article, please make sure your article does not contain additional sections that will duplicate this material.<br><br>
-            The <b>Scientific Transparency Supplement</b> will be added as a supplement linked to the online version of your article.<br></h5>"),
+            In this section, you can download a zipped file with your Scientific Transparency Statement and Supplement. Both of these files should be uploaded alongside your manuscript files.<br></h5>"),
             br(),
             br(),
             
@@ -83,9 +81,7 @@ observeEvent(input$sidebar, {
             status = "purple",
             collapsed = FALSE,
             HTML("<h5 style>You have successfully completed all app sections.<br><br>
-            In this section, you can download a zipped file with your Scientific Transparency Statement and Supplement. Both of these files should be uploaded alongside your manuscript files.<br><br>
-            The <b>Scientific Transparency Statement</b> will be appended to your article, please make sure your article does not contain additional sections that will duplicate this material.<br><br>
-            The <b>Scientific Transparency Supplement</b> will be added as a supplement linked to the online version of your article.<br></h5>"),
+            In this section, you can download a zipped file with your Scientific Transparency Statement and Supplement. Both of these files should be uploaded alongside your manuscript files.<br></h5>"),
             br(),
             br(),
             
