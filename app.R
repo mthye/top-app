@@ -6,9 +6,9 @@
 #                           token='',
 #                           secret='')
 # rsconnect::deployApp("path/to/app_files")
-#
 # redeploy:
-# rsconnect::deployApp()
+# rsconnect::deployApp(appName = "top-report-dev")
+#
 #
 ####
 
