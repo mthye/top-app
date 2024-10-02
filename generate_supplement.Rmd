@@ -231,7 +231,6 @@ if (params$Q4b_complete==1 & (params$Q4b_partial==1 | params$Q4b_none==1)) {
 `r if(params$Q5 == "Yes"){"This article reports, for all studies, how the author(s) determined all sample sizes, all data exclusions, all data inclusion and exclusion criteria, and whether inclusion and exclusion criteria were established prior to data analysis."}`
 
 `r if(params$Q5 == "No"){"The authors indicated that aspects of the sample size determination, data exclusions, and inclusion or exclusion criteria were not reported in the article. The authors provided the following explanation:"}`
-
 `r if(params$Q5 == "Not Applicable"){"The authors indicated that reporting the sample size determination, data exclusions, and inclusion and exclusion criteria was not applicable to this research. They provided the following justification:"}` `r design_text`
 
 ### Preregistration

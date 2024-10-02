@@ -82,16 +82,17 @@ observeEvent(input$popupQ5, {
   } else {
     desValues$measureStatus = 1
     fullReport$S5_output = "B"
-    fullReport$editor$Note[5] <- "Yes"
     desValues$Q5_complete = 1
     fullReport$S5_complete = 1
     desValues$Q5 = "No"
     desValues$YesQ5 = 2
     
-    # fullReport$Standard5 = paste(
-    #   "The manuscript does not report any measures, dependent variables, or other observations.",
-    #   "Note to Editor. The authors have described the nature of the data in the following statement.",
-    #   input$popupQ5)
+    # allow NA reponses to be flagged as compliant
+    if (input$Q5 == "Not Applicable") {
+      fullReport$editor$Note[5] <- NA
+    } else if (input$Q5 == "No") {
+      fullReport$editor$Note[5] <- "Yes"
+    }
     
   }
 })
