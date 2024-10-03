@@ -1,5 +1,4 @@
 ---
-title: "Scientific Transparency Statement"
 output: word_document
 params:
   ms_id: NA
@@ -49,6 +48,7 @@ params:
   editor: NA
 
 ---
+<span style="color: black;">**Scientific Transparency Statement**</span>
   
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, results='asis')
@@ -174,4 +174,4 @@ if ("Materials are in Supplementary Information" %in% params$Q4b_input$X4 | "Mat
 `r if(params$Q6 == "No"){"PRE-REGISTRATION: No part of the study procedures was pre-registered in a time-stamped, institutional registry prior to the research being conducted."}` `r if(params$Q6 != "No"){"PRE-REGISTRATION: At least part of the study procedures was pre-registered in a time-stamped, institutional registry prior to the research being conducted:"}` `r trimws(params$Q6a)` `r if(params$Q7 == "No"){"No part of the analysis plans was pre-registered in a time-stamped, institutional registry prior to the research being conducted."}` `r if(params$S7_output == "B" | params$S7_output == "C" | params$S7_output == "D"){"At least part of the analysis plans was pre-registered in a time-stamped, institutional registry prior to the research being conducted:"}` `r trimws(params$Q7a)` `r if(params$S7_output == "C"){"The analyses that were undertaken deviated from the preregistered analysis plans. All such deviations are fully disclosed in the manuscript."}` `r if(params$S7_output == "D"){"The analyses that were undertaken deviated from the preregistered analysis plans. These deviations are not fully disclosed in the manuscript. The authors provided the following justification:"}` `r prereg_text`
 
 
-For full details, see the *Scientific Transparency Supplement* in the online version of this article.
+For full details, see the *Scientific Transparency Report* in the online version of this article.
