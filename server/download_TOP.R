@@ -57,7 +57,7 @@ observeEvent(input$sidebar, {
             status = "success",
             collapsed = FALSE,
             HTML("<h5 style>Report generation requires successful completion of all app sections and the report cannot be created yet.<br><br>
-            In this section, you can download a zipped file with your Scientific Transparency Statement and Supplement. Both of these files should be uploaded alongside your manuscript files.<br></h5>"),
+            In this section, you can download a zipped file with your Scientific Transparency Statement and Report. Both of these files should be uploaded alongside your manuscript files.<br></h5>"),
             br(),
             br(),
             
@@ -81,7 +81,7 @@ observeEvent(input$sidebar, {
             status = "purple",
             collapsed = FALSE,
             HTML("<h5 style>You have successfully completed all app sections.<br><br>
-            In this section, you can download a zipped file with your Scientific Transparency Statement and Supplement. Both of these files should be uploaded alongside your manuscript files.<br></h5>"),
+            In this section, you can download a zipped file with your Scientific Transparency Statement and Report. Both of these files should be uploaded alongside your manuscript files.<br></h5>"),
             br(),
             br(),
             
@@ -204,7 +204,7 @@ output$downloadReport <- downloadHandler(
     # Knit the document, passing in the `params` list, and eval it in a
     # child of the global environment (this isolates the code in the document
     # from the code in this app).
-    pdf_file <- rmarkdown::render(tempSupplement, output_file = paste(input$ms_id, '-', Sys.Date(), '_Transparency_Supplement.pdf', sep=''),
+    pdf_file <- rmarkdown::render(tempSupplement, output_file = paste(input$ms_id, '-', Sys.Date(), '_Transparency_Report.pdf', sep=''),
                       params = params,
                       envir = new.env(parent = globalenv()))
     
@@ -231,7 +231,7 @@ observeEvent(input$generateReport, {
     title = "Success!",
     text = tagList(
       "Please download the zipped report file and save the current session to your computer.
-      Upload both the Transparency Statement (docx file) and Transparency Supplement (pdf file) with your resubmission.
+      Upload both the Transparency Statement (docx file) and Transparency Report (pdf file) with your resubmission.
       You can restore and modify the current session using the session file in the event edits to the report are requested.",
       br(),
       br(),

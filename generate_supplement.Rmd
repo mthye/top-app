@@ -1,5 +1,5 @@
 ---
-title: "Scientific Transparency Supplement"
+title: "Scientific Transparency Report"
 output: pdf_document
 classoption: landscape
 params:

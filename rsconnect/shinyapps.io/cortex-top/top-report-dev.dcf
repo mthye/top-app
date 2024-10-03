@@ -1,10 +1,10 @@
-name: top-report
+name: top-report-dev
 title:
 username: cortex-top
 account: cortex-top
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
-appId: 12045067
-bundleId: 9178958
-url: https://cortex-top.shinyapps.io/top-report/
+appId: 12892199
+bundleId: 9178982
+url: https://cortex-top.shinyapps.io/top-report-dev/
 version: 1
