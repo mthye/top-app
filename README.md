@@ -45,6 +45,6 @@ into separate files and we also have a ui file for the Home section and the FAQ 
 
 This folder is automatically generated when the app is deployed using the rsconnect package.
 
-## app_session.Rmd
+## generate_session.Rmd and generate_supplement.Rmd
 
-Markdown document used to generate the transparency report.
+Markdown document used to generate the transparency report files.
