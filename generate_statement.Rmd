@@ -48,7 +48,7 @@ params:
   editor: NA
 
 ---
-<span style="color: black;">**Scientific Transparency Statement**</span>
+<span style="color: black;">**Scientific transparency statement**</span>
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, results='asis')
