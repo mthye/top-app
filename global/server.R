@@ -7,6 +7,8 @@ server <- function(input, output, session) {
   
   dataValues <- reactiveValues(
     ID = "",
+    Title = "",
+    Author = "",
     Q1 = "",
     Q2 = "",
     S2a_complete = 0,
@@ -222,17 +224,11 @@ server <- function(input, output, session) {
   
   doc <- reactiveValues()
   
-  # report <- read_docx("TOP-report.docx") 
-  # new_styles <- read.csv("new_styles.csv")
-  # report$styles <- new_styles
-  
   notes <- data.frame(matrix(ncol=2, nrow=7))
   names(notes) <- c("Standard", "Note")
   notes$Standard <- 1:nrow(notes)
   
   fullReport <- reactiveValues(
-    #template = read_docx("TOP-report.docx"),
-    #doc = report, 
     editor = notes,
     S1_complete = 0,
     S2_complete = 0,
@@ -330,6 +326,8 @@ server <- function(input, output, session) {
       # Set up parameters to pass to Rmd document
       params <- list(
         ms_id = input$ms_id,
+        ms_title = input$ms_title,
+        ms_author = input$ms_author,
         Q2 = input$Q2,
         Q2a = input$Q2a,
         Q2b_eval = dataValues$dataYes,
@@ -370,7 +368,6 @@ server <- function(input, output, session) {
         Q7c = preregValues$Q7c
       )
       
-      #saveRDS(reactiveValuesToList(input), file)
       saveRDS(params, file)
     }
   )
@@ -382,6 +379,8 @@ server <- function(input, output, session) {
     observe({
       # data
       dataValues$ID <- params$ms_id
+      dataValues$Title <- params$ms_title
+      dataValues$Author <- params$ms_author
       dataValues$Q1 <- params$Q1
       dataValues$Q2 <- params$Q2
       dataValues$dataTypes <- params$dataTypes
@@ -425,13 +424,13 @@ server <- function(input, output, session) {
       updateTextAreaInput(session, "ms_id",
                           value = paste(isolate(dataValues$ID))
       )
+      updateTextAreaInput(session, "ms_title",
+                          value = paste(isolate(dataValues$Title))
+      )
+      updateTextAreaInput(session, "ms_author",
+                          value = paste(isolate(dataValues$Author))
+      )
     })
-    
-    # observe({
-    #   req(params)
-    #   updatePickerInput(session, "Q6", selected = paste(isolate(preregValues$Q6))
-    #   )
-    # })
     
     updateTabsetPanel(session, "sidebar", selected = "data")
   })

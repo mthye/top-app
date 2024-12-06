@@ -1,13 +1,15 @@
 observeEvent(input$next2, {
-  if (input$ms_id == "") {
+  if (input$ms_id == "" | input$ms_title == "" | input$ms_author == "") {
     sendSweetAlert(session = session,
                    title = "Incomplete section",
                    type = "error")
     fullReport$S2_complete = 0
   }
   
-  if (input$ms_id != "") {
+  if (input$ms_id != "" & input$ms_title != "" & input$ms_author != "") {
     dataValues$ID = input$ms_id
+    dataValues$Title = input$ms_title
+    dataValues$Author = input$ms_author
     
     updateTabsetPanel(session, "S2_box", selected = "tab2a")
     
@@ -656,19 +658,6 @@ observeEvent(input$next2b, {
     
     dataValues$S2b_complete = 1
     
-    # sendSweetAlert(
-    #   session = session, 
-    #   title = "Section successfully completed!", 
-    #   html = TRUE,
-    #   text = tagList(
-    #     "Download your session responses to avoid potential data loss.",
-    #     downloadBttn(
-    #       outputId = "downloadRDS"
-    #     )
-    #   ),
-    #   type = "success"
-    # )
-    
     fullReport$S2_table3 <- subset(fullReport$S2_table1, select = c(1:2, 5:6))
     
     if (isTRUE(levels(as.factor(fullReport$S2_table1[[3]]))=="ALL data")) {
@@ -796,19 +785,6 @@ observeEvent(input$next2b, {
     
     dataValues$S2b_complete = 1
     
-    # sendSweetAlert(
-    #   session = session, html = TRUE,
-    #   title = "Data save reminder", 
-    #   text = tagList(
-    #     "You will now proceed to the next subsection. 
-    #     You can download your session responses now if you wish to pause or continue
-    #     to the end of this Standard.",
-    #     downloadBttn(
-    #       outputId = "downloadRDS"
-    #     )
-    #   ),
-    #   type = "info"
-    # )
     updateTabsetPanel(session, "S2_box", selected = "tab2c")
     fullReport$S2_complete = 0
     
@@ -989,19 +965,6 @@ observeEvent(input$next2c, {
       "Restricted access conditions"
     )
     
-    # sendSweetAlert(
-    #   session = session,
-    #   title = "Section successfully completed!",
-    #   # text = "All your responses are valid. You will now proceed to the next section.",
-    #   html = TRUE,
-    #   text = tagList(
-    #     "Download your session responses to avoid potential data loss.",
-    #     downloadBttn(
-    #       outputId = "downloadRDS"
-    #     )
-    #   ),
-    #   type = "success"
-    # )
     dataValues$S2c_complete = 1
     
     if (fullReport$S2_output == "D") {

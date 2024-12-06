@@ -57,9 +57,9 @@ observeEvent(input$sidebar, {
             status = "success",
             collapsed = FALSE,
             HTML("<h5 style>Report generation requires successful completion of all app sections and the report cannot be created yet.<br><br>
-            In this section, you can download a zipped file with your Scientific Transparency Statement and Supplement. Both of these files should be uploaded alongside your manuscript files.<br><br>
+            In this section, you can download a zipped file with your Scientific Transparency Statement and Report. Both of these files should be uploaded alongside your manuscript files.<br><br>
             The <b>Scientific Transparency Statement</b> will be appended to your article, please make sure your article does not contain additional sections that will duplicate this material.<br><br>
-            The <b>Scientific Transparency Supplement</b> will be added as a supplement linked to the online version of your article.<br></h5>"),
+            The <b>Scientific Transparency Report</b> will be added as a supplement linked to the online version of your article.<br></h5>"),
             br(),
             br(),
             
@@ -83,9 +83,9 @@ observeEvent(input$sidebar, {
             status = "purple",
             collapsed = FALSE,
             HTML("<h5 style>You have successfully completed all app sections.<br><br>
-            In this section, you can download a zipped file with your Scientific Transparency Statement and Supplement. Both of these files should be uploaded alongside your manuscript files.<br><br>
+            In this section, you can download a zipped file with your Scientific Transparency Statement and Report. Both of these files should be uploaded alongside your manuscript files.<br><br>
             The <b>Scientific Transparency Statement</b> will be appended to your article, please make sure your article does not contain additional sections that will duplicate this material.<br><br>
-            The <b>Scientific Transparency Supplement</b> will be added as a supplement linked to the online version of your article.<br></h5>"),
+            The <b>Scientific Transparency Report</b> will be added as a supplement linked to the online version of your article.<br></h5>"),
             br(),
             br(),
             
@@ -146,6 +146,8 @@ output$downloadReport <- downloadHandler(
     # Set up parameters to pass to Rmd document
     params <- list(
       ms_id = input$ms_id,
+      ms_title = input$ms_title,
+      ms_author = input$ms_author,
       Q2 = input$Q2,
       Q2a = input$Q2a,
       Q2b_eval = dataValues$dataYes,
@@ -200,15 +202,15 @@ output$downloadReport <- downloadHandler(
     # Copy the report file to a temporary directory before processing it, in
     # case we don't have write permissions to the current working dir (which
     # can happen when deployed).
-    tempSupplement <- file.path(tempdir(), "generate_supplement.Rmd")
+    tempReport <- file.path(tempdir(), "generate_report.Rmd")
     tempStatement <- file.path(tempdir(), "generate_statement.Rmd")
-    file.copy("generate_supplement.Rmd", tempSupplement, overwrite = TRUE)
+    file.copy("generate_report.Rmd", tempReport, overwrite = TRUE)
     file.copy("generate_statement.Rmd", tempStatement, overwrite = TRUE)
     
     # Knit the document, passing in the `params` list, and eval it in a
     # child of the global environment (this isolates the code in the document
     # from the code in this app).
-    pdf_file <- rmarkdown::render(tempSupplement, output_file = paste(input$ms_id, '-', Sys.Date(), '_Transparency_Supplement.pdf', sep=''),
+    pdf_file <- rmarkdown::render(tempReport, output_file = paste(input$ms_id, '-', Sys.Date(), '_Transparency_Report.pdf', sep=''),
                       params = params,
                       envir = new.env(parent = globalenv()))
     
@@ -235,7 +237,7 @@ observeEvent(input$generateReport, {
     title = "Success!",
     text = tagList(
       "Please download the zipped report file and save the current session to your computer.
-      Upload both the Transparency Statement (docx file) and Transparency Supplement (pdf file) with your resubmission.
+      Upload both the Scientific Transparency Statement (docx file) and Scientific Transparency Report (pdf file) with your resubmission.
       You can restore and modify the current session using the session file in the event edits to the report are requested.",
       br(),
       br(),

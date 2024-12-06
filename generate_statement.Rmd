@@ -2,6 +2,8 @@
 output: word_document
 params:
   ms_id: NA
+  ms_title: NA
+  ms_author: NA
   Q2: NA
   Q2a: NA
   Q2b_eval: NA
