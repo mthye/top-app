@@ -20,7 +20,9 @@ fluidPage(
            </h5>"),
       br(),
       h5("Check out our ", actionLink("goFAQ", "FAQ & Tips", status = "primary", style="color: #fe9923"), "section for more information on the criteria."),
-    )
+      br(),
+      h5(HTML("This app was developed by Loukia Tzavella and Melissa Thye. The code is available on <a href='https://github.com/mthye/top-app' target='_blank'>github</a>.")),
+      )
   ),
   
   br(),

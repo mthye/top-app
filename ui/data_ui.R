@@ -6,6 +6,13 @@ tabBox(
     "", value = "id", width = 12,
     fluidPage(
       textInput("ms_id", h5("1. Manuscript Number"), placeholder = "e.g.: CORTEX-D-12-34567R1"),
+      h6(HTML("If your manuscript has not yet been assigned a number, please provide a name in the format <b>CORTEX-LASTNAME</b> (e.g., CORTEX-SMITH).")),
+      
+      br(),
+      textInput("ms_title", h5("Manuscript Title"), placeholder = "e.g.: Transparency and Openness Promotion Guidelines"),
+      
+      br(),
+      textInput("ms_author", h5("Corresponding Author"), placeholder = "e.g.: Jane Smith"),
       
       div(style = "display:table-row; float:right",
           actionBttn("next2",
