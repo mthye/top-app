@@ -83,7 +83,6 @@ observeEvent(input$matsIC, {
 
 output$insertQ4a <- renderUI({
   if (matsValues$matsYes == 1) {
-  #if (matsValues$Q4 == "Yes") {
     fluidPage(
       ## Question 4a
       h5(
@@ -188,11 +187,6 @@ observeEvent(input$Q4a, {
   fullReport$S4_complete = 0
   
   matsValues$selectedMatsTypes <- input$Q4a
-  
-  # matsTable1 <- data.frame(matrix(ncol = 5, nrow = 1))
-  # matsTable1[1:5] <- NA_character_
-  # matsTable1[1:length(matsValues$selectedMatsTypes), 1] <-
-  #   as.character(matsValues$selectedMatsTypes)
   
     # if outputs were previously saved
     if (!is.null(matsValues$saveQ4b)){
@@ -711,18 +705,7 @@ observeEvent(input$next4b, {
       matsValues$Q4b_partialMats == 2 &
       matsValues$Q4b_noneMats == 2) {
     matsValues$S4b_complete = 1
-    # sendSweetAlert(
-    #   session = session, 
-    #   title = "Section successfully completed!", 
-    #   html = TRUE,
-    #   text = tagList(
-    #     "Download your session responses to avoid potential data loss.",
-    #     downloadBttn(
-    #       outputId = "downloadRDS"
-    #     )
-    #   ),
-    #   type = "success"
-    # )
+    
     updateTabsetPanel(session, "sidebar", selected = "design")
     fullReport$S4_complete = 1
     fullReport$S4_output = "C"
@@ -846,19 +829,7 @@ observeEvent(input$next4b, {
     
     
     matsValues$S4b_complete=1
-    # sendSweetAlert(
-    #   session = session, html = TRUE,
-    #   title = "Data save reminder", 
-    #   text = tagList(
-    #     "You will now proceed to the next subsection. 
-    #     You can download your session responses now if you wish to pause or continue
-    #     to the end of this Standard.",
-    #     downloadBttn(
-    #       outputId = "downloadRDS"
-    #     )
-    #   ),
-    #   type = "info"
-    # )
+
     updateTabsetPanel(session, "S4_box", selected = "tab4c")
     fullReport$S4_complete = 0
   }
@@ -1017,19 +988,7 @@ observeEvent(input$next4c, {
       "Restricted access route",
       "Restricted access conditions"
     )
-    
-    # sendSweetAlert(
-    #   session = session,
-    #   title = "Section successfully completed!",
-    #   html = TRUE,
-    #   text = tagList(
-    #     "Download your session responses to avoid potential data loss.",
-    #     downloadBttn(
-    #       outputId = "downloadRDS"
-    #     )
-    #   ),
-    #   type = "success"
-    # )
+
     matsValues$S4c_complete = 1
     
     if (fullReport$S4_output == "E") {

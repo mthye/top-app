@@ -38,7 +38,6 @@ observeEvent(input$Q3, {
 
 output$insertQ3a <- renderUI({
   if (codeValues$codeYes == 1) {
-  #if (codeValues$Q3 == "Yes") {
     fluidPage(
       ## Question 3a
       h5(

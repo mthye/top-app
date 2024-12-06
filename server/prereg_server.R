@@ -61,8 +61,6 @@ observeEvent(input$Q6, {
       preregValues$Q6 = "No"
       
       fullReport$editor$Note[6] <- NA # explicitly set note to NA in case authors had previously provided a response to the pop-up but then changed their answer
-
-      #updateTabsetPanel(session, "sidebar", selected = "results")
     }
 })
 
@@ -421,20 +419,6 @@ observeEvent(input$Q7c, {
   } else if (input$Q7c=="Yes") {
     preregValues$analysisRep = 0
     
-    
-    # sendSweetAlert(
-    #   session = session, html = TRUE,
-    #   title = "Section successfully completed!", 
-    #   text = tagList(
-    #     "Download your session responses to avoid potential data loss.",
-    #     downloadBttn(
-    #       outputId = "downloadRDS"
-    #     )
-    #   ),
-    #   type = "success"
-    # )
-    #updateTabsetPanel(session, "sidebar", selected = "results")
-    
     updateTabsetPanel(session, "sidebar", selected = "results")
     
     fullReport$S7_complete = 1
@@ -475,17 +459,6 @@ observeEvent(input$popupQ7c, {
   } else {
     preregValues$analysisRep = 2
     
-    # sendSweetAlert(
-    #   session = session, html = TRUE,
-    #   title = "Section successfully completed!", 
-    #   text = tagList(
-    #     "Download your session responses to avoid potential data loss.",
-    #     downloadBttn(
-    #       outputId = "downloadRDS"
-    #     )
-    #   ),
-    #   type = "success"
-    # )
     updateTabsetPanel(session, "sidebar", selected = "results")
     
     fullReport$S7_complete = 1
@@ -496,7 +469,3 @@ observeEvent(input$popupQ7c, {
     preregValues$Q7c = "No"
   }
 })
-
-
-
-
