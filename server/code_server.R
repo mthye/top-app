@@ -273,31 +273,46 @@ observeEvent(input$next3b, {
   
   ## Check whether any URLs exist
   
-  codeValues$Q3b$exists <-
-    ifelse(is_valid_url(codeValues$Q3b[5]) == TRUE, "valid", "invalid")
+  codeValues$Q3b$exists <- ifelse(is_valid_url(codeValues$Q3b[5]) == TRUE, "valid", "invalid")
   
-  if ("valid" %in% codeValues$Q3b) {
-    url_validity <- data.frame(matrix(ncol = 2))
-    url_validity[1] <-
-      codeValues$Q3b$X5[codeValues$Q3b$exists == "valid"]
-    url_validity[2] <-
-      !ldply(codeValues$Q3b$X5[codeValues$Q3b$exists == "valid"], http_error)
+  if ("valid" %in% codeValues$Q3b$exists) {
     
+    # extract unique URLs to check
+    urls <- unique(codeValues$Q3b$X5[codeValues$Q3b$exists == "valid" & !is.na(codeValues$Q3b$X5)])
+    
+    # check validity of URL, tagging as NULL if not found after 10s
+    validity <- sapply(urls, function(url) {
+      response <- tryCatch(GET(url, timeout(10)), error = function(e) NULL)
+      
+      # If the response is NULL, mark as invalid
+      if (is.null(response) || http_error(response)) {
+        return(FALSE)
+      } 
+      return(TRUE)
+    })
+    
+    # create dataframe
+    url_validity <- data.frame(url = urls, validity = validity)
+    
+    # extract valid and invalid URLs
     url_valid <- subset(url_validity, url_validity[2] == TRUE)
     url_invalid <- subset(url_validity, url_validity[2] == FALSE)
     
+    # tag URLs as valid or invalid
     codeValues$Q3b$exists <-
       ifelse(
         codeValues$Q3b$exists == "valid" &
-          codeValues$Q3b[5] %in% url_valid,
+          codeValues$Q3b[5] == url_valid$url,
         "TRUE",
         ifelse(
           codeValues$Q3b$exists == "valid" &
-            codeValues$Q3b[5] %in% url_invalid,
+            codeValues$Q3b[5] == url_invalid$url,
           "FALSE",
           "FALSE"
         )
       )
+    print(codeValues$Q3b$exists)
+    
   } else {
     codeValues$Q3b$exists <-
       ifelse(codeValues$Q3b$exists == "invalid", "FALSE", "NA")
