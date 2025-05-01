@@ -392,19 +392,12 @@ observeEvent(input$next2b, {
   )
   
   
-  dataValues$Q2b_partialData <-
-    ifelse("SOME data are publicly available" %in% dataValues$Q2b$X3, 1, 2)
-  dataValues$Q2b_noneData <-
-    ifelse("NO data are publicly available" %in% dataValues$Q2b$X3, 1, 2)
-  dataValues$Q2b_invalidrepo <-
-    ifelse(TRUE %in% str_contains(
-      dataValues$Q2b$X6,
-      c("drive", "google", "dropbox"),
-      ignore.case = TRUE
-    ),
-    1,
-    2)
-  
+  dataValues$Q2b_partialData <- ifelse("SOME data are publicly available" %in% dataValues$Q2b$X3, 1, 2)
+  dataValues$Q2b_noneData <- ifelse("NO data are publicly available" %in% dataValues$Q2b$X3, 1, 2)
+  dataValues$Q2b_invalidrepo <- ifelse(TRUE %in% str_contains(dataValues$Q2b$X6,
+                                                              c("drive", "google", "dropbox"),
+                                                              ignore.case = TRUE), 1, 2)
+
   ## Save URLs that don't exist to present in an alert later on when user tries to proceed
   dataValues$Q2b_urls <-
     unique(dataValues$Q2b$X6[dataValues$Q2b$condition == "invalid_url"])

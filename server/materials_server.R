@@ -429,23 +429,12 @@ observeEvent(input$next4b, {
   
   
   
-  matsValues$Q4b_partialMats <-
-    ifelse("SOME materials are publicly available" %in% matsValues$Q4b$X2,
-           1,
-           2)
-  matsValues$Q4b_noneMats <-
-    ifelse("NO materials are publicly available" %in% matsValues$Q4b$X2,
-           1,
-           2)
+  matsValues$Q4b_partialMats <- ifelse("SOME materials are publicly available" %in% matsValues$Q4b$X2, 1, 2)
+  matsValues$Q4b_noneMats <- ifelse("NO materials are publicly available" %in% matsValues$Q4b$X2, 1, 2)
   
-  matsValues$Q4b_invalidrepo <-
-    ifelse(TRUE %in% str_contains(
-      matsValues$Q4b$X5,
-      c("drive", "google", "dropbox"),
-      ignore.case = TRUE
-    ),
-    1,
-    2)
+  # allow flexible URLs for materials
+  #matsValues$Q4b_invalidrepo <- ifelse(TRUE %in% str_contains(matsValues$Q4b$X5, c("drive", "google", "dropbox"), ignore.case = TRUE), 1, 2)
+  matsValues$Q4b_invalidrepo <- 2
   
   ## Save URLs that don't exist to present in an alert later on when user tries to proceed
   matsValues$Q4b_urls <-
