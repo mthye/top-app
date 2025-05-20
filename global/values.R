@@ -120,6 +120,7 @@ codeTypes <- c(
   "GraphPad Prism syntax",
   "JAGS code",
   "Jamovi syntax (R)",
+  "JASP",
   "JavaScript code",
   "JMP code",
   "Matlab code",

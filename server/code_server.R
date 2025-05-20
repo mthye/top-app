@@ -47,8 +47,7 @@ output$insertQ3a <- renderUI({
         inputId = "Q3a",
         width = "300px",
         label = "",
-        choices = codeTypes,
-        #selected = isolate(codeValues$Q3a),
+        choices = isolate(codeValues$codeTypes),
         selected = isolate(codeValues$selectedCodeTypes),
         multiple = TRUE,
         options = list(
@@ -311,7 +310,6 @@ observeEvent(input$next3b, {
           "FALSE"
         )
       )
-    print(codeValues$Q3b$exists)
     
   } else {
     codeValues$Q3b$exists <-

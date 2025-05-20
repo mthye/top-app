@@ -336,6 +336,7 @@ server <- function(input, output, session) {
         Q2b_partial = dataValues$Q2b_partialData,
         Q2b_none = dataValues$Q2b_noneData,
         Q2c_input = dataValues$Q2c,
+        dataTypes = dataValues$dataTypes,
         selectedDataTypes = dataValues$selectedDataTypes,
         
         Q3 = input$Q3,
@@ -346,6 +347,7 @@ server <- function(input, output, session) {
         Q3b_partial = codeValues$Q3b_partialCode,
         Q3b_none = codeValues$Q3b_noneCode,
         Q3c_input = codeValues$Q3c,
+        codeTypes = codeValues$codeTypes,
         selectedCodeTypes = codeValues$selectedCodeTypes,
         
         Q4 = input$Q4,
@@ -356,6 +358,7 @@ server <- function(input, output, session) {
         Q4b_partial = matsValues$Q4b_partialMats,
         Q4b_none = matsValues$Q4b_noneMats,
         Q4c_input = matsValues$Q4c,
+        matsTypes = matsValues$matsTypes,
         selectedMatsTypes = matsValues$selectedMatsTypes,
         
         Q5 = input$Q5,
@@ -393,6 +396,7 @@ server <- function(input, output, session) {
       # code
       codeValues$Q3 <- params$Q3
       codeValues$Q3a <- params$Q3a # code types
+      codeValues$codeTypes <- params$codeTypes
       codeValues$selectedCodeTypes <- params$selectedCodeTypes
       codeValues$Q3b <- params$Q3b_input
       codeValues$Q3c <- params$Q3c_input
@@ -402,6 +406,7 @@ server <- function(input, output, session) {
       # materials
       matsValues$Q4 <- params$Q4
       #matsValues$Q4a <- input$Q4a # material types
+      matsValues$matsTypes <- params$matsTypes
       matsValues$selectedMatsTypes <- params$selectedMatsTypes
       matsValues$Q4b <- params$Q4b_input
       matsValues$Q4c <- params$Q4c_input

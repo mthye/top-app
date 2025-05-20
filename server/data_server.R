@@ -63,7 +63,7 @@ output$insertQ2a <- renderUI({
         inputId = "Q2a",
         width = "300px",
         label = "",
-        choices = dataTypes,
+        choices = isolate(dataValues$dataTypes),
         selected = isolate(dataValues$selectedDataTypes),
         multiple = TRUE,
         options = list(

@@ -95,7 +95,7 @@ output$insertQ4a <- renderUI({
         inputId = "Q4a",
         width = "300px",
         label = "",
-        choices = matsTypes,
+        choices = isolate(matsValues$matsTypes),
         selected = isolate(matsValues$selectedMatsTypes),
         multiple = TRUE,
         options = list(
@@ -364,7 +364,7 @@ observeEvent(input$next4b, {
           "FALSE"
         )
       )
-    print(matsValues$Q4b$exists)
+
   } else {
     matsValues$Q4b$exists <-
       ifelse(matsValues$Q4b$exists == "invalid", "FALSE", "NA")
