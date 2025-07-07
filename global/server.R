@@ -319,13 +319,14 @@ server <- function(input, output, session) {
   
   output$downloadData <- downloadHandler(
     filename = function() {
-      paste('Transparency_Session-', input$ms_id, '-', Sys.Date(),'.rds', sep='')
+      # trim any blank spaces in ms_id here and anywhere input$ms_id is called so files save in expected format
+      paste('Transparency_Session-', str_trim(input$ms_id), '-', Sys.Date(),'.rds', sep='')
     },
     content = function(file) {
       
       # Set up parameters to pass to Rmd document
       params <- list(
-        ms_id = input$ms_id,
+        ms_id = str_trim(input$ms_id),
         ms_title = input$ms_title,
         ms_author = input$ms_author,
         Q2 = input$Q2,

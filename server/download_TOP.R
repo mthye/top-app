@@ -139,13 +139,16 @@ observeEvent(input$sidebar, {
 
 output$downloadReport <- downloadHandler(
   filename = function() {
-    paste('Transparency_Report_Files-', input$ms_id, '-', Sys.Date(),'.zip', sep='')
-    
+    # trim any blank spaces in ms_id here and anywhere input$ms_id is called so files save in expected format
+    paste('Transparency_Report_Files-', str_trim(input$ms_id), '-', Sys.Date(),'.zip', sep='')
   },
   content = function(file) {
+    # trim any blank spaces in ms_id so files save in expected format
+    ms_id=str_trim(input$ms_id)
+    
     # Set up parameters to pass to Rmd document
     params <- list(
-      ms_id = input$ms_id,
+      ms_id = str_trim(input$ms_id),
       ms_title = input$ms_title,
       ms_author = input$ms_author,
       Q2 = input$Q2,
@@ -210,13 +213,14 @@ output$downloadReport <- downloadHandler(
     # Knit the document, passing in the `params` list, and eval it in a
     # child of the global environment (this isolates the code in the document
     # from the code in this app).
-    pdf_file <- rmarkdown::render(tempReport, output_file = paste(input$ms_id, '-', Sys.Date(), '_Transparency_Report.pdf', sep=''),
-                      params = params,
-                      envir = new.env(parent = globalenv()))
+    pdf_file <- rmarkdown::render(tempReport, output_file = paste(str_trim(input$ms_id), '-', Sys.Date(), '_Transparency_Report.pdf', sep=''),
+                                  params = params,
+                                  envir = new.env(parent = globalenv()))
     
-    word_file <- rmarkdown::render(tempStatement, output_file = paste(input$ms_id, '-', Sys.Date(),'_Transparency_Statement.docx', sep=''),
-                      params = params,
-                      envir = new.env(parent = globalenv()))
+    word_file <- rmarkdown::render(tempStatement, output_file = paste(str_trim(input$ms_id), '-', Sys.Date(),'_Transparency_Statement.docx', sep=''),
+                                   params = params,
+                                   envir = new.env(parent = globalenv()))
+    
     
     # zip the generated files
     zip(zipfile = file, files = c(pdf_file, word_file), flags = "-j", extras = NULL)

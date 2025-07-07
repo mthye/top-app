@@ -32,6 +32,7 @@ library(dplyr)
 library(httr)
 
 # Required for compiling the TOP report
+library(stringr)
 library(flextable)
 library(officer)
 library(rlang)
