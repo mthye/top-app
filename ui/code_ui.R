@@ -22,6 +22,7 @@ tabBox(
   tabPanel(
     "", value = "tab3b",
     uiOutput("insertQ3b"),
+    
     div(style = "display:table-row; float:left",
         actionBttn("previous3b",
                    icon = shiny::icon("backward"),
@@ -37,6 +38,7 @@ tabBox(
   tabPanel(
     "", value = "tab3c",
     uiOutput("insertQ3c"),
+    
     div(style = "display:table-row; float:left",
         actionBttn("previous3c",
                    icon = shiny::icon("backward"),

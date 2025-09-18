@@ -149,6 +149,10 @@ output$insertQ4b <- renderUI({
       h5(
         "4b. Please indicate the public availability for all selected types of research materials, as explained below."
       ),
+      p(
+        em("Note."),
+        "Any paper-based materials are expected to be scanned and uploaded to a public repository unless there are legal or ethical barriers to doing so."
+      ),
       tags$div(
         HTML(
           "<dl>
@@ -156,7 +160,7 @@ output$insertQ4b <- renderUI({
               <dd>- For all types of research materials you first need to indicate whether ALL, SOME or NO research materials are publicly available.</dd>
              <dt>Availability barrier:</dt>
               <dd>- If ALL research materials are publicly available, please select the option 'N/A - ALL materials are publicly available'.</dd>
-              <dd>- If SOME or NO research materials are publicly available, you need to specify the reason(s), such as an ethical barrier.</dd>
+              <dd>- If SOME or NO research materials are publicly available, you need to specify the reason(s), such as a legal barrier (e.g., copyright restrictions).</dd>
              <dt>Public access route:</dt>
               <dd> - If SOME or ALL research materials are publicly available without any restrictions, please indicate how readers can access them. For repositories (e.g. OSF) we ask that you provide a valid URL.</dd>
               <dd> - If NO research materials are publicly available, you should select the option 'N/A - NO materials are publicly available'.</dd>
@@ -165,17 +169,17 @@ output$insertQ4b <- renderUI({
       ),
       div(
         style = "display:table-row; float:left",
-        
-        p(
-          em("Note."),
-          "Any paper-based materials are expected to be scanned and uploaded to a public repository unless there are legal or ethical barriers to doing so."
-        ),
-        p(
-          "You can copy and paste cell contents for same responses (e.g. URL). Please use the exact address from your browser when adding any URLs (e.g. https://osf.io/9f6gx/)."
-        )
+        h5("You can copy and paste cell contents for same responses (e.g. URL)."),
+        h5("Please use the exact address from your browser when adding any URLs (e.g. https://osf.io/9f6gx/)."),
       ),
       br(),
       rHandsontableOutput("Q4b"),
+      HTML(paste0('<p style="font-size:20px;">If the categories listed do not apply to your manuscript and you need guidance, please contact the transparency team: 
+                  <a href="mailto:transparency.cortex@ed.ac.uk?subject=TOP%20App%20Support%20', URLencode(input$ms_id, reserved = TRUE),'&body=Dear%20Transparency%20Editors," 
+                  style="color:fuchsia; text-decoration:none;">
+                  transparency.cortex@ed.ac.uk
+                  </a>
+                  </p>')),
       br(),
       br()
     )
@@ -856,6 +860,12 @@ output$insertQ4c <- renderUI({
       ),
       br(),
       rHandsontableOutput("Q4c"),
+      HTML(paste0('<p style="font-size:20px;">If the categories listed do not apply to your manuscript and you need guidance, please contact the transparency team: 
+                  <a href="mailto:transparency.cortex@ed.ac.uk?subject=TOP%20App%20Support%20', URLencode(input$ms_id, reserved = TRUE),'&body=Dear%20Transparency%20Editors," 
+                  style="color:fuchsia; text-decoration:none;">
+                  transparency.cortex@ed.ac.uk
+                  </a>
+                  </p>')),
       br()
     )
   }

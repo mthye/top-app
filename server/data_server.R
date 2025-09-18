@@ -134,18 +134,23 @@ output$insertQ2b <- renderUI({
       div(
         style = "display:table-row; float:left",
         
-        h5(
-          "You can copy and paste cell contents for same responses (e.g. URL). Please use the exact address from your browser when adding any URLs (e.g. https://osf.io/9f6gx/). "
-        )
+        h5("You can copy and paste cell contents for same responses (e.g. URL)."),
+        h5("Please use the exact address from your browser when adding any URLs (e.g. https://osf.io/9f6gx/)."),
       ) %>%
-        helper(
-          type = "inline",
-          colour = "DarkViolet",
-          content = dataHelper1,
-          size = "m",
-        ),
+        # helper(
+        #   type = "inline",
+        #   colour = "DarkViolet",
+        #   content = dataHelper1,
+        #   size = "m",
+        # ),
       br(),
       rHandsontableOutput("Q2b"),
+      HTML(paste0('<p style="font-size:20px;">If the categories listed do not apply to your manuscript and you need guidance, please contact the transparency team: 
+                  <a href="mailto:transparency.cortex@ed.ac.uk?subject=TOP%20App%20Support%20', URLencode(input$ms_id, reserved = TRUE),'&body=Dear%20Transparency%20Editors," 
+                  style="color:fuchsia; text-decoration:none;">
+                  transparency.cortex@ed.ac.uk
+                  </a>
+                  </p>')),
       br(),
       br()
     )
@@ -824,13 +829,14 @@ output$insertQ2c <- renderUI({
             can access the data that is not publicly available (restricted access route) and under what conditions they can do so (restricted
             access conditions)."
       ),
-      # p(
-      #   em(
-      #     "You can copy and paste cell contents for same responses (e.g. URL)."
-      #   )
-      # ),
       br(),
       rHandsontableOutput("Q2c"),
+      HTML(paste0('<p style="font-size:20px;">If the categories listed do not apply to your manuscript and you need guidance, please contact the transparency team: 
+                  <a href="mailto:transparency.cortex@ed.ac.uk?subject=TOP%20App%20Support%20', URLencode(input$ms_id, reserved = TRUE),'&body=Dear%20Transparency%20Editors," 
+                  style="color:fuchsia; text-decoration:none;">
+                  transparency.cortex@ed.ac.uk
+                  </a>
+                  </p>')),
       br()
     )
   }

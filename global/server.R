@@ -347,6 +347,7 @@ server <- function(input, output, session) {
         Q3b_complete = codeValues$Q3b_complete,
         Q3b_partial = codeValues$Q3b_partialCode,
         Q3b_none = codeValues$Q3b_noneCode,
+        Q3_text = input$barrierApprovalQ3b,
         Q3c_input = codeValues$Q3c,
         codeTypes = codeValues$codeTypes,
         selectedCodeTypes = codeValues$selectedCodeTypes,

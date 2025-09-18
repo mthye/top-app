@@ -51,8 +51,6 @@ dataTypes <- c(
   "Video data - clinical sample"
 )
 
-
-
 dataReason <- c(
   "N/A - ALL data are publicly available",
   "Legal barrier only",
@@ -62,7 +60,6 @@ dataReason <- c(
   "Legal and technical barrier",
   "Ethical and technical barrier",
   "Legal, ethical and technical barrier",
-  "Other barrier (contact Editor)",
   "Author preference"
 )
 
@@ -123,7 +120,7 @@ codeTypes <- c(
   "JASP",
   "JavaScript code",
   "JMP code",
-  "Matlab code",
+  "MATLAB code",
   "Octave code",
   "Python code",
   "R or R Markdown code",
@@ -147,7 +144,6 @@ codeReason <- c(
   "Legal and technical barrier",
   "Ethical and technical barrier",
   "Legal, ethical and technical barrier",
-  "Other barrier (contact Editor)",
   "Author preference"
 )
 
@@ -205,7 +201,6 @@ matsReason <- c(
   "Legal and technical barrier",
   "Ethical and technical barrier",
   "Legal, ethical and technical barrier",
-  "Other barrier (contact Editor)",
   "Author preference"
 )
 

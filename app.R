@@ -1,5 +1,5 @@
 #####
-# Shiny app to asses TOP Compliance for newly accepted Cortex manuscripts
+# Shiny app to asses TOP Compliance for Cortex manuscripts
 #
 # library(rsconnect)
 #rsconnect::setAccountInfo(name='cortex-top',
