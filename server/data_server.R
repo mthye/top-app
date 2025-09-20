@@ -17,6 +17,7 @@ observeEvent(input$next2, {
 })
 
 output$insertQ2 <- renderUI({
+  
   fluidPage(
     h5("2. Does your manuscript report the outcomes of data analysis?"),
     h6("This includes any empirical research that generates new data, re-analysis of existing data,
@@ -96,7 +97,7 @@ observeEvent(input$next2a, {
   }
   
   if (dataValues$dataYes == 2) {
-
+    
     updateTabsetPanel(session, "sidebar", selected = "code")
     
   }
@@ -104,7 +105,7 @@ observeEvent(input$next2a, {
   if ((length(dataValues$selectedDataTypes) > 0 &
        dataValues$dataYes == 1)) {
     dataValues$S2a_complete = 1
-
+    
     updateTabsetPanel(session, "S2_box", selected = "tab2b")
     
   }
@@ -143,7 +144,7 @@ output$insertQ2b <- renderUI({
         #   content = dataHelper1,
         #   size = "m",
         # ),
-      br(),
+        br(),
       rHandsontableOutput("Q2b"),
       HTML(paste0('<p style="font-size:20px;">If the categories listed do not apply to your manuscript and you need guidance, please contact the transparency team: 
                   <a href="mailto:transparency.cortex@ed.ac.uk?subject=TOP%20App%20Support%20', URLencode(input$ms_id, reserved = TRUE),'&body=Dear%20Transparency%20Editors," 
@@ -186,7 +187,7 @@ observeEvent(input$Q2a, {
   output$Q2b <- renderRHandsontable({
     if (!is.null(input$Q2b)) {
       dataValues$Q2b = hot_to_r(input$Q2b)
-
+      
       if (all(is.na(dataValues$Q2b[, 3:6])) == TRUE) {
         DF <- dataTable1
       } else if (all(is.na(dataValues$Q2b[, 3:6])) == FALSE &
@@ -234,7 +235,7 @@ observeEvent(input$Q2a, {
         col = "Public availability",
         type = "dropdown",
         allowInvalid = FALSE,
-
+        
         source = c(
           "ALL data are publicly available",
           "SOME data are publicly available",
@@ -356,14 +357,17 @@ observeEvent(input$next2b, {
         dataValues$Q2b[5] == "Data is contained in the paper",
         "manuscript",
         if_else(
-          dataValues$Q2b[4] == "Technical barrier only" |
-            dataValues$Q2b[4] == "Author preference",
-          "invalid_barrier",
+          dataValues$Q2b[4] == "Technical barrier only",
+          "tech_barrier",
           if_else(
-            dataValues$Q2b[7] == "FALSE" &
-              dataValues$Q2b[5] == "Data in repository (URL required)",
-            "invalid_url",
-            "success"
+            dataValues$Q2b[4] == "Author preference",
+            "author_barrier",
+            if_else(
+              dataValues$Q2b[7] == "FALSE" &
+                dataValues$Q2b[5] == "Data in repository (URL required)",
+              "invalid_url",
+              "success"
+            )
           )
         )
       )
@@ -402,7 +406,7 @@ observeEvent(input$next2b, {
   dataValues$Q2b_invalidrepo <- ifelse(TRUE %in% str_contains(dataValues$Q2b$X6,
                                                               c("drive", "google", "dropbox"),
                                                               ignore.case = TRUE), 1, 2)
-
+  
   ## Save URLs that don't exist to present in an alert later on when user tries to proceed
   dataValues$Q2b_urls <-
     unique(dataValues$Q2b$X6[dataValues$Q2b$condition == "invalid_url"])
@@ -415,8 +419,10 @@ observeEvent(input$next2b, {
     ifelse("manuscript" %in% dataValues$Q2b$condition, 1, 2)
   dataValues$Q2b_invalid_url <-
     ifelse("invalid_url" %in% dataValues$Q2b$condition, 1, 2)
-  dataValues$Q2b_invalid_barrier <-
-    ifelse("invalid_barrier" %in% dataValues$Q2b$condition, 1, 2)
+  dataValues$Q2b_tech_barrier <-
+    ifelse("tech_barrier" %in% dataValues$Q2b$condition, 1, 2)
+  dataValues$Q2b_author_barrier <-
+    ifelse("author_barrier" %in% dataValues$Q2b$condition, 1, 2)
   
   dataValues$Q2b_inconsistent_all <-
     ifelse("inconsistent_all" %in% dataValues$Q2b$inconsistency, 1, 2)
@@ -424,7 +430,6 @@ observeEvent(input$next2b, {
     ifelse("inconsistent_some" %in% dataValues$Q2b$inconsistency, 1, 2)
   dataValues$Q2b_inconsistent_no <-
     ifelse("inconsistent_no" %in% dataValues$Q2b$inconsistency, 1, 2)
-  
   
   # 1. Incomplete section (empty table or missing responses)
   if (is.null(input$Q2b) | dataValues$Q2b_incomplete < 2) {
@@ -478,38 +483,59 @@ observeEvent(input$next2b, {
     dataValues$warning_manuscript = 2
   }
   
-  # 4. There is an invalid barrier and they haven't confirmed they have approval from the editor
-  if (dataValues$Q2b_invalid_barrier == 1 &
-      (is.null(input$barrierApprovalQ2b) |
-       isFALSE(input$barrierApprovalQ2b)) &
+  # 4. There is an invalid barrier (technical barrier only)
+  if (dataValues$Q2b_tech_barrier == 1 &
       dataValues$warning_incomplete_Q2b == 2 &
       dataValues$Q2b_urlmiss == 2 &
-      (dataValues$warning_manuscript == 2 |
-       dataValues$warning_manuscript == 0)) {
-    dataValues$Q2b_complete = 0
+      (dataValues$warning_manuscript == 2 | dataValues$warning_manuscript == 0)) {
     
-    dataValues$warning_invalid_barrier = 1
+    dataValues$Q2b_complete = 0
+    dataValues$warning_tech_barrier = 1
+    
     fullReport$editor$Note[2] <- "No"
     fullReport$S2_Editor = 0
     confirmSweetAlert(
       session = session,
-      inputId = "barrierApprovalQ2b",
+      inputId = "barrierApprovalQ2b1",
       title = "Warning",
-      text = "If you have selected 'Technical barrier only' or 'Author preference' please note that these
-      reasons are generally not an eligible basis for restricting public availability of data.
-      Do you confirm that you have selected them only following editorial approval?",
+      text = HTML(paste0("You have indicated that data are not available due to a 'Technical barrier only' which is not an eligible reason for restricting public availability of data. <br><br>
+                          If you are encountering a technical barrier to sharing data, please contact our transparency team for guidance:
+                          <a href='mailto:transparency.cortex@ed.ac.uk?subject=", URLencode(paste0("TOP App Support ", input$ms_id), reserved = TRUE),"' 
+                         style='color:fuchsia;'>transparency.cortex@ed.ac.uk</a>")),
       type = "warning",
-      btn_labels = c("No", "Yes")
-    )
-  } else if (dataValues$Q2b_invalid_barrier == 1 &
-             isTRUE(input$barrierApprovalQ2b) &
-             dataValues$warning_incomplete_Q2b == 2 &
-             dataValues$Q2b_urlmiss == 2 &
-             (dataValues$warning_manuscript == 2 |
-              dataValues$warning_manuscript == 0)) {
-    dataValues$warning_invalid_barrier = 2
+      btn_labels = c("Close"),
+      html = TRUE) 
+    
+  } else if (dataValues$Q2b_tech_barrier == 2) {
+    dataValues$warning_tech_barrier = 2
     fullReport$editor$Note[2] <- "Yes"
   }
+  
+  # 4. There is an invalid barrier (author preference)
+  if (dataValues$Q2b_author_barrier == 1 &
+      dataValues$warning_incomplete_Q2b == 2 &
+      dataValues$Q2b_urlmiss == 2 &
+      (dataValues$warning_manuscript == 2 | dataValues$warning_manuscript == 0)) {
+    dataValues$Q2b_complete = 0
+    dataValues$warning_author_barrier = 1
+    
+    fullReport$editor$Note[2] <- "No"
+    fullReport$S2_Editor = 0
+    confirmSweetAlert(
+      session = session,
+      inputId = "barrierApprovalQ2b2",
+      title = "Warning",
+      text = HTML("You have indicated that data are not available due to 'Author preference' which is not an eligible reason for restricting public availability of data.<br><br> 
+              Restrictions to sharing data cannot be author imposed."),
+      type = "warning",
+      btn_labels = c("Close"),
+      html = TRUE) 
+    
+  } else if (dataValues$Q2b_author_barrier == 2) {
+    dataValues$warning_author_barrier = 2
+    fullReport$editor$Note[2] <- "Yes"
+  }
+  
   
   # 5. Invalid repositories
   if (dataValues$Q2b_invalidrepo == 1 &
@@ -517,8 +543,8 @@ observeEvent(input$next2b, {
       dataValues$Q2b_urlmiss == 2 &
       (dataValues$warning_manuscript == 2 |
        dataValues$warning_manuscript == 0) &
-      (dataValues$warning_invalid_barrier == 0 |
-       dataValues$warning_invalid_barrier == 2)) {
+      (dataValues$warning_tech_barrier == 0 | dataValues$warning_tech_barrier == 2) &
+      (dataValues$warning_author_barrier == 0 | dataValues$warning_author_barrier == 2)) {
     dataValues$Q2b_complete = 0
     
     sendSweetAlert(
@@ -536,8 +562,8 @@ observeEvent(input$next2b, {
       dataValues$Q2b_urlmiss == 2 &
       (dataValues$warning_manuscript == 2 |
        dataValues$warning_manuscript == 0) &
-      (dataValues$warning_invalid_barrier == 0 |
-       dataValues$warning_invalid_barrier == 2)) {
+      (dataValues$warning_tech_barrier == 0 | dataValues$warning_tech_barrier == 2) &
+      (dataValues$warning_author_barrier == 0 | dataValues$warning_author_barrier == 2)) {
     dataValues$Q2b_complete = 0
     
     sendSweetAlert(
@@ -556,8 +582,8 @@ observeEvent(input$next2b, {
       dataValues$Q2b_urlmiss == 2 &
       (dataValues$warning_manuscript == 2 |
        dataValues$warning_manuscript == 0) &
-      (dataValues$warning_invalid_barrier == 0 |
-       dataValues$warning_invalid_barrier == 2)) {
+      (dataValues$warning_tech_barrier == 0 | dataValues$warning_tech_barrier == 2) &
+      (dataValues$warning_author_barrier == 0 | dataValues$warning_author_barrier == 2)) {
     dataValues$Q2b_complete = 0
     
     sendSweetAlert(
@@ -578,8 +604,8 @@ observeEvent(input$next2b, {
       &
       (dataValues$warning_manuscript == 2 |
        dataValues$warning_manuscript == 0) &
-      (dataValues$warning_invalid_barrier == 0 |
-       dataValues$warning_invalid_barrier == 2)) {
+      (dataValues$warning_tech_barrier == 0 | dataValues$warning_tech_barrier == 2) &
+      (dataValues$warning_author_barrier == 0 | dataValues$warning_author_barrier == 2)) {
     dataValues$Q2b_complete = 0
     
     sendSweetAlert(
@@ -601,8 +627,8 @@ observeEvent(input$next2b, {
       &
       (dataValues$warning_manuscript == 2 |
        dataValues$warning_manuscript == 0) &
-      (dataValues$warning_invalid_barrier == 0 |
-       dataValues$warning_invalid_barrier == 2)) {
+      (dataValues$warning_tech_barrier == 0 | dataValues$warning_tech_barrier == 2) &
+      (dataValues$warning_author_barrier == 0 | dataValues$warning_author_barrier == 2)) {
     dataValues$Q2b_complete = 0
     
     sendSweetAlert(
@@ -621,8 +647,8 @@ observeEvent(input$next2b, {
              &
              (dataValues$warning_manuscript == 2 |
               dataValues$warning_manuscript == 0) &
-             (dataValues$warning_invalid_barrier == 0 |
-              dataValues$warning_invalid_barrier == 2)) {
+             (dataValues$warning_tech_barrier == 0 | dataValues$warning_tech_barrier == 2) &
+             (dataValues$warning_author_barrier == 0 | dataValues$warning_author_barrier == 2)) {
     dataValues$Q2b_complete = 1
     
     fullReport$S2_table1 <- dataValues$Q2b[, 1:6]
@@ -696,26 +722,26 @@ observeEvent(input$next2b, {
       
     } else {
       
-    dataTable1 <- data.frame(matrix(ncol = 5, nrow = 1))
-    dataTable1[1:5] <- NA_character_
-    dataTable1[1:nrow(dataValues$partialDataTypes), 1] <-
-      as.character(dataValues$partialDataTypes$X1)
-    dataTable1[1:nrow(dataValues$partialDataTypes), 2] <-
-      as.character(dataValues$partialDataTypes$X2)
-    dataTable1[1:nrow(dataValues$partialDataTypes), 3] <-
-      as.character(dataValues$partialDataTypes$X3)
-    
-    dataTable1[3] <-
-      if_else(
-        dataTable1[3] == "NO data are publicly available",
-        "NO data",
+      dataTable1 <- data.frame(matrix(ncol = 5, nrow = 1))
+      dataTable1[1:5] <- NA_character_
+      dataTable1[1:nrow(dataValues$partialDataTypes), 1] <-
+        as.character(dataValues$partialDataTypes$X1)
+      dataTable1[1:nrow(dataValues$partialDataTypes), 2] <-
+        as.character(dataValues$partialDataTypes$X2)
+      dataTable1[1:nrow(dataValues$partialDataTypes), 3] <-
+        as.character(dataValues$partialDataTypes$X3)
+      
+      dataTable1[3] <-
         if_else(
-          dataTable1[3] == "SOME data are publicly available",
-          "SOME data",
-          "NA"
+          dataTable1[3] == "NO data are publicly available",
+          "NO data",
+          if_else(
+            dataTable1[3] == "SOME data are publicly available",
+            "SOME data",
+            "NA"
+          )
         )
-      )
-    
+      
     }
     
     output$Q2c <- renderRHandsontable({
@@ -892,9 +918,16 @@ observeEvent(input$next2c, {
            1,
            2)
   
+  # Pop up warning for invalid access conditions (shared unconditionally upon request)
+  dataValues$Q2c$access <- if_else(dataValues$Q2c$X5 == "Shared unconditionally upon request to author(s)",
+                                   "uncond_share", "success")
+  
+  dataValues$Q2c_invalid_access <- ifelse("uncond_share" %in% dataValues$Q2c$access, 1, 2)
+  
   # 1. Incomplete section (empty table or missing responses)
   
-  if (is.null(input$Q2c) | dataValues$Q2c_incomplete < 2) {
+  if (is.null(input$Q2c) | 
+      dataValues$Q2c_incomplete < 2) {
     dataValues$warning_incomplete_Q2c = 1
     dataValues$Q2c_complete = 0
     
@@ -910,7 +943,7 @@ observeEvent(input$next2c, {
   
   # 2. Inconsistent responses - never
   
-  if (dataValues$Q2c_inconsistent_never == 1 &
+  if (dataValues$Q2c_inconsistent_never == 1 & 
       dataValues$warning_incomplete_Q2c == 2) {
     dataValues$Q2c_complete = 0
     
@@ -939,12 +972,43 @@ observeEvent(input$next2c, {
     )
   }
   
-  # 4. Inconsistent responses - external
+  # 4. Shared unconditionally upon request
+  
+  if (dataValues$Q2c_invalid_access == 1 &
+      dataValues$Q2c_inconsistent_ethics == 2 &
+      dataValues$Q2c_inconsistent_never == 2 &
+      dataValues$warning_incomplete_Q2c == 2) {
+    
+    dataValues$warning_access = 1
+    dataValues$Q2c_complete = 0
+    
+    confirmSweetAlert(
+      session = session,
+      inputId = "barrierAcessQ2c",
+      title = "Warning",
+      text = HTML(paste0("You have indicated that data can be shared unconditionally upon request to author(s) which is not an eligible reason for restricting public availability of data. <br><br>
+                            If data can be shared upon request, they should be made publicly available unless there are restrictions to doing so. 
+                            These restrictions cannot be author-imposed.")),
+      type = "warning",
+      btn_labels = c("Close"),
+      html = TRUE) 
+    
+  } else if (dataValues$Q2c_invalid_access == 2 &
+             dataValues$Q2c_inconsistent_ethics == 2 &
+             dataValues$Q2c_inconsistent_never == 2 &
+             dataValues$warning_incomplete_Q2c == 2) {
+    
+    dataValues$warning_access = 2
+  }
+  
+  
+  # 5. Inconsistent responses - external
   
   if (dataValues$Q2c_inconsistent_external == 1 &
       dataValues$Q2c_inconsistent_ethics == 2 &
       dataValues$Q2c_inconsistent_never == 2 &
-      dataValues$warning_incomplete_Q2c == 2) {
+      dataValues$warning_incomplete_Q2c == 2 &
+      dataValues$warning_access == 2) {
     dataValues$Q2c_complete = 0
     
     sendSweetAlert(
@@ -957,7 +1021,8 @@ observeEvent(input$next2c, {
   } else if (dataValues$Q2c_inconsistent_never == 2 &
              dataValues$Q2c_inconsistent_ethics == 2 &
              dataValues$Q2c_inconsistent_never == 2 &
-             dataValues$warning_incomplete_Q2c == 2) {
+             dataValues$warning_incomplete_Q2c == 2 &
+             dataValues$warning_access == 2) {
     dataValues$Q2c_complete = 1
     fullReport$S2_complete = 1
     
@@ -968,6 +1033,7 @@ observeEvent(input$next2c, {
       
     }
     
+
     
     fullReport$S2_table2 <- dataValues$Q2c[1:5]
     names(fullReport$S2_table2) <- c(

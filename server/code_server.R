@@ -337,10 +337,10 @@ observeEvent(input$next3b, {
         "manuscript",
         if_else(
           codeValues$Q3b[3] == "Technical barrier only",
-          "invalid_barrier",
+          "tech_barrier",
           if_else(
               codeValues$Q3b[3] == "Author preference",
-            "preference_barrier",
+            "author_barrier",
             if_else(
               codeValues$Q3b[6] == "FALSE" &
                 codeValues$Q3b[4] == "Code in repository (URL required)",
@@ -406,8 +406,10 @@ observeEvent(input$next3b, {
     ifelse("manuscript" %in% codeValues$Q3b$condition, 1, 2)
   codeValues$Q3b_invalid_url <-
     ifelse("invalid_url" %in% codeValues$Q3b$condition, 1, 2)
-  codeValues$Q3b_invalid_barrier <-
-    ifelse("invalid_barrier" %in% codeValues$Q3b$condition, 1, 2)
+  codeValues$Q3b_tech_barrier <-
+    ifelse("tech_barrier" %in% codeValues$Q3b$condition, 1, 2)
+  codeValues$Q3b_author_barrier <-
+    ifelse("author_barrier" %in% codeValues$Q3b$condition, 1, 2)
   
   codeValues$Q3b_inconsistent_all <-
     ifelse("inconsistent_all" %in% codeValues$Q3b$inconsistency, 1, 2)
@@ -471,47 +473,71 @@ observeEvent(input$next3b, {
   }
   
   
-  # 4. There is an invalid barrier and they haven't confirmed they have approval from the editor
-  if (codeValues$Q3b_invalid_barrier == 1 &
-      (is.null(input$barrierApprovalQ3b) |
-       isFALSE(input$barrierApprovalQ3b)) &
+  # 4. There is an invalid barrier  (technical barrier only)
+  if (codeValues$Q3b_tech_barrier == 1 &
       codeValues$warning_incomplete_Q3b == 2 &
       codeValues$Q3b_urlmiss == 2 &
-      (codeValues$warning_manuscript == 2 |
-       codeValues$warning_manuscript == 0)) {
-    codeValues$Q3b_complete = 0
+      (codeValues$warning_manuscript == 2 | codeValues$warning_manuscript == 0)) {
     
-    codeValues$warning_invalid_barrier = 1
+    codeValues$Q3b_complete = 0
+    codeValues$warning_tech_barrier = 1
     fullReport$editor$Note[3] <- "No"
     
     confirmSweetAlert(
       session = session,
-      inputId = "barrierApprovalQ3b",
+      inputId = "barrierApprovalQ3b1",
       title = "Warning",
-      text = "If you have selected 'Technical barrier only' or 'Author preference' please note that these
-      reasons are generally not an eligible basis for restricting public availability of analysis code.
-      Do you confirm that you have selected them only following editorial approval?",
+      text = HTML(paste0("You have indicated that code is not available due to a 'Technical barrier only' which is not an eligible reason for restricting public availability of code. <br><br>
+                          If you are encountering a technical barrier to sharing code, please contact our transparency team for guidance:
+                          <a href='mailto:transparency.cortex@ed.ac.uk?subject=", URLencode(paste0("TOP App Support ", input$ms_id), reserved = TRUE),"' 
+                         style='color:fuchsia;'>transparency.cortex@ed.ac.uk</a>")),
       type = "warning",
-      btn_labels = c("No", "Yes")
-    )
-  } else if (codeValues$Q3b_invalid_barrier == 1 &
-             isTRUE(input$barrierApprovalQ3b) &
+      btn_labels = c("Close"),
+      html = TRUE) 
+    
+  } else if (codeValues$Q3b_tech_barrier == 2 &
              codeValues$warning_incomplete_Q3b == 2 &
              codeValues$Q3b_urlmiss == 2 &
-             (codeValues$warning_manuscript == 2 |
-              codeValues$warning_manuscript == 0)) {
-    codeValues$warning_invalid_barrier = 2
+             (codeValues$warning_manuscript == 2 | codeValues$warning_manuscript == 0)) {
+    codeValues$warning_tech_barrier = 2
     fullReport$editor$Note[3] <- "Yes"
   }
-
+  
+  # 4. There is an invalid barrier  (author preference)
+  if (codeValues$Q3b_author_barrier == 1 &
+      codeValues$warning_incomplete_Q3b == 2 & 
+      codeValues$Q3b_urlmiss == 2 &
+      (codeValues$warning_manuscript == 2 | codeValues$warning_manuscript == 0)) {
+    
+    codeValues$Q3b_complete = 0
+    codeValues$warning_author_barrier = 1
+    fullReport$editor$Note[3] <- "No"
+    
+    confirmSweetAlert(
+      session = session,
+      inputId = "barrierApprovalQ3b2",
+      title = "Warning",
+      text = HTML("You have indicated that code is not available due to 'Author preference' which is not an eligible reason for restricting public availability of code.<br><br> 
+              Restrictions to sharing code cannot be author imposed."),
+      type = "warning",
+      btn_labels = c("Close"),
+      html = TRUE) 
+    
+  } else if (codeValues$Q3b_author_barrier == 2 &
+             codeValues$warning_incomplete_Q3b == 2 &
+             codeValues$Q3b_urlmiss == 2 &
+             (codeValues$warning_manuscript == 2 | codeValues$warning_manuscript == 0)) {
+    codeValues$warning_author_barrier = 2
+    fullReport$editor$Note[3] <- "Yes"
+  }
+  
     # 5. Invalid repositories
   if (codeValues$Q3b_invalidrepo == 1 &
-      codeValues$warning_incomplete_Q3b == 2 &
+      codeValues$warning_incomplete_Q3b == 2 & 
       codeValues$Q3b_urlmiss == 2 &
-      (codeValues$warning_manuscript == 2 |
-       codeValues$warning_manuscript == 0) &
-      (codeValues$warning_invalid_barrier == 0 |
-       codeValues$warning_invalid_barrier == 2)) {
+      (codeValues$warning_manuscript == 2 | codeValues$warning_manuscript == 0) &
+      (codeValues$warning_tech_barrier == 0 | codeValues$warning_tech_barrier == 2) &
+      (codeValues$warning_author_barrier == 0 | codeValues$warning_author_barrier == 2)) {
     codeValues$Q3b_complete = 0
     
     sendSweetAlert(
@@ -527,10 +553,9 @@ observeEvent(input$next3b, {
       codeValues$Q3b_invalidrepo == 2 &
       codeValues$warning_incomplete_Q3b == 2 &
       codeValues$Q3b_urlmiss == 2 &
-      (codeValues$warning_manuscript == 2 |
-       codeValues$warning_manuscript == 0) &
-      (codeValues$warning_invalid_barrier == 0 |
-       codeValues$warning_invalid_barrier == 2)) {
+      (codeValues$warning_manuscript == 2 | codeValues$warning_manuscript == 0) &
+      (codeValues$warning_tech_barrier == 0 | codeValues$warning_tech_barrier == 2) &
+      (codeValues$warning_author_barrier == 0 | codeValues$warning_author_barrier == 2)) {
     codeValues$Q3b_complete = 0
     
     sendSweetAlert(
@@ -546,12 +571,10 @@ observeEvent(input$next3b, {
       codeValues$Q3b_invalid_url == 2 &
       codeValues$Q3b_invalidrepo == 2 &
       codeValues$warning_incomplete_Q3b == 2 &
-      codeValues$Q3b_urlmiss == 2
-      &
-      (codeValues$warning_manuscript == 2 |
-       codeValues$warning_manuscript == 0) &
-      (codeValues$warning_invalid_barrier == 0 |
-       codeValues$warning_invalid_barrier == 2)) {
+      codeValues$Q3b_urlmiss == 2 &
+      (codeValues$warning_manuscript == 2 | codeValues$warning_manuscript == 0) &
+      (codeValues$warning_tech_barrier == 0 | codeValues$warning_tech_barrier == 2) &
+      (codeValues$warning_author_barrier == 0 | codeValues$warning_author_barrier == 2)) {
     codeValues$Q3b_complete = 0
     
     sendSweetAlert(
@@ -569,12 +592,10 @@ observeEvent(input$next3b, {
       codeValues$Q3b_invalid_url == 2 &
       codeValues$Q3b_invalidrepo == 2 &
       codeValues$warning_incomplete_Q3b == 2 &
-      codeValues$Q3b_urlmiss == 2
-      &
-      (codeValues$warning_manuscript == 2 |
-       codeValues$warning_manuscript == 0) &
-      (codeValues$warning_invalid_barrier == 0 |
-       codeValues$warning_invalid_barrier == 2)) {
+      codeValues$Q3b_urlmiss == 2 &
+      (codeValues$warning_manuscript == 2 | codeValues$warning_manuscript == 0) &
+      (codeValues$warning_tech_barrier == 0 | codeValues$warning_tech_barrier == 2) &
+      (codeValues$warning_author_barrier == 0 | codeValues$warning_author_barrier == 2)) {
     codeValues$Q3b_complete = 0
     
     sendSweetAlert(
@@ -593,12 +614,10 @@ observeEvent(input$next3b, {
       codeValues$Q3b_invalid_url == 2 &
       codeValues$Q3b_invalidrepo == 2 &
       codeValues$warning_incomplete_Q3b == 2 &
-      codeValues$Q3b_urlmiss == 2
-      &
-      (codeValues$warning_manuscript == 2 |
-       codeValues$warning_manuscript == 0) &
-      (codeValues$warning_invalid_barrier == 0 |
-       codeValues$warning_invalid_barrier == 2)) {
+      codeValues$Q3b_urlmiss == 2 &
+      (codeValues$warning_manuscript == 2 | codeValues$warning_manuscript == 0) &
+      (codeValues$warning_tech_barrier == 0 | codeValues$warning_tech_barrier == 2)&
+      (codeValues$warning_author_barrier == 0 | codeValues$warning_author_barrier == 2)) {
     codeValues$Q3b_complete = 0
     
     sendSweetAlert(
@@ -614,12 +633,10 @@ observeEvent(input$next3b, {
              codeValues$Q3b_invalid_url == 2 &
              codeValues$Q3b_invalidrepo == 2 &
              codeValues$warning_incomplete_Q3b == 2 &
-             codeValues$Q3b_urlmiss == 2
-             &
-             (codeValues$warning_manuscript == 2 |
-              codeValues$warning_manuscript == 0) &
-             (codeValues$warning_invalid_barrier == 0 |
-              codeValues$warning_invalid_barrier == 2)) {
+             codeValues$Q3b_urlmiss == 2 &
+             (codeValues$warning_manuscript == 2 | codeValues$warning_manuscript == 0) &
+             (codeValues$warning_tech_barrier == 0 | codeValues$warning_tech_barrier == 2) &
+             (codeValues$warning_author_barrier == 0 | codeValues$warning_author_barrier == 2)) {
     codeValues$Q3b_complete = 1
     
     fullReport$S3_table1 = codeValues$Q3b[, 1:5]
@@ -867,6 +884,14 @@ observeEvent(input$next3c, {
            1,
            2)
   
+  
+  # Pop up warning for invalid access conditions (shared unconditionally upon request)
+  codeValues$Q3c$access <- if_else(codeValues$Q3c$X4 == "Shared unconditionally upon request to author(s)",
+                                   "uncond_share", "success")
+  
+  codeValues$Q3c_invalid_access <- ifelse("uncond_share" %in% codeValues$Q3c$access, 1, 2)
+  
+  
   # 1. Incomplete section (empty table or missing responses)
   if (is.null(input$Q3c) | codeValues$Q3c_incomplete < 2) {
     codeValues$warning_incomplete_Q3c = 1
@@ -913,12 +938,43 @@ observeEvent(input$next3c, {
     )
   }
   
-  # 4. Inconsistent responses - external
+  # 4. Shared unconditionally upon request
+  
+  if (codeValues$Q3c_invalid_access == 1 &
+      codeValues$Q3c_inconsistent_ethics == 2 &
+      codeValues$Q3c_inconsistent_never == 2 &
+      codeValues$warning_incomplete_Q3c == 2) {
+    
+    codeValues$warning_access = 1
+    codeValues$Q3c_complete = 0
+    
+    confirmSweetAlert(
+      session = session,
+      inputId = "barrierAcessQ3c",
+      title = "Warning",
+      text = HTML(paste0("You have indicated that code can be shared unconditionally upon request to author(s) which is not an eligible reason for restricting public availability of code. <br><br>
+                            If code can be shared upon request, it should be made publicly available unless there are restrictions to doing so. 
+                            These restrictions cannot be author-imposed.")),
+      type = "warning",
+      btn_labels = c("Close"),
+      html = TRUE) 
+    
+  } else if (codeValues$Q3c_invalid_access == 2 &
+             codeValues$Q3c_inconsistent_ethics == 2 &
+             codeValues$Q3c_inconsistent_never == 2 &
+             codeValues$warning_incomplete_Q3c == 2) {
+    
+    codeValues$warning_access = 2
+  }
+  
+  
+  # 5. Inconsistent responses - external
   
   if (codeValues$Q3c_inconsistent_external == 1 &
       codeValues$Q3c_inconsistent_ethics == 2 &
       codeValues$Q3c_inconsistent_never == 2 &
-      codeValues$warning_incomplete_Q3c == 2) {
+      codeValues$warning_incomplete_Q3c == 2 &
+      codeValues$warning_access == 2) {
     codeValues$Q3c_complete = 0
     
     sendSweetAlert(
@@ -931,7 +987,8 @@ observeEvent(input$next3c, {
   } else if (codeValues$Q3c_inconsistent_never == 2 &
              codeValues$Q3c_inconsistent_ethics == 2 &
              codeValues$Q3c_inconsistent_never == 2 &
-             codeValues$warning_incomplete_Q3c == 2) {
+             codeValues$warning_incomplete_Q3c == 2 &
+             codeValues$warning_access == 2) {
     codeValues$Q3c_complete = 1
     fullReport$S3_complete = 1
     

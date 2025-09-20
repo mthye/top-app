@@ -149,9 +149,8 @@ output$insertQ4b <- renderUI({
       h5(
         "4b. Please indicate the public availability for all selected types of research materials, as explained below."
       ),
-      p(
-        em("Note."),
-        "Any paper-based materials are expected to be scanned and uploaded to a public repository unless there are legal or ethical barriers to doing so."
+      p(HTML("Any paper-based materials are expected to be scanned and uploaded to a public repository unless there are legal or ethical barriers to doing so.<br>",
+        "Copyright restrictions should be indicated as a legal barrier with restricted access route managed by an external authority.")
       ),
       tags$div(
         HTML(
@@ -169,8 +168,8 @@ output$insertQ4b <- renderUI({
       ),
       div(
         style = "display:table-row; float:left",
-        h5("You can copy and paste cell contents for same responses (e.g. URL)."),
-        h5("Please use the exact address from your browser when adding any URLs (e.g. https://osf.io/9f6gx/)."),
+        h6("You can copy and paste cell contents for same responses (e.g. URL)."),
+        h6("Please use the exact address from your browser when adding any URLs (e.g. https://osf.io/9f6gx/)."),
       ),
       br(),
       rHandsontableOutput("Q4b"),
@@ -389,20 +388,22 @@ observeEvent(input$next4b, {
         matsValues$Q4b[4] == "Materials are contained in the paper",
         "manuscript",
         if_else(
-          matsValues$Q4b[3] == "Technical barrier only" |
-            matsValues$Q4b[3] == "Author preference",
-          "invalid_barrier",
+          matsValues$Q4b[3] == "Technical barrier only",
+          "tech_barrier",
           if_else(
-            matsValues$Q4b[6] == "FALSE" &
-              matsValues$Q4b[4] == "Materials in repository (URL required)",
-            "invalid_url",
-            "success"
+            matsValues$Q4b[3] == "Author preference",
+            "author_barrier",
+            if_else(
+              matsValues$Q4b[6] == "FALSE" &
+                matsValues$Q4b[4] == "Materials in repository (URL required)",
+              "invalid_url",
+              "success"
+            )
           )
         )
       )
     )
   )
-  
   
   matsValues$Q4b$inconsistency <-
     if_else(
@@ -452,8 +453,10 @@ observeEvent(input$next4b, {
     ifelse("manuscript" %in% matsValues$Q4b$condition, 1, 2)
   matsValues$Q4b_invalid_url <-
     ifelse("invalid_url" %in% matsValues$Q4b$condition, 1, 2)
-  matsValues$Q4b_invalid_barrier <-
-    ifelse("invalid_barrier" %in% matsValues$Q4b$condition, 1, 2)
+  matsValues$Q4b_tech_barrier <-
+    ifelse("tech_barrier" %in% matsValues$Q4b$condition, 1, 2)
+  matsValues$Q4b_author_barrier <-
+    ifelse("author_barrier" %in% matsValues$Q4b$condition, 1, 2)
   
   matsValues$Q4b_inconsistent_all <-
     ifelse("inconsistent_all" %in% matsValues$Q4b$inconsistency, 1, 2)
@@ -515,48 +518,72 @@ observeEvent(input$next4b, {
     matsValues$warning_manuscript = 2
   }
   
-  # 4. There is an invalid barrier and they haven't confirmed they have approval from the editor
-  if (matsValues$Q4b_invalid_barrier == 1 &
-      (is.null(input$barrierApprovalQ4b) |
-       isFALSE(input$barrierApprovalQ4b)) &
+  # 4. There is an invalid barrier (technical barrier only)
+  if (matsValues$Q4b_tech_barrier == 1 &
       matsValues$warning_incomplete_Q4b == 2 &
       matsValues$Q4b_urlmiss == 2 &
-      (matsValues$warning_manuscript == 2 |
-       matsValues$warning_manuscript == 0)) {
+      (matsValues$warning_manuscript == 2 | matsValues$warning_manuscript == 0)) {
     matsValues$Q4b_complete = 0
     
-    matsValues$warning_invalid_barrier = 1
+    matsValues$warning_tech_barrier = 1
     fullReport$editor$Note[4] <- "No"
     
     confirmSweetAlert(
       session = session,
-      inputId = "barrierApprovalQ4b",
+      inputId = "barrierApprovalQ4b1",
       title = "Warning",
-      text = "If you have selected 'Technical barrier only' or 'Author preference' please note that these
-      reasons are generally not an eligible basis for restricting public availability of research materials.
-      Do you confirm that you have selected them only following editorial approval?",
+      text = HTML(paste0("You have indicated that materials are not available due to a 'Technical barrier only' which is not an eligible reason for restricting public availability of materials. <br><br>
+                          If you are encountering a technical barrier to sharing materials, please contact our transparency team for guidance:
+                          <a href='mailto:transparency.cortex@ed.ac.uk?subject=", URLencode(paste0("TOP App Support ", input$ms_id), reserved = TRUE),"' 
+                         style='color:fuchsia;'>transparency.cortex@ed.ac.uk</a>")),
       type = "warning",
-      btn_labels = c("No", "Yes")
-    )
-  } else if (matsValues$Q4b_invalid_barrier == 1 &
-             isTRUE(input$barrierApprovalQ4b) &
+      btn_labels = c("Close"),
+      html = TRUE) 
+    
+  } else if (matsValues$Q4b_tech_barrier == 2 &
              matsValues$warning_incomplete_Q4b == 2 &
              matsValues$Q4b_urlmiss == 2 &
-             (matsValues$warning_manuscript == 2 |
-              matsValues$warning_manuscript == 0)) {
-    matsValues$warning_invalid_barrier = 2
+             (matsValues$warning_manuscript == 2 | matsValues$warning_manuscript == 0)) {
+    matsValues$warning_tech_barrier = 2
     fullReport$editor$Note[4] <- "Yes"
+  }
+  
+  
+  # 4. There is an invalid barrier (author preference)
+  if (matsValues$Q4b_author_barrier == 1 &
+      matsValues$warning_incomplete_Q4b == 2 &
+      matsValues$Q4b_urlmiss == 2 &
+      (matsValues$warning_manuscript == 2 | matsValues$warning_manuscript == 0)) {
+    matsValues$Q4b_complete = 0
     
+    matsValues$warning_author_barrier = 1
+    fullReport$editor$Note[4] <- "No"
+    
+    confirmSweetAlert(
+      session = session,
+      inputId = "barrierApprovalQ4b2",
+      title = "Warning",
+      text = HTML("You have indicated that materials are not available due to 'Author preference' which is not an eligible reason for restricting public availability of materials.<br><br> 
+              Restrictions to sharing materials cannot be author imposed."),
+      type = "warning",
+      btn_labels = c("Close"),
+      html = TRUE) 
+    
+  } else if (matsValues$Q4b_author_barrier == 2 &
+             matsValues$warning_incomplete_Q4b == 2 &
+             matsValues$Q4b_urlmiss == 2 &
+             (matsValues$warning_manuscript == 2 | matsValues$warning_manuscript == 0)) {
+    matsValues$warning_author_barrier = 2
+    fullReport$editor$Note[4] <- "Yes"
   }
   
   # 5. Invalid repositories
   if (matsValues$Q4b_invalidrepo == 1 &
       matsValues$warning_incomplete_Q4b == 2 &
       matsValues$Q4b_urlmiss == 2 &
-      (matsValues$warning_manuscript == 2 |
-       matsValues$warning_manuscript == 0) &
-      (matsValues$warning_invalid_barrier == 0 |
-       matsValues$warning_invalid_barrier == 2)) {
+      (matsValues$warning_manuscript == 2 | matsValues$warning_manuscript == 0) &
+      (matsValues$warning_tech_barrier == 0 | matsValues$warning_tech_barrier == 2) &
+      (matsValues$warning_author_barrier == 0 | matsValues$warning_author_barrier == 2)) {
     matsValues$Q4b_complete = 0
     
     sendSweetAlert(
@@ -572,10 +599,9 @@ observeEvent(input$next4b, {
       matsValues$Q4b_invalidrepo == 2 &
       matsValues$warning_incomplete_Q4b == 2 &
       matsValues$Q4b_urlmiss == 2 &
-      (matsValues$warning_manuscript == 2 |
-       matsValues$warning_manuscript == 0) &
-      (matsValues$warning_invalid_barrier == 0 |
-       matsValues$warning_invalid_barrier == 2)) {
+      (matsValues$warning_manuscript == 2 | matsValues$warning_manuscript == 0) &
+      (matsValues$warning_tech_barrier == 0 | matsValues$warning_tech_barrier == 2) &
+      (matsValues$warning_author_barrier == 0 | matsValues$warning_author_barrier == 2)) {
     matsValues$Q4b_complete = 0
     
     sendSweetAlert(
@@ -592,10 +618,9 @@ observeEvent(input$next4b, {
       matsValues$Q4b_invalidrepo == 2 &
       matsValues$warning_incomplete_Q4b == 2 &
       matsValues$Q4b_urlmiss == 2 &
-      (matsValues$warning_manuscript == 2 |
-       matsValues$warning_manuscript == 0) &
-      (matsValues$warning_invalid_barrier == 0 |
-       matsValues$warning_invalid_barrier == 2)) {
+      (matsValues$warning_manuscript == 2 | matsValues$warning_manuscript == 0) &
+      (matsValues$warning_tech_barrier == 0 | matsValues$warning_tech_barrier == 2) &
+      (matsValues$warning_author_barrier == 0 | matsValues$warning_author_barrier == 2)) {
     matsValues$Q4b_complete = 0
     
     sendSweetAlert(
@@ -613,12 +638,10 @@ observeEvent(input$next4b, {
       matsValues$Q4b_invalid_url == 2 &
       matsValues$Q4b_invalidrepo == 2 &
       matsValues$warning_incomplete_Q4b == 2 &
-      matsValues$Q4b_urlmiss == 2
-      &
-      (matsValues$warning_manuscript == 2 |
-       matsValues$warning_manuscript == 0) &
-      (matsValues$warning_invalid_barrier == 0 |
-       matsValues$warning_invalid_barrier == 2)) {
+      matsValues$Q4b_urlmiss == 2 &
+      (matsValues$warning_manuscript == 2 | matsValues$warning_manuscript == 0) &
+      (matsValues$warning_tech_barrier == 0 | matsValues$warning_tech_barrier == 2) &
+      (matsValues$warning_author_barrier == 0 | matsValues$warning_author_barrier == 2)) {
     matsValues$Q4b_complete = 0
     
     sendSweetAlert(
@@ -638,10 +661,9 @@ observeEvent(input$next4b, {
       matsValues$Q4b_invalidrepo == 2 &
       matsValues$warning_incomplete_Q4b == 2 &
       matsValues$Q4b_urlmiss == 2 &
-      (matsValues$warning_manuscript == 2 |
-       matsValues$warning_manuscript == 0) &
-      (matsValues$warning_invalid_barrier == 0 |
-       matsValues$warning_invalid_barrier == 2)) {
+      (matsValues$warning_manuscript == 2 | matsValues$warning_manuscript == 0) &
+      (matsValues$warning_tech_barrier == 0 | matsValues$warning_tech_barrier == 2) &
+      (matsValues$warning_author_barrier == 0 | matsValues$warning_author_barrier == 2)) {
     matsValues$Q4b_complete = 0
     
     sendSweetAlert(
@@ -658,10 +680,9 @@ observeEvent(input$next4b, {
              matsValues$Q4b_invalidrepo == 2 &
              matsValues$warning_incomplete_Q4b == 2 &
              matsValues$Q4b_urlmiss == 2 &
-             (matsValues$warning_manuscript == 2 |
-              matsValues$warning_manuscript == 0) &
-             (matsValues$warning_invalid_barrier == 0 |
-              matsValues$warning_invalid_barrier == 2)) {
+             (matsValues$warning_manuscript == 2 | matsValues$warning_manuscript == 0) &
+             (matsValues$warning_tech_barrier == 0 | matsValues$warning_tech_barrier == 2) &
+             (matsValues$warning_author_barrier == 0 | matsValues$warning_author_barrier == 2)) {
     matsValues$Q4b_complete = 1
     fullReport$S4_table1 = matsValues$Q4b[, 1:5]
     
@@ -855,8 +876,7 @@ output$insertQ4c <- renderUI({
          can access the research materials that are not publicly available (restricted access route) and under what conditions they can do so (restricted
          access conditions)."
       ),
-      h5(
-        "You can copy and paste cell contents for same responses (e.g. URL)."
+      p(HTML("Copyright restrictions should be indicated as a legal barrier with restricted access route managed by an external authority.")
       ),
       br(),
       rHandsontableOutput("Q4c"),
@@ -866,6 +886,7 @@ output$insertQ4c <- renderUI({
                   transparency.cortex@ed.ac.uk
                   </a>
                   </p>')),
+      br(),
       br()
     )
   }
@@ -921,6 +942,14 @@ observeEvent(input$next4c, {
     ifelse("inconsistent_external" %in% matsValues$Q4c$inconsistency,
            1,
            2)
+  
+  
+  # Pop up warning for invalid access conditions (shared unconditionally upon request)
+  matsValues$Q4c$access <- if_else(matsValues$Q4c$X4 == "Shared unconditionally upon request to author(s)",
+                                   "uncond_share", "success")
+  
+  matsValues$Q4c_invalid_access <- ifelse("uncond_share" %in% matsValues$Q4c$access, 1, 2)
+  
   # 1. Incomplete section (empty table or missing responses)
   if (is.null(input$Q4c) | matsValues$Q4c_incomplete < 2) {
     matsValues$warning_incomplete_Q4c = 1
@@ -966,12 +995,42 @@ observeEvent(input$next4c, {
     )
   }
   
-  # 4. Inconsistent responses - external
+  # 4. Shared unconditionally upon request
+  
+  if (matsValues$Q4c_invalid_access == 1 &
+      matsValues$Q4c_inconsistent_ethics == 2 &
+      matsValues$Q4c_inconsistent_never == 2 &
+      matsValues$warning_incomplete_Q4c == 2) {
+    
+    matsValues$warning_access = 1
+    matsValues$Q4c_complete = 0
+    
+    confirmSweetAlert(
+      session = session,
+      inputId = "barrierAcessQ2c",
+      title = "Warning",
+      text = HTML(paste0("You have indicated that materials can be shared unconditionally upon request to author(s) which is not an eligible reason for restricting public availability of materials. <br><br>
+                            If materials can be shared upon request, they should be made publicly available unless there are restrictions to doing so. 
+                            These restrictions cannot be author-imposed.")),
+      type = "warning",
+      btn_labels = c("Close"),
+      html = TRUE) 
+    
+  } else if (matsValues$Q4c_invalid_access == 2 &
+             matsValues$Q4c_inconsistent_ethics == 2 &
+             matsValues$Q4c_inconsistent_never == 2 &
+             matsValues$warning_incomplete_Q4c == 2) {
+    
+    matsValues$warning_access = 2
+  }
+  
+  # 5. Inconsistent responses - external
   
   if (matsValues$Q4c_inconsistent_external == 1 &
       matsValues$Q4c_inconsistent_ethics == 2 &
       matsValues$Q4c_inconsistent_never == 2 &
-      matsValues$warning_incomplete_Q4c == 2) {
+      matsValues$warning_incomplete_Q4c == 2 &
+      matsValues$warning_access == 2) {
     matsValues$Q4c_complete = 0
     sendSweetAlert(
       session = session,
@@ -983,7 +1042,8 @@ observeEvent(input$next4c, {
   } else if (matsValues$Q4c_inconsistent_never == 2 &
              matsValues$Q4c_inconsistent_ethics == 2 &
              matsValues$Q4c_inconsistent_never == 2 &
-             matsValues$warning_incomplete_Q4c == 2) {
+             matsValues$warning_incomplete_Q4c == 2 &
+             matsValues$warning_access == 2) {
     matsValues$Q4c_complete = 1
     fullReport$S4_complete = 1
     
