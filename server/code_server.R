@@ -132,6 +132,11 @@ output$insertQ3b <- renderUI({
   }
 })
 
+# add question to capture reasons for restrictions
+output$insertQ3b_followup <- renderUI({
+  textInput("Q3b_followup", label = NULL, placeholder = "Response required")
+})
+
 
 observeEvent(input$Q3a, {
   fullReport$S3_complete = 0
@@ -481,7 +486,7 @@ observeEvent(input$next3b, {
     
     codeValues$Q3b_complete = 0
     codeValues$warning_tech_barrier = 1
-    fullReport$editor$Note[3] <- "No"
+    fullReport$editor$Note[3] <- "Yes"
     
     confirmSweetAlert(
       session = session,
@@ -500,7 +505,7 @@ observeEvent(input$next3b, {
              codeValues$Q3b_urlmiss == 2 &
              (codeValues$warning_manuscript == 2 | codeValues$warning_manuscript == 0)) {
     codeValues$warning_tech_barrier = 2
-    fullReport$editor$Note[3] <- "Yes"
+    fullReport$editor$Note[3] <- "No"
   }
   
   # 4. There is an invalid barrier  (author preference)
@@ -511,7 +516,7 @@ observeEvent(input$next3b, {
     
     codeValues$Q3b_complete = 0
     codeValues$warning_author_barrier = 1
-    fullReport$editor$Note[3] <- "No"
+    fullReport$editor$Note[3] <- "Yes"
     
     confirmSweetAlert(
       session = session,
@@ -528,7 +533,7 @@ observeEvent(input$next3b, {
              codeValues$Q3b_urlmiss == 2 &
              (codeValues$warning_manuscript == 2 | codeValues$warning_manuscript == 0)) {
     codeValues$warning_author_barrier = 2
-    fullReport$editor$Note[3] <- "Yes"
+    fullReport$editor$Note[3] <- "No"
   }
   
     # 5. Invalid repositories
@@ -812,15 +817,19 @@ output$insertQ3c <- renderUI({
   req(input$Q3b)
   
   if (codeValues$Q3b_complete == 1 &
-      (codeValues$Q3b_partialCode == 1 |
-       codeValues$Q3b_noneCode == 1)) {
+      (codeValues$Q3b_partialCode == 1 | codeValues$Q3b_noneCode == 1)) {
+    codeValues$Q3_text_prompted = 1
+    
     fluidPage(
-      h5(
-        "3c. You have indicated partial and/or no public availability for your code type(s). In this table please explain how readers
-         can access the code that is not publicly available (restricted access route) and under what conditions they can do so (restricted
-         access conditions)."
-      ),
+      
+      h5("3c. You have indicated partial and/or no public availability for the code type(s) presented below. Please explain the nature of the restriction to 
+              sharing code in more detail in the text box. Your response will be included in the transparency statement published alongside your manuscript."),
+      
+      uiOutput("insertQ3b_followup"),
       br(),
+      
+      h5("In this table please explain how readers can access the code that is not publicly available (restricted access route) 
+          and under what conditions they can do so (restricted access conditions)."),
       rHandsontableOutput("Q3c"),
       HTML(paste0('<p style="font-size:20px;">If the categories listed do not apply to your manuscript and you need guidance, please contact the transparency team: 
                   <a href="mailto:transparency.cortex@ed.ac.uk?subject=TOP%20App%20Support%20', URLencode(input$ms_id, reserved = TRUE),'&body=Dear%20Transparency%20Editors," 
@@ -830,6 +839,8 @@ output$insertQ3c <- renderUI({
                   </p>')),
       br()
     )
+  } else {
+    codeValues$Q3_text_prompted = 2
   }
 })
 
@@ -837,6 +848,18 @@ observeEvent(input$next3c, {
   show_modal_spinner(spin = "orbit",
                      color = "purple",
                      text = "Checking your responses...")
+  
+  if (codeValues$Q3_text_prompted == 1 & input$Q3b_followup == "") {
+    codeValues$Q2c_complete = 0
+    sendSweetAlert(
+      session = session,
+      title = "Incomplete section",
+      text = "You have not completed this section (there are missing responses or unanswered questions).",
+      type = "error"
+    )
+  } else {
+    codeValues$Q3_text_prompted = 2
+  }
   
   codeValues$Q3c[] <- lapply(codeValues$Q3c, as.character)
 
@@ -893,7 +916,9 @@ observeEvent(input$next3c, {
   
   
   # 1. Incomplete section (empty table or missing responses)
-  if (is.null(input$Q3c) | codeValues$Q3c_incomplete < 2) {
+  if (is.null(input$Q3c) | 
+      codeValues$Q3c_incomplete < 2 &
+      codeValues$Q3_text_prompted == 2) {
     codeValues$warning_incomplete_Q3c = 1
     codeValues$Q3c_complete = 0
     
@@ -910,7 +935,8 @@ observeEvent(input$next3c, {
   # 2. Inconsistent responses - never
   
   if (codeValues$Q3c_inconsistent_never == 1 &
-      codeValues$warning_incomplete_Q3c == 2) {
+      codeValues$warning_incomplete_Q3c == 2 &
+      codeValues$Q3_text_prompted == 2) {
     codeValues$Q3c_complete = 0
     
     sendSweetAlert(
@@ -926,7 +952,8 @@ observeEvent(input$next3c, {
   
   if (codeValues$Q3c_inconsistent_ethics == 1 &
       codeValues$Q3c_inconsistent_never == 2 &
-      codeValues$warning_incomplete_Q3c == 2) {
+      codeValues$warning_incomplete_Q3c == 2 &
+      codeValues$Q3_text_prompted == 2) {
     codeValues$Q3c_complete = 0
     
     sendSweetAlert(
@@ -943,28 +970,21 @@ observeEvent(input$next3c, {
   if (codeValues$Q3c_invalid_access == 1 &
       codeValues$Q3c_inconsistent_ethics == 2 &
       codeValues$Q3c_inconsistent_never == 2 &
-      codeValues$warning_incomplete_Q3c == 2) {
-    
-    codeValues$warning_access = 1
+      codeValues$warning_incomplete_Q3c == 2 &
+      codeValues$Q3_text_prompted == 2) {
     codeValues$Q3c_complete = 0
     
     confirmSweetAlert(
       session = session,
       inputId = "barrierAcessQ3c",
       title = "Warning",
-      text = HTML(paste0("You have indicated that code can be shared unconditionally upon request to author(s) which is not an eligible reason for restricting public availability of code. <br><br>
+      text = HTML(paste0("You have indicated that code can be shared unconditionally upon request to author(s) which is not an eligible restricted access condition. <br><br>
                             If code can be shared upon request, it should be made publicly available unless there are restrictions to doing so. 
                             These restrictions cannot be author-imposed.")),
       type = "warning",
       btn_labels = c("Close"),
       html = TRUE) 
     
-  } else if (codeValues$Q3c_invalid_access == 2 &
-             codeValues$Q3c_inconsistent_ethics == 2 &
-             codeValues$Q3c_inconsistent_never == 2 &
-             codeValues$warning_incomplete_Q3c == 2) {
-    
-    codeValues$warning_access = 2
   }
   
   
@@ -974,7 +994,8 @@ observeEvent(input$next3c, {
       codeValues$Q3c_inconsistent_ethics == 2 &
       codeValues$Q3c_inconsistent_never == 2 &
       codeValues$warning_incomplete_Q3c == 2 &
-      codeValues$warning_access == 2) {
+      codeValues$Q3c_invalid_access == 2 &
+      codeValues$Q3_text_prompted == 2) {
     codeValues$Q3c_complete = 0
     
     sendSweetAlert(
@@ -984,11 +1005,12 @@ observeEvent(input$next3c, {
       Please revise your responses to ensure that a valid route for access and corresponding conditions are selected.",
       type = "error"
     )
-  } else if (codeValues$Q3c_inconsistent_never == 2 &
+  } else if (codeValues$Q3c_inconsistent_external == 2 &
              codeValues$Q3c_inconsistent_ethics == 2 &
              codeValues$Q3c_inconsistent_never == 2 &
              codeValues$warning_incomplete_Q3c == 2 &
-             codeValues$warning_access == 2) {
+             codeValues$Q3c_invalid_access == 2 &
+             codeValues$Q3_text_prompted == 2) {
     codeValues$Q3c_complete = 1
     fullReport$S3_complete = 1
     

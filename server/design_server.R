@@ -33,12 +33,11 @@ observeEvent(input$Q5, {
       title = "Further details required",
       type = "question",
       input = "textarea",
-      text = "You have indicated that this information is not reported in your manuscript. Are you sure this is correct?
+      text =  "You have indicated that this information is not reported in your manuscript. Are you sure this is correct?
         If so, please explain why this information is not reported.
-        Otherwise close this window and change your response.
-        Your statement will be included in your report for further editorial assessment.",
-      btn_labels = c("Yes I am sure", "No, change my answer")
-    )
+        Your response will be included in the transparency statement published alongside your manuscript.", # Otherwise close this window and change your response.
+      btn_labels = c("Close")
+      )
     
     desValues$Yes = 0
     
@@ -56,22 +55,15 @@ observeEvent(input$Q5, {
 })
 
 observeEvent(input$popupQ5, {
-  if (input$popupQ5 == "No, change my answer") {
-    updatePickerInput(session,
-                      inputId = "Q5",
-                      selected = "")
-    desValues$YesQ5 = 0
-    desValues$Q5_complete = 0
-    desValues$Q5 = ""
-    
-  } else if (input$popupQ5 == "") {
+  
+  # if no text was provided in the textbox
+  if (input$popupQ5 == "") {
     sendSweetAlert(
       session = session,
-      title = "No response in the text box",
-      text = "You selected 'Yes I am sure' but did not provide the required details in the text box.
-      Your answer to this question has been reset.",
-      type = "error"
-    )
+      title = "No response provided",
+      text = "You did not provide the required details in the text box. Your answer to this question has been reset.",
+      type = "error")
+    
     updatePickerInput(session,
                       inputId = "Q5",
                       selected = "")

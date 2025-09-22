@@ -185,6 +185,11 @@ output$insertQ4b <- renderUI({
   }
 })
 
+# add question to capture reasons for restrictions
+output$insertQ4b_followup <- renderUI({
+  textInput("Q4b_followup", label = NULL, placeholder = "Response required")
+})
+
 # Observe input on Q4a and create table for Q4b with all selected material types
 observeEvent(input$Q4a, {
   fullReport$S4_complete = 0
@@ -526,7 +531,7 @@ observeEvent(input$next4b, {
     matsValues$Q4b_complete = 0
     
     matsValues$warning_tech_barrier = 1
-    fullReport$editor$Note[4] <- "No"
+    fullReport$editor$Note[4] <- "Yes"
     
     confirmSweetAlert(
       session = session,
@@ -545,7 +550,7 @@ observeEvent(input$next4b, {
              matsValues$Q4b_urlmiss == 2 &
              (matsValues$warning_manuscript == 2 | matsValues$warning_manuscript == 0)) {
     matsValues$warning_tech_barrier = 2
-    fullReport$editor$Note[4] <- "Yes"
+    fullReport$editor$Note[4] <- "No"
   }
   
   
@@ -557,7 +562,7 @@ observeEvent(input$next4b, {
     matsValues$Q4b_complete = 0
     
     matsValues$warning_author_barrier = 1
-    fullReport$editor$Note[4] <- "No"
+    fullReport$editor$Note[4] <- "Yes"
     
     confirmSweetAlert(
       session = session,
@@ -574,7 +579,7 @@ observeEvent(input$next4b, {
              matsValues$Q4b_urlmiss == 2 &
              (matsValues$warning_manuscript == 2 | matsValues$warning_manuscript == 0)) {
     matsValues$warning_author_barrier = 2
-    fullReport$editor$Note[4] <- "Yes"
+    fullReport$editor$Note[4] <- "No"
   }
   
   # 5. Invalid repositories
@@ -870,11 +875,19 @@ output$insertQ4c <- renderUI({
   if (matsValues$Q4b_complete == 1 &
       (matsValues$Q4b_partialMats == 1 |
        matsValues$Q4b_noneMats == 1)) {
+    matsValues$Q4_text_prompted = 1
+    
     fluidPage(
-      h5(
-        "4c. You have indicated partial and/or no public availability for your research material type(s). In this table please explain how readers
-         can access the research materials that are not publicly available (restricted access route) and under what conditions they can do so (restricted
-         access conditions)."
+      
+      h5("4c. You have indicated partial and/or no public availability for the material(s) presented below. Please explain the nature of the restriction to 
+              sharing materials in more detail in the text box. Your response will be included in the transparency statement published alongside your manuscript."),
+      
+      uiOutput("insertQ4b_followup"),
+      br(),
+      
+      
+      h5("In this table please explain how readers can access the research materials that are not publicly available (restricted access route) 
+          and under what conditions they can do so (restricted access conditions)."
       ),
       p(HTML("Copyright restrictions should be indicated as a legal barrier with restricted access route managed by an external authority.")
       ),
@@ -886,9 +899,10 @@ output$insertQ4c <- renderUI({
                   transparency.cortex@ed.ac.uk
                   </a>
                   </p>')),
-      br(),
       br()
     )
+  } else {
+    matsValues$Q4_text_prompted = 2
   }
 })
 
@@ -896,6 +910,18 @@ observeEvent(input$next4c, {
   show_modal_spinner(spin = "orbit",
                      color = "purple",
                      text = "Checking your responses...")
+  
+  if (matsValues$Q4_text_prompted == 1 & input$Q4b_followup == "") {
+    matsValues$Q4c_complete = 0
+    sendSweetAlert(
+      session = session,
+      title = "Incomplete section",
+      text = "You have not completed this section (there are missing responses or unanswered questions).",
+      type = "error"
+    )
+  } else {
+    matsValues$Q4_text_prompted = 2
+  }
   
   matsValues$Q4c[] <- lapply(matsValues$Q4c, as.character)
   matsValues$Q4c$condition <-
@@ -951,7 +977,9 @@ observeEvent(input$next4c, {
   matsValues$Q4c_invalid_access <- ifelse("uncond_share" %in% matsValues$Q4c$access, 1, 2)
   
   # 1. Incomplete section (empty table or missing responses)
-  if (is.null(input$Q4c) | matsValues$Q4c_incomplete < 2) {
+  if (is.null(input$Q4c) | 
+      matsValues$Q4c_incomplete < 2 &
+      matsValues$Q4_text_prompted == 2) {
     matsValues$warning_incomplete_Q4c = 1
     matsValues$Q4c_complete = 0
     
@@ -968,7 +996,8 @@ observeEvent(input$next4c, {
   # 2. Inconsistent responses - never
   
   if (matsValues$Q4c_inconsistent_never == 1 &
-      matsValues$warning_incomplete_Q4c == 2) {
+      matsValues$warning_incomplete_Q4c == 2 &
+      matsValues$Q4_text_prompted == 2) {
     matsValues$Q4c_complete = 0
     
     sendSweetAlert(
@@ -984,7 +1013,8 @@ observeEvent(input$next4c, {
   
   if (matsValues$Q4c_inconsistent_ethics == 1 &
       matsValues$Q4c_inconsistent_never == 2 &
-      matsValues$warning_incomplete_Q4c == 2) {
+      matsValues$warning_incomplete_Q4c == 2 &
+      matsValues$Q4_text_prompted == 2) {
     matsValues$Q4c_complete = 0
     sendSweetAlert(
       session = session,
@@ -1000,29 +1030,23 @@ observeEvent(input$next4c, {
   if (matsValues$Q4c_invalid_access == 1 &
       matsValues$Q4c_inconsistent_ethics == 2 &
       matsValues$Q4c_inconsistent_never == 2 &
-      matsValues$warning_incomplete_Q4c == 2) {
+      matsValues$warning_incomplete_Q4c == 2 &
+      matsValues$Q4_text_prompted == 2) {
     
-    matsValues$warning_access = 1
     matsValues$Q4c_complete = 0
     
     confirmSweetAlert(
       session = session,
       inputId = "barrierAcessQ2c",
       title = "Warning",
-      text = HTML(paste0("You have indicated that materials can be shared unconditionally upon request to author(s) which is not an eligible reason for restricting public availability of materials. <br><br>
+      text = HTML(paste0("You have indicated that materials can be shared unconditionally upon request to author(s) which is not an eligible restricted access condition. <br><br>
                             If materials can be shared upon request, they should be made publicly available unless there are restrictions to doing so. 
                             These restrictions cannot be author-imposed.")),
       type = "warning",
       btn_labels = c("Close"),
       html = TRUE) 
     
-  } else if (matsValues$Q4c_invalid_access == 2 &
-             matsValues$Q4c_inconsistent_ethics == 2 &
-             matsValues$Q4c_inconsistent_never == 2 &
-             matsValues$warning_incomplete_Q4c == 2) {
-    
-    matsValues$warning_access = 2
-  }
+  } 
   
   # 5. Inconsistent responses - external
   
@@ -1030,7 +1054,8 @@ observeEvent(input$next4c, {
       matsValues$Q4c_inconsistent_ethics == 2 &
       matsValues$Q4c_inconsistent_never == 2 &
       matsValues$warning_incomplete_Q4c == 2 &
-      matsValues$warning_access == 2) {
+      matsValues$Q4c_invalid_access == 2 &
+      matsValues$Q4_text_prompted == 2) {
     matsValues$Q4c_complete = 0
     sendSweetAlert(
       session = session,
@@ -1039,11 +1064,12 @@ observeEvent(input$next4c, {
       Please revise your responses to ensure that a valid route for access and corresponding conditions are selected.",
       type = "error"
     )
-  } else if (matsValues$Q4c_inconsistent_never == 2 &
+  } else if (matsValues$Q4c_inconsistent_external == 2 &
              matsValues$Q4c_inconsistent_ethics == 2 &
              matsValues$Q4c_inconsistent_never == 2 &
              matsValues$warning_incomplete_Q4c == 2 &
-             matsValues$warning_access == 2) {
+             matsValues$Q4c_invalid_access == 2 &
+             matsValues$Q4_text_prompted == 2) {
     matsValues$Q4c_complete = 1
     fullReport$S4_complete = 1
     

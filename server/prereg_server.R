@@ -329,7 +329,7 @@ observeEvent(input$Q7b, {
       the addition or replacement of analyses, or more detailed descriptions of analysis steps in 
       the manuscript than in the protocol. If you are sure there were no deviations, this will be 
       noted in the Transparency Statement.",
-      btn_labels = c("No", "Yes I am sure"),
+      btn_labels = c("No", "Yes, I am sure"),
       btn_colors = c("#04B404", "#FE642E")
     )
     preregValues$analysisDevs = 0
@@ -401,15 +401,16 @@ observeEvent(input$Q7c, {
     inputSweetAlert(
       session = session,
       inputId = "popupQ7c",
-      title = "Confirmation",
-      text = "You have indicated that the reporting of the analyses deviated from the 
-      pre-registered protocol, but that these deviations are not reported in the manuscript 
-      or supplementary information. Is this correct? If so, this will be noted in the Transparency 
-      Statement and you will be asked to provide an explanation for the lack of disclosure.",
-      input = "text",
+      title = "Further details required",
       type = "question",
-      btn_labels = c("Yes I am sure", "No, change my answer")
+      input = "textarea",
+      text = "You have indicated that the reporting of the analyses deviated from the 
+      pre-registered protocol, but that these deviations are not reported in the manuscript or supplementary information. 
+      Is this correct? If so, please explain why deviations are not reported.
+      Your response will be included in the transparency statement published alongside your manuscript.",
+      btn_labels = c("Close")
     )
+    
     preregValues$analysisRep = 0
     preregValues$Q7c_complete = 0
     preregValues$Q7c = ""
@@ -430,22 +431,11 @@ observeEvent(input$Q7c, {
 })
 
 observeEvent(input$popupQ7c, {
-  if (input$popupQ7c=="No, change my answer") {
-    updatePickerInput(
-      session,
-      inputId = "Q7c",
-      selected = ""
-    )
-    preregValues$analysisRep = 0
-    preregValues$Q7c_complete = 0
-    preregValues$Q7c = ""
-    
-  } else if (input$popupQ7c=="") {
+  if (input$popupQ7c == "") {
     sendSweetAlert(
       session = session,
-      title = "No response in the text box",
-      text = "You selected 'Yes I am sure' but did not provide the required details in the text box.
-      Your answer to this question has been reset.",
+      title = "No response provided",
+      text = "You did not provide the required details in the text box. Your answer to this question has been reset.",
       type = "error"
     )
     updatePickerInput(

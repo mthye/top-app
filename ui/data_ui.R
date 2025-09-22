@@ -47,6 +47,7 @@ tabBox(
     "", value = "tab2b", width = 12,
     
     uiOutput("insertQ2b"),
+
     div(style = "display:table-row; float:right", 
         actionBttn("next2b", 
                    icon = shiny::icon("forward"), 
@@ -62,7 +63,8 @@ tabBox(
   tabPanel(
     "", value = "tab2c",
     
-    uiOutput("insertQ2c"),     
+    uiOutput("insertQ2c"),  
+    
     div(style = "display:table-row; float:right", 
         actionBttn("next2c", 
                    icon = shiny::icon("forward"), 

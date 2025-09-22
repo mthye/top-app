@@ -22,7 +22,6 @@ library(rhandsontable)
 library(shinyhelper)
 library(shinybusy)
 library(tools)
-library(shinyjs)
 
 # Required for response checks (e.g. urls)
 library(RCurl)
@@ -30,6 +29,7 @@ library(sjmisc)
 library(plyr)
 library(dplyr)
 library(httr)
+library(htmlwidgets)
 
 # Required for compiling the TOP report
 library(stringr)
