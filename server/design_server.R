@@ -22,24 +22,35 @@ output$insertQ5 <- renderUI({
       options = list(title = "Response required"),
     ),
     
+    # optional followup question to clarify why study is exempt from reporting design details
+    uiOutput("insertQ5_followup")
+    
   )
 })
 
-observeEvent(input$Q5, {
+# add question to capture reason why study is exempt from reporting design details
+output$insertQ5_followup <- renderUI({
   if (input$Q5 == "No" | input$Q5 == "Not Applicable") {
-    inputSweetAlert(
-      session = session,
-      inputId = "popupQ5",
-      title = "Further details required",
-      type = "question",
-      input = "textarea",
-      text =  "You have indicated that this information is not reported in your manuscript. Are you sure this is correct?
-        If so, please explain why this information is not reported.
-        Your response will be included in the transparency statement published alongside your manuscript.", # Otherwise close this window and change your response.
-      btn_labels = c("Close")
-      )
-    
     desValues$Yes = 0
+    desValues$Q5_complete = 0
+    
+    # allow NA reponses to be flagged as compliant
+    if (input$Q5 == "Not Applicable") {
+      fullReport$editor$Note[5] <- NA
+    } else if (input$Q5 == "No") {
+      fullReport$editor$Note[5] <- "Yes"
+    }
+    
+    fluidPage(
+      br(),
+      h5("5b. You have indicated that this information is not reported in your manuscript.
+           Please explain why this information is not reported.
+           Your response will be included in the transparency statement published alongside your manuscript."),
+      textInput("Q5_followup", 
+                label = NULL, 
+                value = isolate(desValues$Q5_followup),
+                placeholder = "Response required")
+    )
     
   } else if (input$Q5 == "Yes") {
     desValues$Yes = 1
@@ -49,49 +60,40 @@ observeEvent(input$Q5, {
     fullReport$S5_complete = 1
     fullReport$editor$Note[5] <- NA # explicitly set note to NA in case authors had previously provided a response to the pop-up but then changed their answer
     
-    updateTextAreaInput(session, "popupQ5", value = NA)
-  
+    return(NULL)
   }
 })
 
-observeEvent(input$popupQ5, {
+# when the next button is clicked
+observeEvent(input$next6, {
   
   # if no text was provided in the textbox
-  if (input$popupQ5 == "") {
-    sendSweetAlert(
-      session = session,
-      title = "No response provided",
-      text = "You did not provide the required details in the text box. Your answer to this question has been reset.",
-      type = "error")
+  if ((input$Q5 == "No" | input$Q5 == "Not Applicable") & 
+      (is.null(input$Q5_followup) || input$Q5_followup == "")) {
     
-    updatePickerInput(session,
-                      inputId = "Q5",
-                      selected = "")
     desValues$YesQ5 = 0
     desValues$Q5_complete = 0
-    desValues$Q5 = ""
+    
+    sendSweetAlert(
+      session = session,
+      title = "Incomplete section",
+      text = "You have not completed this section (there are missing responses or unanswered questions).",
+      type = "error")
     
   } else {
+    desValues$Q5_followup = input$Q5_followup
+    
     desValues$measureStatus = 1
     fullReport$S5_output = "B"
     desValues$Q5_complete = 1
     fullReport$S5_complete = 1
     desValues$Q5 = "No"
     desValues$YesQ5 = 2
-    
-    # allow NA reponses to be flagged as compliant
-    if (input$Q5 == "Not Applicable") {
-      fullReport$editor$Note[5] <- NA
-    } else if (input$Q5 == "No") {
-      fullReport$editor$Note[5] <- "Yes"
-    }
-    
+  }
+  
+  
+  if (desValues$Q5_complete == 1) {
+    updateTabsetPanel(session, "sidebar", selected = "prereg")
   }
 })
-
-observeEvent(input$next6, {
-               updateTabsetPanel(session, "sidebar", selected = "prereg")
-             })
-
-
 

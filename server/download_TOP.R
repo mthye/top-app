@@ -158,6 +158,7 @@ output$downloadReport <- downloadHandler(
       Q2b_complete = dataValues$Q2b_complete,
       Q2b_partial = dataValues$Q2b_partialData,
       Q2b_none = dataValues$Q2b_noneData,
+      Q2b_followup = dataValues$Q2b_followup,
       Q2c_input = dataValues$Q2c,
       S2_output = fullReport$S2_output,
       
@@ -168,6 +169,7 @@ output$downloadReport <- downloadHandler(
       Q3b_complete = codeValues$Q3b_complete,
       Q3b_partial = codeValues$Q3b_partialCode,
       Q3b_none = codeValues$Q3b_noneCode,
+      Q3b_followup = codeValues$Q3b_followup,
       Q3c_input = codeValues$Q3c,
       S3_output = fullReport$S3_output,
       
@@ -178,14 +180,14 @@ output$downloadReport <- downloadHandler(
       Q4b_complete = matsValues$Q4b_complete,
       Q4b_partial = matsValues$Q4b_partialMats,
       Q4b_none = matsValues$Q4b_noneMats,
+      Q4b_followup = matsValues$Q4b_followup,
       Q4c_input = matsValues$Q4c,
       S4_output = fullReport$S4_output,
       
       Q5 = input$Q5,
-      Q5_text = input$popupQ5,
       Q5_eval = desValues$Yes,
       S5_output = fullReport$S5_output,
-      Q5_popup = input$popupQ5,
+      Q5_followup = desValues$Q5_followup,
       
       Q6 = preregValues$Q6,
       Q6a =  preregValues$Q6a$URL,

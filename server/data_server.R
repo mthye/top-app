@@ -154,7 +154,10 @@ output$insertQ2b <- renderUI({
 
 # add question to capture reasons for restrictions
 output$insertQ2b_followup <- renderUI({
-  textInput("Q2b_followup", label = NULL, placeholder = "Response required")
+  textInput("Q2b_followup", 
+            label = NULL, 
+            value = isolate(dataValues$Q2b_followup),
+            placeholder = "Response required")
 })
 
 # Observe input on Q2a and create table for Q2b with all selected data categories
@@ -879,6 +882,7 @@ observeEvent(input$next2c, {
     )
   } else{
     dataValues$Q2_text_prompted = 2
+    dataValues$Q2b_followup = input$Q2b_followup
   }
   
   dataValues$Q2c[] <- lapply(dataValues$Q2c, as.character)

@@ -187,7 +187,10 @@ output$insertQ4b <- renderUI({
 
 # add question to capture reasons for restrictions
 output$insertQ4b_followup <- renderUI({
-  textInput("Q4b_followup", label = NULL, placeholder = "Response required")
+  textInput("Q4b_followup", 
+            label = NULL, 
+            value = isolate(matsValues$Q4b_followup),
+            placeholder = "Response required")
 })
 
 # Observe input on Q4a and create table for Q4b with all selected material types
@@ -921,6 +924,7 @@ observeEvent(input$next4c, {
     )
   } else {
     matsValues$Q4_text_prompted = 2
+    matsValues$Q4b_followup = input$Q4b_followup
   }
   
   matsValues$Q4c[] <- lapply(matsValues$Q4c, as.character)

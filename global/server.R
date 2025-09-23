@@ -31,6 +31,7 @@ server <- function(input, output, session) {
     Q2b_complete = 0,
     Q2b_partialData = 0,
     Q2b_noneData = 0,
+    Q2b_followup = NULL,
     Q2c_incomplete = 0,
     Q2d_incomplete = 0,
     Q2c_complete = 0,
@@ -68,6 +69,7 @@ server <- function(input, output, session) {
     Q3b_complete = 0,
     Q3b_partialCode = 0,
     Q3b_noneCode = 0,
+    Q3b_followup = NULL,
     Q3c_incomplete = 0,
     Q3c_complete = 0,
     warning_incomplete_Q3b = 0,
@@ -102,6 +104,7 @@ server <- function(input, output, session) {
     Q4b_complete = 0,
     Q4b_partialMats = 0,
     Q4b_noneMats = 0,
+    Q4b_followup = NULL,
     Q4c_incomplete = 0, 
     Q4c_complete = 0,
     warning_incomplete_Q4b = 0,
@@ -139,6 +142,7 @@ server <- function(input, output, session) {
     no4 = "",
     
     Q5_complete = 0,
+    Q5_followup = NA,
     Q5a_complete = 0,
     Q5a2_complete = 0,
     
@@ -336,6 +340,7 @@ server <- function(input, output, session) {
         Q2b_complete = dataValues$Q2b_complete,
         Q2b_partial = dataValues$Q2b_partialData,
         Q2b_none = dataValues$Q2b_noneData,
+        Q2b_followup = dataValues$Q2b_followup,
         Q2c_input = dataValues$Q2c,
         dataTypes = dataValues$dataTypes,
         selectedDataTypes = dataValues$selectedDataTypes,
@@ -347,6 +352,7 @@ server <- function(input, output, session) {
         Q3b_complete = codeValues$Q3b_complete,
         Q3b_partial = codeValues$Q3b_partialCode,
         Q3b_none = codeValues$Q3b_noneCode,
+        Q3b_followup = codeValues$Q3b_followup,
         Q3_text = input$barrierApprovalQ3b,
         Q3c_input = codeValues$Q3c,
         codeTypes = codeValues$codeTypes,
@@ -359,12 +365,13 @@ server <- function(input, output, session) {
         Q4b_complete = matsValues$Q4b_complete,
         Q4b_partial = matsValues$Q4b_partialMats,
         Q4b_none = matsValues$Q4b_noneMats,
+        Q4b_followup = matsValues$Q4b_followup,
         Q4c_input = matsValues$Q4c,
         matsTypes = matsValues$matsTypes,
         selectedMatsTypes = matsValues$selectedMatsTypes,
         
         Q5 = input$Q5,
-        Q5_text = input$popupQ5,
+        Q5_followup = desValues$Q5_followup,
         Q5_eval = desValues$Yes,
         
         Q6 = preregValues$Q6,
@@ -391,6 +398,7 @@ server <- function(input, output, session) {
       dataValues$dataTypes <- params$dataTypes
       dataValues$selectedDataTypes <- params$selectedDataTypes
       dataValues$Q2b <- params$Q2b_input
+      dataValues$Q2b_followup <- params$Q2b_followup
       dataValues$Q2c <- params$Q2c_input
       dataValues$saveQ2b <- 1
       dataValues$saveQ2c <- 1
@@ -401,6 +409,7 @@ server <- function(input, output, session) {
       codeValues$codeTypes <- params$codeTypes
       codeValues$selectedCodeTypes <- params$selectedCodeTypes
       codeValues$Q3b <- params$Q3b_input
+      codeValues$Q3b_followup <- params$Q3b_followup
       codeValues$Q3c <- params$Q3c_input
       codeValues$saveQ3b <- 1
       codeValues$saveQ3c <- 1
@@ -411,12 +420,14 @@ server <- function(input, output, session) {
       matsValues$matsTypes <- params$matsTypes
       matsValues$selectedMatsTypes <- params$selectedMatsTypes
       matsValues$Q4b <- params$Q4b_input
+      matsValues$Q4b_followup <- params$Q4b_followup
       matsValues$Q4c <- params$Q4c_input
       matsValues$saveQ4b <- 1
       matsValues$saveQ4c <- 1
       
       # design
       desValues$Q5 <- params$Q5
+      desValues$Q5_followup <- params$Q5_followup
       
       # prereg
       preregValues$Q6 <- params$Q6

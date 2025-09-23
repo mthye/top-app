@@ -134,7 +134,10 @@ output$insertQ3b <- renderUI({
 
 # add question to capture reasons for restrictions
 output$insertQ3b_followup <- renderUI({
-  textInput("Q3b_followup", label = NULL, placeholder = "Response required")
+  textInput("Q3b_followup", 
+            label = NULL, 
+            value = isolate(codeValues$Q3b_followup),
+            placeholder = "Response required")
 })
 
 
@@ -859,6 +862,7 @@ observeEvent(input$next3c, {
     )
   } else {
     codeValues$Q3_text_prompted = 2
+    codeValues$Q3b_followup = input$Q3b_followup
   }
   
   codeValues$Q3c[] <- lapply(codeValues$Q3c, as.character)
