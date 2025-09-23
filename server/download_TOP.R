@@ -199,7 +199,7 @@ output$downloadReport <- downloadHandler(
       Q7c = preregValues$Q7c,
       S7_url = input$S7_url,
       S7_output = fullReport$S7_output,
-      Q7_popup = input$popupQ7c,
+      Q7_followup = input$Q7_followup,
       
       editor = isolate(fullReport$editor)
     )

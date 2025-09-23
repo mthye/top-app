@@ -221,7 +221,8 @@ server <- function(input, output, session) {
     Q7c_complete = 0,
     Q7 = "",
     Q7b = "",
-    Q7c = ""
+    Q7c = "",
+    Q7_followup = NULL
   )
   
   # Reactive values for TOP report compilation
@@ -377,7 +378,8 @@ server <- function(input, output, session) {
         Q6 = preregValues$Q6,
         Q7 = preregValues$Q7,
         Q7b = preregValues$Q7b,
-        Q7c = preregValues$Q7c
+        Q7c = preregValues$Q7c,
+        Q7_followup = preregValues$Q5_followup
       )
       
       saveRDS(params, file)
@@ -434,6 +436,7 @@ server <- function(input, output, session) {
       preregValues$Q7 <- params$Q7
       preregValues$Q7b <- params$Q7b
       preregValues$Q7c <- params$Q7c
+      preregValues$Q7_followup <- params$Q7_followup
       
     })
     

@@ -53,7 +53,7 @@ params:
   Q7c: NA
   S7_url: NA
   S7_output: NA
-  Q7_popup: NA
+  Q7_followup: NA
   editor: NA
 
 ---
@@ -117,7 +117,7 @@ if (params$Q5 == "Yes") {
   design_text <- ""
 }
 
-prereg_text <- shQuote(params$Q7_popup)
+prereg_text <- shQuote(params$Q7_followup)
 if (params$Q7 == "No") {
   prereg_text <- ""
 }

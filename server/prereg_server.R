@@ -33,35 +33,35 @@ output$insertQ6 <- renderUI({
 
 #If user says no to study prereg go to next section
 observeEvent(input$Q6, {
-
-    # Reset all responses that follow in this decision tree
-    preregValues$studyDevs = 0
-    preregValues$studyRep = 0
-    preregValues$Q6a = NULL
-
-    if (input$Q6 == "Yes") {
-      inputSweetAlert(
-        session = session,
-        inputId = "Q6a",
-        input = "text",
-        title = "Please enter the exact URL to the time-stamped study procedures in an independent repository.",
-        inputPlaceholder = "e.g.: https://osf.io/9f6gx/",
-        allowOutsideClick = FALSE,
-        showCloseButton = FALSE
-      )
-      preregValues$studyYes = 0
-    } else if (input$Q6 == "No") {
-
-      fullReport$S6_complete = 1
-      fullReport$S6_output = "A"
-
-      preregValues$studyYes = 2
-      preregValues$Q6_complete = 1
-
-      preregValues$Q6 = "No"
-      
-      fullReport$editor$Note[6] <- NA # explicitly set note to NA in case authors had previously provided a response to the pop-up but then changed their answer
-    }
+  
+  # Reset all responses that follow in this decision tree
+  preregValues$studyDevs = 0
+  preregValues$studyRep = 0
+  preregValues$Q6a = NULL
+  
+  if (input$Q6 == "Yes") {
+    inputSweetAlert(
+      session = session,
+      inputId = "Q6a",
+      input = "text",
+      title = "Please enter the exact URL to the time-stamped study procedures in an independent repository.",
+      inputPlaceholder = "e.g.: https://osf.io/9f6gx/",
+      allowOutsideClick = FALSE,
+      showCloseButton = FALSE
+    )
+    preregValues$studyYes = 0
+  } else if (input$Q6 == "No") {
+    
+    fullReport$S6_complete = 1
+    fullReport$S6_output = "A"
+    
+    preregValues$studyYes = 2
+    preregValues$Q6_complete = 1
+    
+    preregValues$Q6 = "No"
+    
+    fullReport$editor$Note[6] <- NA # explicitly set note to NA in case authors had previously provided a response to the pop-up but then changed their answer
+  }
 })
 
 observeEvent(input$Q6a, {
@@ -168,18 +168,18 @@ output$insertQ7 <- renderUI({
       selected = isolate(preregValues$Q7),
       multiple = FALSE,
       options = list(
-       title = "Response required"
+        title = "Response required"
       )
     )
   )
 })
 
 observeEvent(input$Q7, {
-
+  
   preregValues$analysisDevs = 0
   preregValues$analysisRep = 0
   preregValues$Q7a = NULL
-
+  
   if (input$Q7 == "Yes") {
     inputSweetAlert(
       session = session,
@@ -191,18 +191,18 @@ observeEvent(input$Q7, {
       showCloseButton = FALSE
     )
     preregValues$analysisYes = 0
-
+    
   } else if (input$Q7 == "No") {
-
+    
     fullReport$S7_complete = 1
     fullReport$S7_output = "A"
-
+    
     preregValues$analysisYes = 2
     preregValues$Q7_complete = 1
     preregValues$Q7 = "No"
     
     fullReport$editor$Note[7] <- NA # explicitly set note to NA in case authors had previously provided a response to the pop-up but then changed their answer
-
+    
     updateTabsetPanel(session, "sidebar", selected = "results")
   }
 })
@@ -329,7 +329,7 @@ observeEvent(input$Q7b, {
       the addition or replacement of analyses, or more detailed descriptions of analysis steps in 
       the manuscript than in the protocol. If you are sure there were no deviations, this will be 
       noted in the Transparency Statement.",
-      btn_labels = c("No", "Yes, I am sure"),
+      btn_labels = c("No", "Yes I am sure"),
       btn_colors = c("#04B404", "#FE642E")
     )
     preregValues$analysisDevs = 0
@@ -392,32 +392,42 @@ output$insertQ7c <- renderUI({
         options = list(
           title = "Response required"
         )
-      )
-    )} 
+      ),
+      
+      # optional followup question to clarify why study is exempt from reporting design details
+      uiOutput("insertQ7_followup")
+    )
+  } 
 })
 
-observeEvent(input$Q7c, {
-  if (input$Q7c=="No") {
-    inputSweetAlert(
-      session = session,
-      inputId = "popupQ7c",
-      title = "Further details required",
-      type = "question",
-      input = "textarea",
-      text = "You have indicated that the reporting of the analyses deviated from the 
-      pre-registered protocol, but that these deviations are not reported in the manuscript or supplementary information. 
-      Is this correct? If so, please explain why deviations are not reported.
-      Your response will be included in the transparency statement published alongside your manuscript.",
-      btn_labels = c("Close")
-    )
-    
+# add question to capture reason why study is exempt from reporting design details
+output$insertQ7_followup <- renderUI({
+  
+  if (input$Q7c == "No") {
     preregValues$analysisRep = 0
     preregValues$Q7c_complete = 0
-    preregValues$Q7c = ""
     fullReport$editor$Note[6] <- "Yes"
     fullReport$editor$Note[7] <- "Yes"
     
-  } else if (input$Q7c=="Yes") {
+    fluidPage(
+      br(),
+      h5("You have indicated that the reporting of the analyses deviated from the pre-registered protocol, 
+          but that these deviations are not reported in the manuscript or supplementary information. 
+          Please explain why deviations are not reported.
+          Your response will be included in the transparency statement published alongside your manuscript."),
+      textInput("Q7_followup", 
+                label = NULL, 
+                value = isolate(preregValues$Q7_followup),
+                placeholder = "Response required"),
+      br(),
+      div(style = "display:table-row; float:right",
+          actionBttn("next7",
+                     icon = shiny::icon("forward"),
+                     label = "Next", color = "primary",  style = "jelly", size = "sm"),
+      )
+    )
+    
+  } else if (input$Q7c == "Yes") {
     preregValues$analysisRep = 0
     
     updateTabsetPanel(session, "sidebar", selected = "results")
@@ -427,35 +437,39 @@ observeEvent(input$Q7c, {
     fullReport$S7_url = as.character(input$Q7a)
     preregValues$Q7c_complete = 1
     preregValues$Q7c = "Yes"
+    
+    return(NULL)
   }
 })
 
-observeEvent(input$popupQ7c, {
-  if (input$popupQ7c == "") {
+# when the next button is clicked
+observeEvent(input$next7, {
+  
+  # if no text was provided in the textbox
+  if (input$Q7c == "No"  & 
+      (is.null(input$Q7_followup) || input$Q7_followup == "")) {
+    
+    preregValues$Q7c_complete = 0
+    preregValues$analysisRep = 0
+    
     sendSweetAlert(
       session = session,
-      title = "No response provided",
-      text = "You did not provide the required details in the text box. Your answer to this question has been reset.",
-      type = "error"
-    )
-    updatePickerInput(
-      session,
-      inputId = "Q7c",
-      selected = ""
-    )
-    preregValues$analysisRep = 0
-    preregValues$Q7c_complete = 0
-    preregValues$Q7c = ""
+      title = "Incomplete section",
+      text = "You have not completed this section (there are missing responses or unanswered questions).",
+      type = "error")
+    
   } else {
+    preregValues$Q7_followup = input$Q7_followup
+    
     preregValues$analysisRep = 2
-    
-    updateTabsetPanel(session, "sidebar", selected = "results")
-    
     fullReport$S7_complete = 1
     fullReport$S7_output = "D"
     fullReport$S7_url = as.character(input$Q7a)
     fullReport$S7_explain = as.character(input$popupQ7c)
     preregValues$Q7c_complete = 1
     preregValues$Q7c = "No"
+    
+    updateTabsetPanel(session, "sidebar", selected = "results")
+    
   }
 })

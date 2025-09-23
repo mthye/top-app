@@ -43,9 +43,9 @@ output$insertQ5_followup <- renderUI({
     
     fluidPage(
       br(),
-      h5("5b. You have indicated that this information is not reported in your manuscript.
-           Please explain why this information is not reported.
-           Your response will be included in the transparency statement published alongside your manuscript."),
+      h5("You have indicated that this information is not reported in your manuscript.
+          Please explain why this information is not reported.
+          Your response will be included in the transparency statement published alongside your manuscript."),
       textInput("Q5_followup", 
                 label = NULL, 
                 value = isolate(desValues$Q5_followup),
