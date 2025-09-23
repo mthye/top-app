@@ -379,7 +379,7 @@ server <- function(input, output, session) {
         Q7 = preregValues$Q7,
         Q7b = preregValues$Q7b,
         Q7c = preregValues$Q7c,
-        Q7_followup = preregValues$Q5_followup
+        Q7_followup = preregValues$Q7_followup
       )
       
       saveRDS(params, file)
