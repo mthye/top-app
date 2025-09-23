@@ -16,6 +16,7 @@ params:
   Q2b_complete: NA
   Q2b_partial: NA
   Q2b_none: NA
+  Q2b_followup: NA
   Q2c_input: NA
   S2_output: NA
   Q3: NA
@@ -25,6 +26,7 @@ params:
   Q3b_complete: NA
   Q3b_partial: NA
   Q3b_none: NA
+  Q3b_followup: NA
   Q3c_input: NA
   S3_output: NA
   Q4: NA
@@ -34,13 +36,13 @@ params:
   Q4b_complete: NA
   Q4b_partial: NA
   Q4b_none: NA
+  Q4b_followup: NA
   Q4c_input: NA
   S4_output: NA
   Q5: NA
   Q5_eval: NA
-  Q5_text: NA
+  Q5_followup: NA
   S5_output: NA
-  Q5_popup: NA
   Q6: NA
   Q6a: NA
   S6_url: NA
@@ -75,12 +77,24 @@ if (!is.null(params$Q2b_input)){ # if access conditions were provided
   }
 }
 
+# remove pop-up text responses if authors changed their answers
+data_text <- shQuote(params$Q2b_followup)
+if (params$S2_output == "A" | params$S2_output == "B") {
+  data_text <- ""
+}
+
 # code
 codeURLs=""
 if (!is.null(params$Q3b_input)){ # if access conditions were provided
   if (any(!is.na(params$Q3b_input$X5))){ # check whether URL was provided
     codeURLs =  filter(params$Q3b_input, !is.na(X5))$X5 # params$Q3b_input$X5
   }
+}
+
+# remove pop-up text responses if authors changed their answers
+code_text <- shQuote(params$Q3b_followup)
+if (params$S3_output == "A" | params$S3_output == "B") {
+  code_text <- ""
 }
 
 # materials
@@ -92,7 +106,13 @@ if (!is.null(params$Q4b_input)){ # if access conditions were provided
 }
 
 # remove pop-up text responses if authors changed their answers
-design_text <- shQuote(params$Q5_popup)
+mat_text <- shQuote(params$Q4b_followup)
+if (params$S4_output  == "A" | params$S4_output == "B") {
+  mat_text <- ""
+}
+
+# remove pop-up text responses if authors changed their answers
+design_text <- shQuote(params$Q5_followup)
 if (params$Q5 == "Yes") {
   design_text <- ""
 }
@@ -112,7 +132,7 @@ if (params$Q7 == "No") {
 
 `r if(params$S2_output == "C"){"In this section authors indicate the public availability and access route(s) for all selected data categories as well as any barriers for data that cannot be fully shared."}`
 
-`r if(params$S2_output == "D"){"In this section authors explain how readers can access the data that are not publicly available and under what conditions. No data will be publicly available."}`
+`r if(params$S2_output == "D"){"In this section authors explain how readers can access the data that are not publicly available and under what conditions. No data will be publicly available. The authors provided the following justification:"}` `r data_text`
 
 
 ```{r Q2b}
@@ -157,7 +177,7 @@ if (params$Q2b_complete==1 & (params$Q2b_partial==1 | params$Q2b_none==1)) {
 
 `r if(params$S3_output == "C"){"In this section authors indicate the public availability and access route(s) for all selected analysis code types as well as any barriers for code that cannot be fully shared."}`
 
-`r if(params$S3_output == "D"){"In this section authors explain how readers can access the analysis code that is not publicly available and under what conditions. No code will be publicly available."}`
+`r if(params$S3_output == "D"){"In this section authors explain how readers can access the analysis code that is not publicly available and under what conditions. No code will be publicly available. The authors provided the following justification:"}` `r code_text`
 
 
 ```{r Q3b}
@@ -200,7 +220,7 @@ if (params$Q3b_complete==1 & (params$Q3b_partial==1 | params$Q3b_none==1)) {
 
 `r if(params$S4_output == "D"){"In this section authors indicate the public availability and access route(s) for all selected types of research materials as well as any barriers for materials that cannot be fully shared."}`
 
-`r if(params$S4_output == "E"){"In this section authors explain how readers can access the research materials that are not publicly available and under what conditions. No materials will be publicly available."}`
+`r if(params$S4_output == "E"){"In this section authors explain how readers can access the research materials that are not publicly available and under what conditions. No materials will be publicly available. The authors provided the following justification:"}` `r mat_text`
 
 
 ```{r Q4b}

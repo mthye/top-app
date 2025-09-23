@@ -11,6 +11,7 @@ params:
   Q2b_complete: NA
   Q2b_partial: NA
   Q2b_none: NA
+  Q2b_followup: NA
   Q2c_input: NA
   S2_output: NA
   Q3: NA
@@ -20,6 +21,7 @@ params:
   Q3b_complete: NA
   Q3b_partial: NA
   Q3b_none: NA
+  Q3b_followup: NA
   Q3c_input: NA
   S3_output: NA
   Q4: NA
@@ -29,13 +31,13 @@ params:
   Q4b_complete: NA
   Q4b_partial: NA
   Q4b_none: NA
+  Q4b_followup: NA
   Q4c_input: NA
   S4_output: NA
   Q5: NA
   Q5_eval: NA
-  Q5_text: NA
+  Q5_followup: NA
   S5_output: NA
-  Q5_popup: NA
   Q6: NA
   Q6a: NA
   S6_url: NA
@@ -70,12 +72,24 @@ if (!is.null(params$Q2b_input)){ # if access conditions were provided
   }
 }
 
+# remove pop-up text responses if authors changed their answers
+data_text <- shQuote(params$Q2b_followup)
+if (params$S2_output == "A" | params$S2_output == "B") {
+  data_text <- ""
+}
+
 # code
 codeURLs=""
 if (!is.null(params$Q3b_input)){ # if access conditions were provided
   if (any(!is.na(params$Q3b_input$X5))){ # check whether URL was provided
     codeURLs =  filter(params$Q3b_input, !is.na(X5))$X5 # params$Q3b_input$X5
   }
+}
+
+# remove pop-up text responses if authors changed their answers
+code_text <- shQuote(params$Q3b_followup)
+if (params$S3_output == "A" | params$S3_output == "B") {
+  code_text <- ""
 }
 
 # materials
@@ -87,7 +101,14 @@ if (!is.null(params$Q4b_input)){ # if access conditions were provided
 }
 
 # remove pop-up text responses if authors changed their answers
-design_text <- shQuote(params$Q5_popup)
+mat_text <- shQuote(params$Q4b_followup)
+if (params$S4_output  == "A" | params$S4_output == "B") {
+  mat_text <- ""
+}
+
+# design
+# remove pop-up text responses if authors changed their answers
+design_text <- shQuote(params$Q5_followup)
 if (params$Q5 == "Yes") {
   design_text <- ""
 }
@@ -153,19 +174,19 @@ if ("Materials are in Supplementary Information" %in% params$Q4b_input$X4 | "Mat
 `r if(params$S2_output == "A"){"DATA: This research did not involve collection or analysis of data."}`
 `r if(params$S2_output == "B"){"DATA: All raw and processed data supporting this research are publicly available:"}`
 `r if(params$S2_output == "C"){"DATA: Some raw and processed data supporting this research are publicly available, while some are subject to restrictions:"}` `r paste(unique(dataURLs[dataURLs != "" & !is.na(dataURLs)]), collapse = ", ")` `r data_access`
-`r if(params$S2_output == "D"){"DATA: No raw or processed data supporting this research are publicly available."}`
+`r if(params$S2_output == "D"){"DATA: No raw or processed data supporting this research are publicly available. The authors provided the following justification:"}` `r data_text`
 
 <!-- code -->
 `r if(params$S3_output == "A"){"CODE: This research did not make use of any analysis code."}`
 `r if(params$S3_output == "B"){"CODE: All analysis code supporting this research is publicly available:"}`
 `r if(params$S3_output == "C"){"CODE: Some analysis code supporting this research is publicly available, while some are subject to restrictions:"}` `r paste(unique(codeURLs[codeURLs != "" & !is.na(codeURLs)]), collapse = ", ")` `r code_access`
-`r if(params$S3_output == "D"){"CODE: No analysis code supporting this research is publicly available."}`
+`r if(params$S3_output == "D"){"CODE: No analysis code supporting this research is publicly available. The authors provided the following justification:"}` `r code_text`
 
 <!-- materials -->
 `r if(params$S4_output == "A" | params$S4_output == "B"){"MATERIALS: This research did not make use of any materials to generate or acquire data."}`
 `r if(params$S4_output == "C"){"MATERIALS: All study materials supporting this research are publicly available:"}`
 `r if(params$S4_output == "D"){"MATERIALS: Some study materials supporting this research are publicly available, while some are subject to restrictions:"}` `r paste(unique(matsURLs[matsURLs != "" & !is.na(matsURLs)]), collapse = ", ")` `r mat_access`
-`r if(params$S4_output == "E"){"MATERIALS: No study materials supporting this research are publicly available."}`
+`r if(params$S4_output == "E"){"MATERIALS: No study materials supporting this research are publicly available. The authors provided the following justification:"}` `r mat_text`
 
 <!-- design -->
 `r if(params$Q5 == "Yes"){"DESIGN: This article reports, for all studies, how the author(s) determined all sample sizes, all data exclusions, all data inclusion and exclusion criteria, and whether inclusion and exclusion criteria were established prior to data analysis."}`
