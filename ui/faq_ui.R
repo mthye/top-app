@@ -25,7 +25,7 @@ fluidPage(
       However, to provide basic guidance notes on reuse, a README file is required that defines every file in the repository and every variable name/abbreviation in the files.
             <br></br>
       
-      <li style='color: #cfabed; font-weight: bold'>What should I share if the current study reuses data available form public repositories?</li>
+      <li style='color: #cfabed; font-weight: bold'>What should I share if the current study reuses data available from public repositories?</li>
       For studies using secondary data, the program code, scripts for statistical packages, and other documentation must be provided to allow an informed researcher 
       to precisely reproduce all published results.
             <br></br>
@@ -42,7 +42,7 @@ fluidPage(
             <br></br>
             
       <li style='color: #cfabed; font-weight: bold'>Can the manuscript pass the transparency assessment if the research study was not pre-registered?</li>
-      <b>Yes</b>, at Level 2 this is not a requirement for study design analysis.
+      <b>Yes</b>, this is not a requirement for study design analysis.
             <br></br>
       <li style='color: #cfabed; font-weight: bold'> If the research study was preregistered but there were deviations in the design and/or analysis can the preregistration guidelines be met?</li>
       <b>Yes</b>, but the deviations need to be transparently reported in the manuscript and you can confirm that in this app when requested.

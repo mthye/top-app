@@ -58,6 +58,8 @@ params:
 knitr::opts_chunk$set(echo = FALSE, results='asis')
 library(pander)
 library(tidyverse)
+library(officedown)
+library(officer)
 panderOptions('table.continues', '')
 
 ```
@@ -74,8 +76,10 @@ if (!is.null(params$Q2b_input)){ # if access conditions were provided
 
 # remove pop-up text responses if authors changed their answers
 data_text <- shQuote(params$Q2b_followup)
-if (params$S2_output == "A" | params$S2_output == "B") {
+if (params$S2_output == "A" | params$S2_output == "B" | is.null(params$Q2b_followup)) {
   data_text <- ""
+} else {
+  data_text <- paste0("*", data_text, "*")
 }
 
 # code
@@ -88,8 +92,10 @@ if (!is.null(params$Q3b_input)){ # if access conditions were provided
 
 # remove pop-up text responses if authors changed their answers
 code_text <- shQuote(params$Q3b_followup)
-if (params$S3_output == "A" | params$S3_output == "B") {
+if (params$S3_output == "A" | params$S3_output == "B" | is.null(params$Q3b_followup)) {
   code_text <- ""
+} else {
+  code_text <- paste0("*", code_text, "*")
 }
 
 # materials
@@ -102,20 +108,28 @@ if (!is.null(params$Q4b_input)){ # if access conditions were provided
 
 # remove pop-up text responses if authors changed their answers
 mat_text <- shQuote(params$Q4b_followup)
-if (params$S4_output  == "A" | params$S4_output == "B") {
+if (params$S4_output  == "A" | params$S4_output == "C" | is.null(params$Q4b_followup)) {
   mat_text <- ""
+} else {
+  mat_text <- paste0("*", mat_text, "*")
 }
 
 # design
 # remove pop-up text responses if authors changed their answers
 design_text <- shQuote(params$Q5_followup)
-if (params$Q5 == "Yes") {
+if (params$Q5 == "Yes" | is.null(params$Q5_followup)) {
   design_text <- ""
+} else {
+  design_text <- paste0("*", design_text, "*")
 }
 
+# prereg
+# remove pop-up text responses if authors changed their answers
 prereg_text <- shQuote(params$Q7_followup)
-if (params$Q7 == "No") {
+if (params$Q7 == "No" | is.null(params$Q7_followup)) {
   prereg_text <- ""
+} else {
+  prereg_text <- paste0("*", prereg_text, "*")
 }
 
 # process editor notes indicating where authors aren't compliant with standards
@@ -144,6 +158,9 @@ if ("Yes" %in% params$editor$Note) {
   }
 }
 
+# make warning note red so it sticks out
+warn_color <- fp_text(color = "red", font.family = "Cambria", font.size = 12)
+
 # process public access routes
 ## data
 data_access <- ""
@@ -167,26 +184,32 @@ if ("Materials are in Supplementary Information" %in% params$Q4b_input$X4 | "Mat
 
 ```
 
-`r note`
+`r ftext(note, warn_color)`
 
 <!-- data -->
 
 `r if(params$S2_output == "A"){"DATA: This research did not involve collection or analysis of data."}`
 `r if(params$S2_output == "B"){"DATA: All raw and processed data supporting this research are publicly available:"}`
 `r if(params$S2_output == "C"){"DATA: Some raw and processed data supporting this research are publicly available, while some are subject to restrictions:"}` `r paste(unique(dataURLs[dataURLs != "" & !is.na(dataURLs)]), collapse = ", ")` `r data_access`
-`r if(params$S2_output == "D"){"DATA: No raw or processed data supporting this research are publicly available. The authors provided the following justification:"}` `r data_text`
+`r if(params$S2_output == "D"){"DATA: No raw or processed data supporting this research are publicly available."}`
+
+`r if(data_text != ""){"The authors provided the following justification for restricting access to data:"}` `r data_text`
 
 <!-- code -->
 `r if(params$S3_output == "A"){"CODE: This research did not make use of any analysis code."}`
 `r if(params$S3_output == "B"){"CODE: All analysis code supporting this research is publicly available:"}`
 `r if(params$S3_output == "C"){"CODE: Some analysis code supporting this research is publicly available, while some are subject to restrictions:"}` `r paste(unique(codeURLs[codeURLs != "" & !is.na(codeURLs)]), collapse = ", ")` `r code_access`
-`r if(params$S3_output == "D"){"CODE: No analysis code supporting this research is publicly available. The authors provided the following justification:"}` `r code_text`
+`r if(params$S3_output == "D"){"CODE: No analysis code supporting this research is publicly available."}`
+
+`r if(code_text != ""){"The authors provided the following justification for restricting access to code:"}` `r code_text`
 
 <!-- materials -->
 `r if(params$S4_output == "A" | params$S4_output == "B"){"MATERIALS: This research did not make use of any materials to generate or acquire data."}`
 `r if(params$S4_output == "C"){"MATERIALS: All study materials supporting this research are publicly available:"}`
 `r if(params$S4_output == "D"){"MATERIALS: Some study materials supporting this research are publicly available, while some are subject to restrictions:"}` `r paste(unique(matsURLs[matsURLs != "" & !is.na(matsURLs)]), collapse = ", ")` `r mat_access`
-`r if(params$S4_output == "E"){"MATERIALS: No study materials supporting this research are publicly available. The authors provided the following justification:"}` `r mat_text`
+`r if(params$S4_output == "E"){"MATERIALS: No study materials supporting this research are publicly available."}`
+
+`r if(mat_text != ""){"The authors provided the following justification for restricting access to materials:"}` `r mat_text`
 
 <!-- design -->
 `r if(params$Q5 == "Yes"){"DESIGN: This article reports, for all studies, how the author(s) determined all sample sizes, all data exclusions, all data inclusion and exclusion criteria, and whether inclusion and exclusion criteria were established prior to data analysis."}`

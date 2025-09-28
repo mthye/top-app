@@ -79,8 +79,10 @@ if (!is.null(params$Q2b_input)){ # if access conditions were provided
 
 # remove pop-up text responses if authors changed their answers
 data_text <- shQuote(params$Q2b_followup)
-if (params$S2_output == "A" | params$S2_output == "B") {
+if (params$S2_output == "A" | params$S2_output == "B" | is.null(params$Q2b_followup)) {
   data_text <- ""
+} else {
+  data_text <- paste0("*", data_text, "*")
 }
 
 # code
@@ -93,8 +95,10 @@ if (!is.null(params$Q3b_input)){ # if access conditions were provided
 
 # remove pop-up text responses if authors changed their answers
 code_text <- shQuote(params$Q3b_followup)
-if (params$S3_output == "A" | params$S3_output == "B") {
+if (params$S3_output == "A" | params$S3_output == "B" | is.null(params$Q3b_followup)) {
   code_text <- ""
+} else {
+  code_text <- paste0("*", code_text, "*")
 }
 
 # materials
@@ -107,21 +111,28 @@ if (!is.null(params$Q4b_input)){ # if access conditions were provided
 
 # remove pop-up text responses if authors changed their answers
 mat_text <- shQuote(params$Q4b_followup)
-if (params$S4_output  == "A" | params$S4_output == "B") {
+if (params$S4_output  == "A" | params$S4_output == "C" | is.null(params$Q4b_followup)) {
   mat_text <- ""
+} else {
+  mat_text <- paste0("*", mat_text, "*")
 }
 
 # remove pop-up text responses if authors changed their answers
 design_text <- shQuote(params$Q5_followup)
-if (params$Q5 == "Yes") {
+if (params$Q5 == "Yes" | is.null(params$Q5_followup)) {
   design_text <- ""
+} else {
+  design_text <- paste0("*", design_text, "*")
 }
 
+# prereg
+# remove pop-up text responses if authors changed their answers
 prereg_text <- shQuote(params$Q7_followup)
-if (params$Q7 == "No") {
+if (params$Q7 == "No" | is.null(params$Q7_followup)) {
   prereg_text <- ""
+} else {
+  prereg_text <- paste0("*", prereg_text, "*")
 }
-
 
 ```
 
@@ -132,7 +143,9 @@ if (params$Q7 == "No") {
 
 `r if(params$S2_output == "C"){"In this section authors indicate the public availability and access route(s) for all selected data categories as well as any barriers for data that cannot be fully shared."}`
 
-`r if(params$S2_output == "D"){"In this section authors explain how readers can access the data that are not publicly available and under what conditions. No data will be publicly available. The authors provided the following justification:"}` `r data_text`
+`r if(params$S2_output == "D"){"In this section authors explain how readers can access the data that are not publicly available and under what conditions. No data will be publicly available."}`
+
+`r if(data_text != ""){"The authors provided the following justification for restricting access to data:"}` `r data_text`
 
 
 ```{r Q2b}
@@ -177,7 +190,9 @@ if (params$Q2b_complete==1 & (params$Q2b_partial==1 | params$Q2b_none==1)) {
 
 `r if(params$S3_output == "C"){"In this section authors indicate the public availability and access route(s) for all selected analysis code types as well as any barriers for code that cannot be fully shared."}`
 
-`r if(params$S3_output == "D"){"In this section authors explain how readers can access the analysis code that is not publicly available and under what conditions. No code will be publicly available. The authors provided the following justification:"}` `r code_text`
+`r if(params$S3_output == "D"){"In this section authors explain how readers can access the analysis code that is not publicly available and under what conditions. No code will be publicly available."}`
+
+`r if(code_text != ""){"The authors provided the following justification for restricting access to code:"}` `r code_text`
 
 
 ```{r Q3b}
@@ -220,7 +235,9 @@ if (params$Q3b_complete==1 & (params$Q3b_partial==1 | params$Q3b_none==1)) {
 
 `r if(params$S4_output == "D"){"In this section authors indicate the public availability and access route(s) for all selected types of research materials as well as any barriers for materials that cannot be fully shared."}`
 
-`r if(params$S4_output == "E"){"In this section authors explain how readers can access the research materials that are not publicly available and under what conditions. No materials will be publicly available. The authors provided the following justification:"}` `r mat_text`
+`r if(params$S4_output == "E"){"In this section authors explain how readers can access the research materials that are not publicly available and under what conditions. No materials will be publicly available."}`
+
+`r if(mat_text != ""){"The authors provided the following justification for restricting access to materials:"}` `r mat_text`
 
 
 ```{r Q4b}

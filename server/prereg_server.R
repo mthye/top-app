@@ -415,7 +415,7 @@ output$insertQ7_followup <- renderUI({
           but that these deviations are not reported in the manuscript or supplementary information. 
           Please explain why deviations are not reported.
           Your response will be included in the transparency statement published alongside your manuscript."),
-      textInput("Q7_followup", 
+      textAreaInput("Q7_followup", 
                 label = NULL, 
                 value = isolate(preregValues$Q7_followup),
                 placeholder = "Response required"),

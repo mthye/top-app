@@ -187,7 +187,7 @@ output$insertQ4b <- renderUI({
 
 # add question to capture reasons for restrictions
 output$insertQ4b_followup <- renderUI({
-  textInput("Q4b_followup", 
+  textAreaInput("Q4b_followup", 
             label = NULL, 
             value = isolate(matsValues$Q4b_followup),
             placeholder = "Response required")
@@ -501,36 +501,10 @@ observeEvent(input$next4b, {
     )
   }
   
-  # 3. Materials are in the manuscript and authors haven't yet confirmed the pop-up
-  if (matsValues$Q4b_manuscript == 1 &
-      (is.null(input$manuscriptOkQ4b) |
-       isFALSE(input$manuscriptOkQ4b)) &
-      matsValues$warning_incomplete_Q4b == 2 &
-      matsValues$Q4b_urlmiss == 2) {
-    matsValues$Q4b_complete = 0
-    
-    matsValues$warning_manuscript = 1
-    confirmSweetAlert(
-      session = session,
-      inputId = "manuscriptOkQ4b",
-      type = "warning",
-      title = "Warning",
-      text = "Do you confirm that the manuscript contains all the research materials?
-      If this is NOT the case, the journal will be unable to progress your submission.",
-      btn_labels = c("No", "Yes")
-    )
-  } else if (matsValues$Q4b_manuscript == 1 &
-             isTRUE(input$manuscriptOkQ4b) &
-             matsValues$warning_incomplete_Q4b == 2 &
-             matsValues$Q4b_urlmiss == 2) {
-    matsValues$warning_manuscript = 2
-  }
-  
-  # 4. There is an invalid barrier (technical barrier only)
+  # 3. There is an invalid barrier (technical barrier only)
   if (matsValues$Q4b_tech_barrier == 1 &
       matsValues$warning_incomplete_Q4b == 2 &
-      matsValues$Q4b_urlmiss == 2 &
-      (matsValues$warning_manuscript == 2 | matsValues$warning_manuscript == 0)) {
+      matsValues$Q4b_urlmiss == 2) {
     matsValues$Q4b_complete = 0
     
     matsValues$warning_tech_barrier = 1
@@ -556,12 +530,10 @@ observeEvent(input$next4b, {
     fullReport$editor$Note[4] <- "No"
   }
   
-  
   # 4. There is an invalid barrier (author preference)
   if (matsValues$Q4b_author_barrier == 1 &
       matsValues$warning_incomplete_Q4b == 2 &
-      matsValues$Q4b_urlmiss == 2 &
-      (matsValues$warning_manuscript == 2 | matsValues$warning_manuscript == 0)) {
+      matsValues$Q4b_urlmiss == 2) {
     matsValues$Q4b_complete = 0
     
     matsValues$warning_author_barrier = 1
@@ -583,9 +555,34 @@ observeEvent(input$next4b, {
              (matsValues$warning_manuscript == 2 | matsValues$warning_manuscript == 0)) {
     matsValues$warning_author_barrier = 2
     fullReport$editor$Note[4] <- "No"
+  } 
+  
+  # 5. Materials are in the manuscript and authors haven't yet confirmed the pop-up
+  if (matsValues$Q4b_manuscript == 1 &
+      (is.null(input$manuscriptOkQ4b) |
+       isFALSE(input$manuscriptOkQ4b)) &
+      matsValues$warning_incomplete_Q4b == 2 &
+      matsValues$Q4b_urlmiss == 2) {
+    matsValues$Q4b_complete = 0
+    
+    matsValues$warning_manuscript = 1
+    confirmSweetAlert(
+      session = session,
+      inputId = "manuscriptOkQ4b",
+      type = "warning",
+      title = "Warning",
+      text = "Do you confirm that the manuscript contains all the research materials?
+      If this is NOT the case, the journal will be unable to progress your submission.",
+      btn_labels = c("No", "Yes")
+    )
+  } else if (matsValues$Q4b_manuscript == 1 &
+             isTRUE(input$manuscriptOkQ4b) &
+             matsValues$warning_incomplete_Q4b == 2 &
+             matsValues$Q4b_urlmiss == 2) {
+    matsValues$warning_manuscript = 2
   }
   
-  # 5. Invalid repositories
+  # 6. Invalid repositories
   if (matsValues$Q4b_invalidrepo == 1 &
       matsValues$warning_incomplete_Q4b == 2 &
       matsValues$Q4b_urlmiss == 2 &
@@ -602,7 +599,7 @@ observeEvent(input$next4b, {
     )
   }
   
-  # 6. Invalid URLs
+  # 7. Invalid URLs
   if (matsValues$Q4b_invalid_url == 1 &
       matsValues$Q4b_invalidrepo == 2 &
       matsValues$warning_incomplete_Q4b == 2 &
@@ -620,7 +617,7 @@ observeEvent(input$next4b, {
     )
   }
   
-  # 7. Inconsistent responses - ALL
+  # 8. Inconsistent responses - ALL
   if (matsValues$Q4b_inconsistent_all == 1 &
       matsValues$Q4b_invalid_url == 2 &
       matsValues$Q4b_invalidrepo == 2 &
@@ -640,7 +637,7 @@ observeEvent(input$next4b, {
     )
   }
   
-  # 8. Inconsistent responses - SOME
+  # 9. Inconsistent responses - SOME
   if (matsValues$Q4b_inconsistent_some == 1 &
       matsValues$Q4b_inconsistent_all == 2 &
       matsValues$Q4b_invalid_url == 2 &
@@ -661,7 +658,7 @@ observeEvent(input$next4b, {
     )
   }
   
-  # 9. Inconsistent responses - NONE
+  # 10. Inconsistent responses - NONE
   if (matsValues$Q4b_inconsistent_no == 1 &
       matsValues$Q4b_inconsistent_some == 2 &
       matsValues$Q4b_inconsistent_all == 2 &

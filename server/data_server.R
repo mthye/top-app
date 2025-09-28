@@ -154,7 +154,7 @@ output$insertQ2b <- renderUI({
 
 # add question to capture reasons for restrictions
 output$insertQ2b_followup <- renderUI({
-  textInput("Q2b_followup", 
+  textAreaInput("Q2b_followup", 
             label = NULL, 
             value = isolate(dataValues$Q2b_followup),
             placeholder = "Response required")
@@ -461,35 +461,10 @@ observeEvent(input$next2b, {
     )
   }
   
-  # 3. Data is in the manuscript and authors haven't yet confirmed the pop-up
-  if (dataValues$Q2b_manuscript == 1 &
-      (is.null(input$manuscriptOkQ2b) |
-       isFALSE(input$manuscriptOkQ2b)) &
-      dataValues$warning_incomplete_Q2b == 2 &
-      dataValues$Q2b_urlmiss == 2) {
-    dataValues$Q2b_complete = 0
-    
-    dataValues$warning_manuscript = 1
-    confirmSweetAlert(
-      session = session,
-      inputId = "manuscriptOkQ2b",
-      type = "warning",
-      title = "Warning",
-      text = "Do you confirm that the manuscript contains the data? If this is NOT the case, the journal will be unable to progress your submission.",
-      btn_labels = c("No", "Yes")
-    )
-  } else if (dataValues$Q2b_manuscript == 1 &
-             isTRUE(input$manuscriptOkQ2b) &
-             dataValues$warning_incomplete_Q2b == 2 &
-             dataValues$Q2b_urlmiss == 2) {
-    dataValues$warning_manuscript = 2
-  }
-  
-  # 4. There is an invalid barrier (technical barrier only)
+  # 3. There is an invalid barrier (technical barrier only)
   if (dataValues$Q2b_tech_barrier == 1 &
       dataValues$warning_incomplete_Q2b == 2 &
-      dataValues$Q2b_urlmiss == 2 &
-      (dataValues$warning_manuscript == 2 | dataValues$warning_manuscript == 0)) {
+      dataValues$Q2b_urlmiss == 2) {
     dataValues$Q2b_complete = 0
     dataValues$warning_tech_barrier = 1
     
@@ -515,8 +490,7 @@ observeEvent(input$next2b, {
   # 4. There is an invalid barrier (author preference)
   if (dataValues$Q2b_author_barrier == 1 &
       dataValues$warning_incomplete_Q2b == 2 &
-      dataValues$Q2b_urlmiss == 2 &
-      (dataValues$warning_manuscript == 2 | dataValues$warning_manuscript == 0)) {
+      dataValues$Q2b_urlmiss == 2) {
     dataValues$Q2b_complete = 0
     dataValues$warning_author_barrier = 1
     
@@ -537,7 +511,31 @@ observeEvent(input$next2b, {
     fullReport$editor$Note[2] <- "No"
   }
   
-  # 5. Invalid repositories
+  # 5. Data is in the manuscript and authors haven't yet confirmed the pop-up
+  if (dataValues$Q2b_manuscript == 1 &
+      (is.null(input$manuscriptOkQ2b) |
+       isFALSE(input$manuscriptOkQ2b)) &
+      dataValues$warning_incomplete_Q2b == 2 &
+      dataValues$Q2b_urlmiss == 2) {
+    dataValues$Q2b_complete = 0
+    
+    dataValues$warning_manuscript = 1
+    confirmSweetAlert(
+      session = session,
+      inputId = "manuscriptOkQ2b",
+      type = "warning",
+      title = "Warning",
+      text = "Do you confirm that the manuscript contains the data? If this is NOT the case, the journal will be unable to progress your submission.",
+      btn_labels = c("No", "Yes")
+    )
+  } else if (dataValues$Q2b_manuscript == 1 &
+             isTRUE(input$manuscriptOkQ2b) &
+             dataValues$warning_incomplete_Q2b == 2 &
+             dataValues$Q2b_urlmiss == 2) {
+    dataValues$warning_manuscript = 2
+  }
+  
+  # 6. Invalid repositories
   if (dataValues$Q2b_invalidrepo == 1 &
       dataValues$warning_incomplete_Q2b == 2 &
       dataValues$Q2b_urlmiss == 2 &
@@ -554,7 +552,7 @@ observeEvent(input$next2b, {
     )
   }
   
-  # 6. Invalid URLs
+  # 7. Invalid URLs
   if (dataValues$Q2b_invalid_url == 1 &
       dataValues$Q2b_invalidrepo == 2 &
       dataValues$warning_incomplete_Q2b == 2 &
@@ -572,7 +570,7 @@ observeEvent(input$next2b, {
     )
   }
   
-  # 7. Inconsistent responses - ALL
+  # 8. Inconsistent responses - ALL
   if (dataValues$Q2b_inconsistent_all == 1 &
       dataValues$Q2b_invalid_url == 2 &
       dataValues$Q2b_invalidrepo == 2 &
@@ -592,7 +590,7 @@ observeEvent(input$next2b, {
     )
   }
   
-  # 8. Inconsistent responses - SOME
+  # 9. Inconsistent responses - SOME
   if (dataValues$Q2b_inconsistent_some == 1 &
       dataValues$Q2b_inconsistent_all == 2 &
       dataValues$Q2b_invalid_url == 2 &
@@ -612,7 +610,7 @@ observeEvent(input$next2b, {
     )
   }
   
-  # 9. Inconsistent responses - NONE
+  # 10. Inconsistent responses - NONE
   if (dataValues$Q2b_inconsistent_no == 1 &
       dataValues$Q2b_inconsistent_some == 2 &
       dataValues$Q2b_inconsistent_all == 2 &
