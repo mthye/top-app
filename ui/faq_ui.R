@@ -56,11 +56,14 @@ fluidPage(
       title = HTML("<h5 style='color: white; '><b>Tips for Manuscript Assessments</b></h5>"),
       status = "danger",
       collapsed = TRUE,
-      HTML("<h5 style>
-      <li style='color: #ffffff'>When providing a URL(s) to study data, code, or materials, make sure it is reliable and publicly accessible and links directly to the repository containing the specific data for the study.</h5></li>
-
-      
-      ")
+      HTML("<h5><ul style='margin-left:20px;'>
+            <li style='color: #ffffff'>When providing a URL(s) to study data, code, or materials, make sure it is reliable and publicly accessible and links directly to the repository containing the specific data for the study.</li>
+            <br>
+            <li style='color: #ffffff'>Pay attention to the pop-up messages that provide guidance when you're navigating the app. 
+                                        Heeding this guidance will help avoid delays in evaluating your manuscript.</li>
+            <br>
+            <li style='color: #ffffff'>Need more help? Contact our transparency team for guidance:
+                                      <a href='mailto:transparency.cortex@ed.ac.uk' style='color:fuchsia;'>transparency.cortex@ed.ac.uk</a></li></ul></h5>"),
     )
   )
 )

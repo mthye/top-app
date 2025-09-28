@@ -12,12 +12,12 @@ fluidPage(
           <b>Please follow all instructions and warnings carefully</b> to ensure successful completion of your assessment.<br><br>
           After all sections are successfully completed, you can download a zipped file with your transparency report files in the <b>Generate Report</b> section.</h5>"),
       br(),
-      HTML("<h5 style>You will need the following information to get started:<br>
-           <li>List of all types of data used in the study</li> 
-           <li>List of all types of research materials used in the study</li> 
-           <li>Links to all publicly available resources (data, materials, code)</li> 
-           <li>Study design details as they are presented in the manuscript</li> 
-           </h5>"),
+      HTML("<h5>You will need the following information to get started:
+      <ul style='margin-left:20px;'>
+      <li>List of all types of data used in the study</li> 
+      <li>List of all types of research materials used in the study</li> 
+      <li>Links to all publicly available resources (data, materials, code)</li> 
+      <li>Study design details as they are presented in the manuscript</li> </ul></h5>"),
       br(),
       h5("Check out our ", actionLink("goFAQ", "FAQ & Tips", status = "primary", style="color: #fe9923"), "section for more information on the criteria."),
       br(),
