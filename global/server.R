@@ -142,7 +142,7 @@ server <- function(input, output, session) {
     no4 = "",
     
     Q5_complete = 0,
-    Q5_followup = NA,
+    Q5_followup = NULL,
     Q5a_complete = 0,
     Q5a2_complete = 0,
     
@@ -461,7 +461,7 @@ server <- function(input, output, session) {
 actionBttn(
   inputId = "Id109",
   label = NULL,
-  style = "simple", 
+  style = "simple",
   color = "primary",
   icon = icon("bars")
-) 
+)

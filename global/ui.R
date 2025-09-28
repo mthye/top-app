@@ -22,7 +22,7 @@ mytheme <- fresh::create_theme(
     submenu_active_color = "#FFF"
   ),
   # bs4dash_status(
-  #   primary = "#873cc7", danger = "#423CC7", light = "#57ac0c", success = "#a3369e"), 
+  #   primary = "#873cc7", danger = "#423CC7", light = "#57ac0c", success = "#a3369e"),
   #   bs4dash_color(gray_900 = "#FFF", white = "#272c30")
   bs4dash_status(
     primary = "#2a92a9", danger = "#fe9923", light = "#57ac0c", success = "#873cc7"), 

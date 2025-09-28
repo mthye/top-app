@@ -13,7 +13,7 @@ fluidPage(
           After all sections are successfully completed, you can download a zipped file with your transparency report files in the <b>Generate Report</b> section.</h5>"),
       br(),
       HTML("<h5>You will need the following information to get started:
-      <ul style='margin-left:20px;'>
+      <ul style='margin-left:5px;'>
       <li>List of all types of data used in the study</li> 
       <li>List of all types of research materials used in the study</li> 
       <li>Links to all publicly available resources (data, materials, code)</li> 
@@ -24,8 +24,6 @@ fluidPage(
       h5(HTML("This app was developed by Loukia Tzavella and Melissa Thye. The code is available on <a href='https://github.com/mthye/top-app' target='_blank'>github</a>.")),
       )
   ),
-  
-  br(),
   
   # Using fluidRow to arrange boxes side by side
   fluidRow(
