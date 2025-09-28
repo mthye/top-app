@@ -177,7 +177,7 @@ if ("Code in Supplementary Information" %in% params$Q3b_input$X4 | "Code is cont
 
 ## materials
 mat_access <- ""
-if ("Materials are in Supplementary Information" %in% params$Q4b_input$X4 | "Materials are contained in the paper" %in% params$Q4b_input$X4) {
+if ("Materials in Supplementary Information" %in% params$Q4b_input$X4 | "Materials are contained in the paper" %in% params$Q4b_input$X4) {
   mat_access <- "Materials are contained in the manuscript or supplemental files. "
 }
 

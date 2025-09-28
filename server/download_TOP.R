@@ -237,14 +237,14 @@ observeEvent(input$generateReport, {
                      text = "Checking your responses...")
   
   remove_modal_spinner()
-  
+
   sendSweetAlert(
     session = session,
     title = "Success!",
     text = tagList(
-      "Please download the zipped report file and save the current session to your computer.
-      Upload both the Scientific Transparency Statement (docx file) and Scientific Transparency Report (pdf file) with your resubmission.
-      You can restore and modify the current session using the session file in the event edits to the report are requested.",
+      HTML("Please download the zipped report file and save the current session to your computer.<br><br>
+      Upload both the Scientific Transparency Statement (docx file) and Scientific Transparency Report (pdf file) with your resubmission.<br><br>
+      You can restore and modify the current session using the session file in the event edits to the report are requested."),
       br(),
       br(),
       downloadBttn(outputId = "downloadReport",

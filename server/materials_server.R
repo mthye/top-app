@@ -149,9 +149,8 @@ output$insertQ4b <- renderUI({
       h5(
         "4b. Please indicate the public availability for all selected types of research materials, as explained below."
       ),
-      p(HTML("Any paper-based materials are expected to be scanned and uploaded to a public repository unless there are legal or ethical barriers to doing so.<br>",
-        "Copyright restrictions should be indicated as a legal barrier with restricted access route managed by an external authority.")
-      ),
+      h6("Any paper-based materials are expected to be scanned and uploaded to a public repository unless there are legal or ethical barriers to doing so."),
+      h6("Copyright restrictions should be indicated as a legal barrier with restricted access route managed by an external authority."),
       tags$div(
         HTML(
           "<dl>
@@ -501,8 +500,32 @@ observeEvent(input$next4b, {
     )
   }
   
-  # 3. There is an invalid barrier (technical barrier only)
+  # 3. No data shared pop-up
+  if (matsValues$warning_incomplete_Q4b == 2 &
+      matsValues$Q4b_urlmiss == 2 &
+      (isTRUE(levels(as.factor(matsValues$Q4b$X2))=="NO materials are publicly available")) &
+      (isFALSE(input$matsSharingQ4b) || is.null(input$matsSharingQ4b))) {
+    matsValues$Q4b_complete = 0
+    
+    matsValues$mats_barrier = 1
+    
+    confirmSweetAlert(
+      session = session,
+      inputId = "matsSharingQ4b",
+      title = "Warning",
+      text = HTML("You have indicated that no research materials are publicly available. Is this correct? <br><br>
+                    If so, you will be asked to provide additional justification for why no materials are shared on the next page unless you change your answers.
+                    This justification will be published alongside your manuscript."),
+      type = "warning",
+      btn_labels = c("Change my response", "This is correct"),
+      html = TRUE) 
+  } else {
+    matsValues$mats_barrier = 2
+  } 
+
+  # 4. There is an invalid barrier (technical barrier only)
   if (matsValues$Q4b_tech_barrier == 1 &
+      matsValues$mats_barrier == 2 &
       matsValues$warning_incomplete_Q4b == 2 &
       matsValues$Q4b_urlmiss == 2) {
     matsValues$Q4b_complete = 0
@@ -524,14 +547,14 @@ observeEvent(input$next4b, {
     
   } else if (matsValues$Q4b_tech_barrier == 2 &
              matsValues$warning_incomplete_Q4b == 2 &
-             matsValues$Q4b_urlmiss == 2 &
-             (matsValues$warning_manuscript == 2 | matsValues$warning_manuscript == 0)) {
+             matsValues$Q4b_urlmiss == 2) {
     matsValues$warning_tech_barrier = 2
     fullReport$editor$Note[4] <- "No"
   }
   
-  # 4. There is an invalid barrier (author preference)
+  # 5. There is an invalid barrier (author preference)
   if (matsValues$Q4b_author_barrier == 1 &
+      matsValues$mats_barrier == 2 &
       matsValues$warning_incomplete_Q4b == 2 &
       matsValues$Q4b_urlmiss == 2) {
     matsValues$Q4b_complete = 0
@@ -551,16 +574,15 @@ observeEvent(input$next4b, {
     
   } else if (matsValues$Q4b_author_barrier == 2 &
              matsValues$warning_incomplete_Q4b == 2 &
-             matsValues$Q4b_urlmiss == 2 &
-             (matsValues$warning_manuscript == 2 | matsValues$warning_manuscript == 0)) {
+             matsValues$Q4b_urlmiss == 2) {
     matsValues$warning_author_barrier = 2
     fullReport$editor$Note[4] <- "No"
   } 
   
-  # 5. Materials are in the manuscript and authors haven't yet confirmed the pop-up
+  # 6. Materials are in the manuscript and authors haven't yet confirmed the pop-up
   if (matsValues$Q4b_manuscript == 1 &
-      (is.null(input$manuscriptOkQ4b) |
-       isFALSE(input$manuscriptOkQ4b)) &
+      matsValues$mats_barrier == 2 &
+      (is.null(input$manuscriptOkQ4b) | isFALSE(input$manuscriptOkQ4b)) &
       matsValues$warning_incomplete_Q4b == 2 &
       matsValues$Q4b_urlmiss == 2) {
     matsValues$Q4b_complete = 0
@@ -577,15 +599,17 @@ observeEvent(input$next4b, {
     )
   } else if (matsValues$Q4b_manuscript == 1 &
              isTRUE(input$manuscriptOkQ4b) &
+             matsValues$mats_barrier == 2 &
              matsValues$warning_incomplete_Q4b == 2 &
              matsValues$Q4b_urlmiss == 2) {
     matsValues$warning_manuscript = 2
   }
   
-  # 6. Invalid repositories
+  # 7. Invalid repositories
   if (matsValues$Q4b_invalidrepo == 1 &
       matsValues$warning_incomplete_Q4b == 2 &
       matsValues$Q4b_urlmiss == 2 &
+      matsValues$mats_barrier == 2 &
       (matsValues$warning_manuscript == 2 | matsValues$warning_manuscript == 0) &
       (matsValues$warning_tech_barrier == 0 | matsValues$warning_tech_barrier == 2) &
       (matsValues$warning_author_barrier == 0 | matsValues$warning_author_barrier == 2)) {
@@ -599,11 +623,12 @@ observeEvent(input$next4b, {
     )
   }
   
-  # 7. Invalid URLs
+  # 8. Invalid URLs
   if (matsValues$Q4b_invalid_url == 1 &
       matsValues$Q4b_invalidrepo == 2 &
       matsValues$warning_incomplete_Q4b == 2 &
       matsValues$Q4b_urlmiss == 2 &
+      matsValues$mats_barrier == 2 &
       (matsValues$warning_manuscript == 2 | matsValues$warning_manuscript == 0) &
       (matsValues$warning_tech_barrier == 0 | matsValues$warning_tech_barrier == 2) &
       (matsValues$warning_author_barrier == 0 | matsValues$warning_author_barrier == 2)) {
@@ -617,12 +642,13 @@ observeEvent(input$next4b, {
     )
   }
   
-  # 8. Inconsistent responses - ALL
+  # 9. Inconsistent responses - ALL
   if (matsValues$Q4b_inconsistent_all == 1 &
       matsValues$Q4b_invalid_url == 2 &
       matsValues$Q4b_invalidrepo == 2 &
       matsValues$warning_incomplete_Q4b == 2 &
       matsValues$Q4b_urlmiss == 2 &
+      matsValues$mats_barrier == 2 &
       (matsValues$warning_manuscript == 2 | matsValues$warning_manuscript == 0) &
       (matsValues$warning_tech_barrier == 0 | matsValues$warning_tech_barrier == 2) &
       (matsValues$warning_author_barrier == 0 | matsValues$warning_author_barrier == 2)) {
@@ -637,13 +663,14 @@ observeEvent(input$next4b, {
     )
   }
   
-  # 9. Inconsistent responses - SOME
+  # 10. Inconsistent responses - SOME
   if (matsValues$Q4b_inconsistent_some == 1 &
       matsValues$Q4b_inconsistent_all == 2 &
       matsValues$Q4b_invalid_url == 2 &
       matsValues$Q4b_invalidrepo == 2 &
       matsValues$warning_incomplete_Q4b == 2 &
       matsValues$Q4b_urlmiss == 2 &
+      matsValues$mats_barrier == 2 &
       (matsValues$warning_manuscript == 2 | matsValues$warning_manuscript == 0) &
       (matsValues$warning_tech_barrier == 0 | matsValues$warning_tech_barrier == 2) &
       (matsValues$warning_author_barrier == 0 | matsValues$warning_author_barrier == 2)) {
@@ -658,7 +685,7 @@ observeEvent(input$next4b, {
     )
   }
   
-  # 10. Inconsistent responses - NONE
+  # 11. Inconsistent responses - NONE
   if (matsValues$Q4b_inconsistent_no == 1 &
       matsValues$Q4b_inconsistent_some == 2 &
       matsValues$Q4b_inconsistent_all == 2 &
@@ -666,6 +693,7 @@ observeEvent(input$next4b, {
       matsValues$Q4b_invalidrepo == 2 &
       matsValues$warning_incomplete_Q4b == 2 &
       matsValues$Q4b_urlmiss == 2 &
+      matsValues$mats_barrier == 2 &
       (matsValues$warning_manuscript == 2 | matsValues$warning_manuscript == 0) &
       (matsValues$warning_tech_barrier == 0 | matsValues$warning_tech_barrier == 2) &
       (matsValues$warning_author_barrier == 0 | matsValues$warning_author_barrier == 2)) {
@@ -685,6 +713,7 @@ observeEvent(input$next4b, {
              matsValues$Q4b_invalidrepo == 2 &
              matsValues$warning_incomplete_Q4b == 2 &
              matsValues$Q4b_urlmiss == 2 &
+             matsValues$mats_barrier == 2 &
              (matsValues$warning_manuscript == 2 | matsValues$warning_manuscript == 0) &
              (matsValues$warning_tech_barrier == 0 | matsValues$warning_tech_barrier == 2) &
              (matsValues$warning_author_barrier == 0 | matsValues$warning_author_barrier == 2)) {
@@ -873,36 +902,50 @@ output$insertQ4c <- renderUI({
   req(input$Q4b)
   
   if (matsValues$Q4b_complete == 1 &
-      (matsValues$Q4b_partialMats == 1 |
-       matsValues$Q4b_noneMats == 1)) {
-    matsValues$Q4_text_prompted = 1
+      (matsValues$Q4b_partialMats == 1 |matsValues$Q4b_noneMats == 1)) {
     
-    fluidPage(
+    if (isTRUE(levels(as.factor(matsValues$Q4b$X2))=="NO materials are publicly available")) {
+      matsValues$Q4_text_prompted = 1
       
-      h5("4c. You have indicated partial and/or no public availability for the material(s) presented below. Please explain the nature of the restriction to 
-              sharing materials in more detail in the text box. Your response will be included in the transparency statement published alongside your manuscript."),
-      
-      uiOutput("insertQ4b_followup"),
-      br(),
-      
-      
-      h5("In this table please explain how readers can access the research materials that are not publicly available (restricted access route) 
-          and under what conditions they can do so (restricted access conditions)."
-      ),
-      p(HTML("Copyright restrictions should be indicated as a legal barrier with restricted access route managed by an external authority.")
-      ),
-      br(),
-      rHandsontableOutput("Q4c"),
-      HTML(paste0('<p style="font-size:20px;">If the categories listed do not apply to your manuscript and you need guidance, please contact the transparency team: 
+      fluidPage(
+        h5("4c. In this table please explain how readers can access the research materials that are not publicly available (restricted access route) 
+          and under what conditions they can do so (restricted access conditions)."),
+        h6("Copyright restrictions should be indicated as a legal barrier with restricted access route managed by an external authority."),
+        br(),
+        rHandsontableOutput("Q4c"),
+        
+        h5("You have indicated that no materials will be made publicly available. Please explain the nature of the restriction to 
+           sharing materials in more detail in the text box. Your response will be included in the transparency statement published alongside your manuscript."),
+        
+        uiOutput("insertQ4b_followup"),
+        
+        br(),
+        HTML(paste0('<p style="font-size:20px;">If the categories listed do not apply to your manuscript and you need guidance, please contact the transparency team: 
                   <a href="mailto:transparency.cortex@ed.ac.uk?subject=TOP%20App%20Support%20', URLencode(input$ms_id, reserved = TRUE),'&body=Dear%20Transparency%20Editors," 
                   style="color:fuchsia; text-decoration:none;">
                   transparency.cortex@ed.ac.uk
                   </a>
                   </p>')),
-      br()
-    )
-  } else {
-    matsValues$Q4_text_prompted = 2
+      )
+    } else {
+      matsValues$Q4_text_prompted = 2
+      
+      fluidPage(
+        h5("4c. In this table please explain how readers can access the research materials that are not publicly available (restricted access route) 
+          and under what conditions they can do so (restricted access conditions)."),
+        h6("Copyright restrictions should be indicated as a legal barrier with restricted access route managed by an external authority."),
+        br(),
+        rHandsontableOutput("Q4c"),
+        
+        br(),
+        HTML(paste0('<p style="font-size:20px;">If the categories listed do not apply to your manuscript and you need guidance, please contact the transparency team: 
+                  <a href="mailto:transparency.cortex@ed.ac.uk?subject=TOP%20App%20Support%20', URLencode(input$ms_id, reserved = TRUE),'&body=Dear%20Transparency%20Editors," 
+                  style="color:fuchsia; text-decoration:none;">
+                  transparency.cortex@ed.ac.uk
+                  </a>
+                  </p>')),
+      )
+    }
   }
 })
 
@@ -911,7 +954,8 @@ observeEvent(input$next4c, {
                      color = "purple",
                      text = "Checking your responses...")
   
-  if (matsValues$Q4_text_prompted == 1 & input$Q4b_followup == "") {
+  if (matsValues$Q4_text_prompted == 1 & 
+      (is.null(input$Q4b_followup) || input$Q4b_followup == "")) {
     matsValues$Q4c_complete = 0
     sendSweetAlert(
       session = session,
@@ -919,7 +963,8 @@ observeEvent(input$next4c, {
       text = "You have not completed this section (there are missing responses or unanswered questions).",
       type = "error"
     )
-  } else {
+  } else if (matsValues$Q4_text_prompted == 1 & 
+             (!is.null(input$Q4b_followup) || input$Q4b_followup != "")) {
     matsValues$Q4_text_prompted = 2
     matsValues$Q4b_followup = input$Q4b_followup
   }

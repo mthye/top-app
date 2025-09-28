@@ -140,7 +140,6 @@ output$insertQ3b_followup <- renderUI({
                 placeholder = "Response required")
 })
 
-
 observeEvent(input$Q3a, {
   fullReport$S3_complete = 0
   
@@ -389,19 +388,12 @@ observeEvent(input$next3b, {
     )
   )
   
-  codeValues$Q3b_partialCode <-
-    ifelse("SOME code is publicly available" %in% codeValues$Q3b$X2, 1, 2)
-  codeValues$Q3b_noneCode <-
-    ifelse("NO code is publicly available" %in% codeValues$Q3b$X2, 1, 2)
+  codeValues$Q3b_partialCode <- ifelse("SOME code is publicly available" %in% codeValues$Q3b$X2, 1, 2)
+  codeValues$Q3b_noneCode <- ifelse("NO code is publicly available" %in% codeValues$Q3b$X2, 1, 2)
   
-  codeValues$Q3b_invalidrepo <-
-    ifelse(TRUE %in% str_contains(
-      codeValues$Q3b$X5,
-      c("drive", "google", "dropbox"),
-      ignore.case = TRUE
-    ),
-    1,
-    2)
+  codeValues$Q3b_invalidrepo <- ifelse(TRUE %in% str_contains(codeValues$Q3b$X5,
+                                                              c("drive", "google", "dropbox"),
+                                                              ignore.case = TRUE), 1, 2)
   
   ## Save URLs that don't exist to present in an alert later on when user tries to proceed
   codeValues$Q3b_urls <-
@@ -456,8 +448,32 @@ observeEvent(input$next3b, {
     )
   }
   
-  # 3. There is an invalid barrier  (technical barrier only)
+  # 3. No data shared pop-up
+  if (codeValues$warning_incomplete_Q3b == 2 &
+      codeValues$Q3b_urlmiss == 2 &
+      (isTRUE(levels(as.factor(codeValues$Q3b$X2))=="NO code is publicly available")) &
+      (isFALSE(input$codeSharingQ3b) || is.null(input$codeSharingQ3b))) {
+    matsValues$Q4b_complete = 0
+    
+    codeValues$code_barrier = 1
+    
+    confirmSweetAlert(
+      session = session,
+      inputId = "codeSharingQ3b",
+      title = "Warning",
+      text = HTML("You have indicated that no code is publicly available. Is this correct? <br><br>
+                    If so, you will be asked to provide additional justification for why no code is shared on the next page unless you change your answers.
+                    This justification will be published alongside your manuscript."),
+      type = "warning",
+      btn_labels = c("Change my response", "This is correct"),
+      html = TRUE) 
+  } else {
+    codeValues$code_barrier = 2
+  } 
+  
+  # 4. There is an invalid barrier  (technical barrier only)
   if (codeValues$Q3b_tech_barrier == 1 &
+      codeValues$code_barrier == 2 &
       codeValues$warning_incomplete_Q3b == 2 &
       codeValues$Q3b_urlmiss == 2) {
     
@@ -484,8 +500,9 @@ observeEvent(input$next3b, {
     fullReport$editor$Note[3] <- "No"
   }
   
-  # 4. There is an invalid barrier  (author preference)
+  # 5. There is an invalid barrier  (author preference)
   if (codeValues$Q3b_author_barrier == 1 &
+      codeValues$code_barrier == 2 &
       codeValues$warning_incomplete_Q3b == 2 &
       codeValues$Q3b_urlmiss == 2) {
     
@@ -510,8 +527,9 @@ observeEvent(input$next3b, {
     fullReport$editor$Note[3] <- "No"
   }
   
-  # 5. Code is in the manuscript and authors haven't yet confirmed the pop-up
+  # 6. Code is in the manuscript and authors haven't yet confirmed the pop-up
   if (codeValues$Q3b_manuscript == 1 &
+      codeValues$code_barrier == 2 &
       (is.null(input$manuscriptOkQ3b) | isFALSE(input$manuscriptOkQ3b)) &
       codeValues$warning_incomplete_Q3b == 2 &
       codeValues$Q3b_urlmiss == 2) {
@@ -529,16 +547,18 @@ observeEvent(input$next3b, {
       btn_labels = c("No" , "Yes"))
     
   } else if (codeValues$Q3b_manuscript == 1 &
+             codeValues$code_barrier == 2 &
              isTRUE(input$manuscriptOkQ3b) &
              codeValues$warning_incomplete_Q3b == 2 &
              codeValues$Q3b_urlmiss == 2) {
     codeValues$warning_manuscript = 2
   }
   
-  # 6. Invalid repositories
+  # 7. Invalid repositories
   if (codeValues$Q3b_invalidrepo == 1 &
       codeValues$warning_incomplete_Q3b == 2 &
       codeValues$Q3b_urlmiss == 2 &
+      codeValues$code_barrier == 2 &
       (codeValues$warning_manuscript == 2 | codeValues$warning_manuscript == 0) &
       (codeValues$warning_tech_barrier == 2 | codeValues$warning_tech_barrier == 0) &
       (codeValues$warning_author_barrier == 2 | codeValues$warning_author_barrier == 0)) {
@@ -552,11 +572,12 @@ observeEvent(input$next3b, {
     )
   }
   
-  # 7. Invalid URLs
+  # 8. Invalid URLs
   if (codeValues$Q3b_invalid_url == 1 &
       codeValues$Q3b_invalidrepo == 2 &
       codeValues$warning_incomplete_Q3b == 2 &
       codeValues$Q3b_urlmiss == 2 &
+      codeValues$code_barrier == 2 &
       (codeValues$warning_manuscript == 2 | codeValues$warning_manuscript == 0) &
       (codeValues$warning_tech_barrier == 2 | codeValues$warning_tech_barrier == 0) &
       (codeValues$warning_author_barrier == 2 | codeValues$warning_author_barrier == 0)) {
@@ -570,12 +591,13 @@ observeEvent(input$next3b, {
     )
   }
   
-  # 8. Inconsistent responses - ALL
+  # 9. Inconsistent responses - ALL
   if (codeValues$Q3b_inconsistent_all == 1 &
       codeValues$Q3b_invalid_url == 2 &
       codeValues$Q3b_invalidrepo == 2 &
       codeValues$warning_incomplete_Q3b == 2 &
       codeValues$Q3b_urlmiss == 2 &
+      codeValues$code_barrier == 2 &
       (codeValues$warning_manuscript == 2 | codeValues$warning_manuscript == 0) &
       (codeValues$warning_tech_barrier == 2 | codeValues$warning_tech_barrier == 0) &
       (codeValues$warning_author_barrier == 2 | codeValues$warning_author_barrier == 0)) {
@@ -590,13 +612,14 @@ observeEvent(input$next3b, {
     )
   }
   
-  # 9. Inconsistent responses - SOME
+  # 10. Inconsistent responses - SOME
   if (codeValues$Q3b_inconsistent_some == 1 &
       codeValues$Q3b_inconsistent_all == 2 &
       codeValues$Q3b_invalid_url == 2 &
       codeValues$Q3b_invalidrepo == 2 &
       codeValues$warning_incomplete_Q3b == 2 &
       codeValues$Q3b_urlmiss == 2 &
+      codeValues$code_barrier == 2 &
       (codeValues$warning_manuscript == 2 | codeValues$warning_manuscript == 0) &
       (codeValues$warning_tech_barrier == 2 | codeValues$warning_tech_barrier == 0) &
       (codeValues$warning_author_barrier == 2 | codeValues$warning_author_barrier == 0)) {
@@ -611,7 +634,7 @@ observeEvent(input$next3b, {
     )
   }
   
-  # 10. Inconsistent responses - NONE
+  # 11. Inconsistent responses - NONE
   if (codeValues$Q3b_inconsistent_no == 1 &
       codeValues$Q3b_inconsistent_some == 2 &
       codeValues$Q3b_inconsistent_all == 2 &
@@ -619,6 +642,7 @@ observeEvent(input$next3b, {
       codeValues$Q3b_invalidrepo == 2 &
       codeValues$warning_incomplete_Q3b == 2 &
       codeValues$Q3b_urlmiss == 2 &
+      codeValues$code_barrier == 2 &
       (codeValues$warning_manuscript == 2 | codeValues$warning_manuscript == 0) &
       (codeValues$warning_tech_barrier == 2 | codeValues$warning_tech_barrier == 0) &
       (codeValues$warning_author_barrier == 2 | codeValues$warning_author_barrier == 0)) {
@@ -638,6 +662,7 @@ observeEvent(input$next3b, {
              codeValues$Q3b_invalidrepo == 2 &
              codeValues$warning_incomplete_Q3b == 2 &
              codeValues$Q3b_urlmiss == 2 &
+             codeValues$code_barrier == 2 &
              (codeValues$warning_manuscript == 2 | codeValues$warning_manuscript == 0) &
              (codeValues$warning_tech_barrier == 2 | codeValues$warning_tech_barrier == 0) &
              (codeValues$warning_author_barrier == 2 | codeValues$warning_author_barrier == 0)) {
@@ -688,8 +713,7 @@ observeEvent(input$next3b, {
   ##Code for partial/no availability
   
   if (codeValues$Q3b_complete == 1 &
-      codeValues$Q3b_partialCode == 2 &
-      codeValues$Q3b_noneCode == 2) {
+      codeValues$Q3b_partialCode == 2 & codeValues$Q3b_noneCode == 2) {
     codeValues$S3b_complete = 1
     
     updateTabsetPanel(session, "sidebar", selected = "materials")
@@ -817,29 +841,48 @@ output$insertQ3c <- renderUI({
   
   if (codeValues$Q3b_complete == 1 &
       (codeValues$Q3b_partialCode == 1 | codeValues$Q3b_noneCode == 1)) {
+    if  (isTRUE(levels(as.factor(codeValues$Q3b$X2))=="NO code is publicly available")) {
     codeValues$Q3_text_prompted = 1
     
     fluidPage(
       
-      h5("3c. You have indicated partial and/or no public availability for the code type(s) presented below. Please explain the nature of the restriction to 
-              sharing code in more detail in the text box. Your response will be included in the transparency statement published alongside your manuscript."),
-      
-      uiOutput("insertQ3b_followup"),
-      br(),
-      
-      h5("In this table please explain how readers can access the code that is not publicly available (restricted access route) 
+      h5("3c. In this table please explain how readers can access the code that is not publicly available (restricted access route) 
           and under what conditions they can do so (restricted access conditions)."),
+      br(),
       rHandsontableOutput("Q3c"),
+      
+      h5("You have indicated that no code will be made publicly available. Please explain the nature of the restriction to 
+          sharing code in more detail in the text box. Your response will be included in the transparency statement published alongside your manuscript."),
+
+      uiOutput("insertQ3b_followup"),
+      
+      br(),
       HTML(paste0('<p style="font-size:20px;">If the categories listed do not apply to your manuscript and you need guidance, please contact the transparency team: 
                   <a href="mailto:transparency.cortex@ed.ac.uk?subject=TOP%20App%20Support%20', URLencode(input$ms_id, reserved = TRUE),'&body=Dear%20Transparency%20Editors," 
                   style="color:fuchsia; text-decoration:none;">
                   transparency.cortex@ed.ac.uk
                   </a>
                   </p>')),
-      br()
     )
-  } else {
-    codeValues$Q3_text_prompted = 2
+    } else{
+      codeValues$Q3_text_prompted = 2
+      
+      fluidPage(
+        
+        h5("3c. In this table please explain how readers can access the code that is not publicly available (restricted access route) 
+          and under what conditions they can do so (restricted access conditions)."),
+        br(),
+        rHandsontableOutput("Q3c"),
+        
+        br(),
+        HTML(paste0('<p style="font-size:20px;">If the categories listed do not apply to your manuscript and you need guidance, please contact the transparency team: 
+                  <a href="mailto:transparency.cortex@ed.ac.uk?subject=TOP%20App%20Support%20', URLencode(input$ms_id, reserved = TRUE),'&body=Dear%20Transparency%20Editors," 
+                  style="color:fuchsia; text-decoration:none;">
+                  transparency.cortex@ed.ac.uk
+                  </a>
+                  </p>')),
+      )
+    }
   }
 })
 
@@ -848,7 +891,8 @@ observeEvent(input$next3c, {
                      color = "purple",
                      text = "Checking your responses...")
   
-  if (codeValues$Q3_text_prompted == 1 & input$Q3b_followup == "") {
+  if (codeValues$Q3_text_prompted == 1 & 
+      (is.null(input$Q3b_followup) || input$Q3b_followup == "")) {
     codeValues$Q2c_complete = 0
     sendSweetAlert(
       session = session,
@@ -856,7 +900,8 @@ observeEvent(input$next3c, {
       text = "You have not completed this section (there are missing responses or unanswered questions).",
       type = "error"
     )
-  } else {
+  } else if (codeValues$Q3_text_prompted == 1 & 
+             (!is.null(input$Q3b_followup) || input$Q3b_followup != "")) {
     codeValues$Q3_text_prompted = 2
     codeValues$Q3b_followup = input$Q3b_followup
   }

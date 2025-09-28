@@ -88,7 +88,8 @@ output$insertQ2a <- renderUI({
 
 observeEvent(input$next2a, {
   if (input$Q2 == "" |
-      (length(dataValues$selectedDataTypes) == 0 &
+      #(length(dataValues$selectedDataTypes) == 0 &
+      (length(input$Q2a) == 0 &
        dataValues$dataYes == 1)) {
     sendSweetAlert(session = session,
                    title = "Incomplete section",
@@ -460,9 +461,34 @@ observeEvent(input$next2b, {
       type = "error"
     )
   }
+
+    # 3. No data shared pop-up
+    if (dataValues$warning_incomplete_Q2b == 2 &
+        dataValues$Q2b_urlmiss == 2 &
+        (isTRUE(levels(as.factor(dataValues$Q2b$X3))=="NO data are publicly available")) &
+        (isFALSE(input$dataSharingQ2b) || is.null(input$dataSharingQ2b))) {
+      dataValues$Q2b_complete = 0
+      
+      dataValues$data_barrier = 1
+      
+      confirmSweetAlert(
+        session = session,
+        inputId = "dataSharingQ2b",
+        title = "Warning",
+        text = HTML("You have indicated that no raw or processed data are publicly available. Is this correct? <br><br>
+                    If so, you will be asked to provide additional justification for why no data are shared on the next page unless you change your answers.
+                    This justification will be published alongside your manuscript."),
+        type = "warning",
+        btn_labels = c("Change my response", "This is correct"),
+        html = TRUE) 
+    } else {
+      dataValues$data_barrier = 2
+    } 
   
-  # 3. There is an invalid barrier (technical barrier only)
+  
+  # 4. There is an invalid barrier (technical barrier only)
   if (dataValues$Q2b_tech_barrier == 1 &
+      dataValues$data_barrier == 2 &
       dataValues$warning_incomplete_Q2b == 2 &
       dataValues$Q2b_urlmiss == 2) {
     dataValues$Q2b_complete = 0
@@ -487,10 +513,10 @@ observeEvent(input$next2b, {
     fullReport$editor$Note[2] <- "No"
   }
   
-  # 4. There is an invalid barrier (author preference)
+  # 5. There is an invalid barrier (author preference)
   if (dataValues$Q2b_author_barrier == 1 &
-      dataValues$warning_incomplete_Q2b == 2 &
-      dataValues$Q2b_urlmiss == 2) {
+      dataValues$data_barrier == 2 &
+      dataValues$warning_incomplete_Q2b == 2 & dataValues$Q2b_urlmiss == 2) {
     dataValues$Q2b_complete = 0
     dataValues$warning_author_barrier = 1
     
@@ -511,12 +537,14 @@ observeEvent(input$next2b, {
     fullReport$editor$Note[2] <- "No"
   }
   
-  # 5. Data is in the manuscript and authors haven't yet confirmed the pop-up
+  # 6. Data is in the manuscript and authors haven't yet confirmed the pop-up
   if (dataValues$Q2b_manuscript == 1 &
-      (is.null(input$manuscriptOkQ2b) |
-       isFALSE(input$manuscriptOkQ2b)) &
+      (is.null(input$manuscriptOkQ2b) | isFALSE(input$manuscriptOkQ2b)) &
       dataValues$warning_incomplete_Q2b == 2 &
-      dataValues$Q2b_urlmiss == 2) {
+      dataValues$Q2b_urlmiss == 2 &
+      dataValues$data_barrier == 2 &
+      (dataValues$warning_tech_barrier == 0 | dataValues$warning_tech_barrier == 2) &
+      (dataValues$warning_author_barrier == 0 | dataValues$warning_author_barrier == 2)) {
     dataValues$Q2b_complete = 0
     
     dataValues$warning_manuscript = 1
@@ -531,14 +559,18 @@ observeEvent(input$next2b, {
   } else if (dataValues$Q2b_manuscript == 1 &
              isTRUE(input$manuscriptOkQ2b) &
              dataValues$warning_incomplete_Q2b == 2 &
-             dataValues$Q2b_urlmiss == 2) {
+             dataValues$Q2b_urlmiss == 2 &
+             dataValues$data_barrier == 2 &
+             (dataValues$warning_tech_barrier == 0 | dataValues$warning_tech_barrier == 2) &
+             (dataValues$warning_author_barrier == 0 | dataValues$warning_author_barrier == 2)) {
     dataValues$warning_manuscript = 2
   }
   
-  # 6. Invalid repositories
+  # 7. Invalid repositories
   if (dataValues$Q2b_invalidrepo == 1 &
       dataValues$warning_incomplete_Q2b == 2 &
       dataValues$Q2b_urlmiss == 2 &
+      dataValues$data_barrier == 2 &
       (dataValues$warning_manuscript == 2 | dataValues$warning_manuscript == 0) &
       (dataValues$warning_tech_barrier == 0 | dataValues$warning_tech_barrier == 2) &
       (dataValues$warning_author_barrier == 0 | dataValues$warning_author_barrier == 2)) {
@@ -552,11 +584,12 @@ observeEvent(input$next2b, {
     )
   }
   
-  # 7. Invalid URLs
+  # 8. Invalid URLs
   if (dataValues$Q2b_invalid_url == 1 &
       dataValues$Q2b_invalidrepo == 2 &
       dataValues$warning_incomplete_Q2b == 2 &
       dataValues$Q2b_urlmiss == 2 &
+      dataValues$data_barrier == 2 &
       (dataValues$warning_manuscript == 2 | dataValues$warning_manuscript == 0) &
       (dataValues$warning_tech_barrier == 0 | dataValues$warning_tech_barrier == 2) &
       (dataValues$warning_author_barrier == 0 | dataValues$warning_author_barrier == 2)){
@@ -570,12 +603,13 @@ observeEvent(input$next2b, {
     )
   }
   
-  # 8. Inconsistent responses - ALL
+  # 9. Inconsistent responses - ALL
   if (dataValues$Q2b_inconsistent_all == 1 &
       dataValues$Q2b_invalid_url == 2 &
       dataValues$Q2b_invalidrepo == 2 &
       dataValues$warning_incomplete_Q2b == 2 &
       dataValues$Q2b_urlmiss == 2 &
+      dataValues$data_barrier == 2 &
       (dataValues$warning_manuscript == 2 | dataValues$warning_manuscript == 0) &
       (dataValues$warning_tech_barrier == 0 | dataValues$warning_tech_barrier == 2) &
       (dataValues$warning_author_barrier == 0 | dataValues$warning_author_barrier == 2)) {
@@ -590,11 +624,12 @@ observeEvent(input$next2b, {
     )
   }
   
-  # 9. Inconsistent responses - SOME
+  # 10. Inconsistent responses - SOME
   if (dataValues$Q2b_inconsistent_some == 1 &
       dataValues$Q2b_inconsistent_all == 2 &
       dataValues$Q2b_invalid_url == 2 &
       dataValues$Q2b_invalidrepo == 2 &
+      dataValues$data_barrier == 2 &
       dataValues$warning_incomplete_Q2b == 2 & dataValues$Q2b_urlmiss == 2 &
       (dataValues$warning_manuscript == 2 | dataValues$warning_manuscript == 0) &
       (dataValues$warning_tech_barrier == 0 | dataValues$warning_tech_barrier == 2) &
@@ -610,12 +645,13 @@ observeEvent(input$next2b, {
     )
   }
   
-  # 10. Inconsistent responses - NONE
+  # 11. Inconsistent responses - NONE
   if (dataValues$Q2b_inconsistent_no == 1 &
       dataValues$Q2b_inconsistent_some == 2 &
       dataValues$Q2b_inconsistent_all == 2 &
       dataValues$Q2b_invalid_url == 2 &
       dataValues$Q2b_invalidrepo == 2 &
+      dataValues$data_barrier == 2 &
       dataValues$warning_incomplete_Q2b == 2 & dataValues$Q2b_urlmiss == 2 &
       (dataValues$warning_manuscript == 2 | dataValues$warning_manuscript == 0) &
       (dataValues$warning_tech_barrier == 0 | dataValues$warning_tech_barrier == 2) &
@@ -634,6 +670,7 @@ observeEvent(input$next2b, {
              dataValues$Q2b_inconsistent_all == 2 &
              dataValues$Q2b_invalid_url == 2 &
              dataValues$Q2b_invalidrepo == 2 &
+             dataValues$data_barrier == 2 &
              dataValues$warning_incomplete_Q2b == 2 & dataValues$Q2b_urlmiss == 2 &
              (dataValues$warning_manuscript == 2 | dataValues$warning_manuscript == 0) &
              (dataValues$warning_tech_barrier == 0 | dataValues$warning_tech_barrier == 2) &
@@ -839,29 +876,44 @@ output$insertQ2c <- renderUI({
   
   if (dataValues$Q2b_complete == 1 &
       (dataValues$Q2b_partialData == 1 | dataValues$Q2b_noneData == 1)) {
-    dataValues$Q2_text_prompted = 1
-    
-    fluidPage(
+    if (isTRUE(levels(as.factor(dataValues$Q2b$X3))=="NO data are publicly available")) {
+      dataValues$Q2_text_prompted = 1
       
-      h5("2c. You have indicated partial and/or no public availability for the data type(s) presented below. Please explain the nature of the restriction to 
-              sharing data in more detail in the text box. Your response will be included in the transparency statement published alongside your manuscript."),
-      
-      uiOutput("insertQ2b_followup"),
-      br(),
-      
-      h5("In this table please explain how readers can access the data that is not publicly available (restricted access route) 
+      fluidPage(
+        h5("2c. In this table please explain how readers can access the data that is not publicly available (restricted access route) 
          and under what conditions they can do so (restricted access conditions)."),
-      rHandsontableOutput("Q2c"),
-      HTML(paste0('<p style="font-size:20px;">If the categories listed do not apply to your manuscript and you need guidance, please contact the transparency team: 
+        rHandsontableOutput("Q2c"),
+        
+        h5("You have indicated that no raw or processed data will be made publicly available. Please explain the nature of the restriction to 
+           sharing data in more detail in the text box. Your response will be included in the transparency statement published alongside your manuscript."),
+        
+        uiOutput("insertQ2b_followup"),
+        
+        br(),
+        HTML(paste0('<p style="font-size:20px;">If the categories listed do not apply to your manuscript and you need guidance, please contact the transparency team: 
                   <a href="mailto:transparency.cortex@ed.ac.uk?subject=TOP%20App%20Support%20', URLencode(input$ms_id, reserved = TRUE),'&body=Dear%20Transparency%20Editors," 
                   style="color:fuchsia; text-decoration:none;">
                   transparency.cortex@ed.ac.uk
                   </a>
                   </p>')),
-      br()
-    )
-  } else{
-    dataValues$Q2_text_prompted = 2
+      )
+    } else {
+      dataValues$Q2_text_prompted = 2
+      
+      fluidPage(
+        h5("2c. In this table please explain how readers can access the data that is not publicly available (restricted access route) 
+         and under what conditions they can do so (restricted access conditions)."),
+        rHandsontableOutput("Q2c"),
+        
+        br(),
+        HTML(paste0('<p style="font-size:20px;">If the categories listed do not apply to your manuscript and you need guidance, please contact the transparency team: 
+                  <a href="mailto:transparency.cortex@ed.ac.uk?subject=TOP%20App%20Support%20', URLencode(input$ms_id, reserved = TRUE),'&body=Dear%20Transparency%20Editors," 
+                  style="color:fuchsia; text-decoration:none;">
+                  transparency.cortex@ed.ac.uk
+                  </a>
+                  </p>')),
+      )
+    }
   }
 })
 
@@ -870,7 +922,8 @@ observeEvent(input$next2c, {
                      color = "purple",
                      text = "Checking your responses...")
   
-  if (dataValues$Q2_text_prompted == 1 & input$Q2b_followup == "") {
+  if (dataValues$Q2_text_prompted == 1 & 
+      (is.null(input$Q2b_followup) || input$Q2b_followup == "")) {
     dataValues$Q2c_complete = 0
     sendSweetAlert(
       session = session,
@@ -878,10 +931,12 @@ observeEvent(input$next2c, {
       text = "You have not completed this section (there are missing responses or unanswered questions).",
       type = "error"
     )
-  } else{
+  } else if (dataValues$Q2_text_prompted == 1 & 
+             (!is.null(input$Q2b_followup) || input$Q2b_followup != "")) {
     dataValues$Q2_text_prompted = 2
     dataValues$Q2b_followup = input$Q2b_followup
   }
+  
   
   dataValues$Q2c[] <- lapply(dataValues$Q2c, as.character)
   dataValues$Q2c$condition <-
