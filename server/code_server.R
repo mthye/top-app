@@ -493,9 +493,7 @@ observeEvent(input$next3b, {
       btn_labels = c("Close"),
       html = TRUE)
     
-  } else if (codeValues$Q3b_tech_barrier == 2 &
-             codeValues$warning_incomplete_Q3b == 2 &
-             codeValues$Q3b_urlmiss == 2) {
+  } else { # if (codeValues$Q3b_tech_barrier == 2 & codeValues$warning_incomplete_Q3b == 2 & codeValues$Q3b_urlmiss == 2)
     codeValues$warning_tech_barrier = 2
     fullReport$editor$Note[3] <- "No"
   }
@@ -520,9 +518,7 @@ observeEvent(input$next3b, {
       btn_labels = c("Close"),
       html = TRUE)
     
-  } else if (codeValues$Q3b_author_barrier == 2 &
-             codeValues$warning_incomplete_Q3b == 2 &
-             codeValues$Q3b_urlmiss == 2) {
+  } else { # if (codeValues$Q3b_author_barrier == 2 & codeValues$warning_incomplete_Q3b == 2 & codeValues$Q3b_urlmiss == 2)
     codeValues$warning_author_barrier = 2
     fullReport$editor$Note[3] <- "No"
   }

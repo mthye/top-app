@@ -156,9 +156,9 @@ output$insertQ2b <- renderUI({
 # add question to capture reasons for restrictions
 output$insertQ2b_followup <- renderUI({
   textAreaInput("Q2b_followup", 
-            label = NULL, 
-            value = isolate(dataValues$Q2b_followup),
-            placeholder = "Response required")
+                label = NULL, 
+                value = isolate(dataValues$Q2b_followup),
+                placeholder = "Response required")
 })
 
 # Observe input on Q2a and create table for Q2b with all selected data categories
@@ -461,35 +461,33 @@ observeEvent(input$next2b, {
       type = "error"
     )
   }
-
-    # 3. No data shared pop-up
-    if (dataValues$warning_incomplete_Q2b == 2 &
-        dataValues$Q2b_urlmiss == 2 &
-        (isTRUE(levels(as.factor(dataValues$Q2b$X3))=="NO data are publicly available")) &
-        (isFALSE(input$dataSharingQ2b) || is.null(input$dataSharingQ2b))) {
-      dataValues$Q2b_complete = 0
-      
-      dataValues$data_barrier = 1
-      
-      confirmSweetAlert(
-        session = session,
-        inputId = "dataSharingQ2b",
-        title = "Warning",
-        text = HTML("You have indicated that no raw or processed data are publicly available. Is this correct? <br><br>
+  
+  # 3. No data shared pop-up
+  if (dataValues$warning_incomplete_Q2b == 2 &
+      dataValues$Q2b_urlmiss == 2 &
+      (isTRUE(levels(as.factor(dataValues$Q2b$X3))=="NO data are publicly available")) &
+      (isFALSE(input$dataSharingQ2b) || is.null(input$dataSharingQ2b))) {
+    dataValues$Q2b_complete = 0
+    dataValues$data_barrier = 1
+    
+    confirmSweetAlert(
+      session = session,
+      inputId = "dataSharingQ2b",
+      title = "Warning",
+      text = HTML("You have indicated that no raw or processed data are publicly available. Is this correct? <br><br>
                     If so, you will be asked to provide additional justification for why no data are shared on the next page unless you change your answers.
                     This justification will be published alongside your manuscript."),
-        type = "warning",
-        btn_labels = c("Change my response", "This is correct"),
-        html = TRUE) 
-    } else {
-      dataValues$data_barrier = 2
-    } 
-  
+      type = "warning",
+      btn_labels = c("Change my response", "This is correct"),
+      html = TRUE) 
+  } else {
+    dataValues$data_barrier = 2
+  } 
   
   # 4. There is an invalid barrier (technical barrier only)
   if (dataValues$Q2b_tech_barrier == 1 &
       dataValues$data_barrier == 2 &
-      dataValues$warning_incomplete_Q2b == 2 &
+      dataValues$warning_incomplete_Q2b == 2 & 
       dataValues$Q2b_urlmiss == 2) {
     dataValues$Q2b_complete = 0
     dataValues$warning_tech_barrier = 1
@@ -508,7 +506,7 @@ observeEvent(input$next2b, {
       btn_labels = c("Close"),
       html = TRUE) 
     
-  } else if (dataValues$Q2b_tech_barrier == 2) {
+  } else { # if (dataValues$Q2b_tech_barrier == 2)
     dataValues$warning_tech_barrier = 2
     fullReport$editor$Note[2] <- "No"
   }
@@ -516,7 +514,9 @@ observeEvent(input$next2b, {
   # 5. There is an invalid barrier (author preference)
   if (dataValues$Q2b_author_barrier == 1 &
       dataValues$data_barrier == 2 &
-      dataValues$warning_incomplete_Q2b == 2 & dataValues$Q2b_urlmiss == 2) {
+      dataValues$warning_incomplete_Q2b == 2 & 
+      dataValues$warning_tech_barrier == 2 &
+      dataValues$Q2b_urlmiss == 2) {
     dataValues$Q2b_complete = 0
     dataValues$warning_author_barrier = 1
     
@@ -532,7 +532,7 @@ observeEvent(input$next2b, {
       btn_labels = c("Close"),
       html = TRUE) 
     
-  } else if (dataValues$Q2b_author_barrier == 2) {
+  } else { # if (dataValues$Q2b_author_barrier == 2)
     dataValues$warning_author_barrier = 2
     fullReport$editor$Note[2] <- "No"
   }

@@ -545,12 +545,12 @@ observeEvent(input$next4b, {
       btn_labels = c("Close"),
       html = TRUE) 
     
-  } else if (matsValues$Q4b_tech_barrier == 2 &
-             matsValues$warning_incomplete_Q4b == 2 &
-             matsValues$Q4b_urlmiss == 2) {
+  } else { # if (matsValues$Q4b_tech_barrier == 2 & matsValues$warning_incomplete_Q4b == 2 & matsValues$Q4b_urlmiss == 2)
     matsValues$warning_tech_barrier = 2
     fullReport$editor$Note[4] <- "No"
   }
+  
+  print(matsValues$warning_tech_barrier)
   
   # 5. There is an invalid barrier (author preference)
   if (matsValues$Q4b_author_barrier == 1 &
@@ -572,9 +572,7 @@ observeEvent(input$next4b, {
       btn_labels = c("Close"),
       html = TRUE) 
     
-  } else if (matsValues$Q4b_author_barrier == 2 &
-             matsValues$warning_incomplete_Q4b == 2 &
-             matsValues$Q4b_urlmiss == 2) {
+  } else { # if (matsValues$Q4b_author_barrier == 2 & matsValues$warning_incomplete_Q4b == 2 & matsValues$Q4b_urlmiss == 2)
     matsValues$warning_author_barrier = 2
     fullReport$editor$Note[4] <- "No"
   } 
