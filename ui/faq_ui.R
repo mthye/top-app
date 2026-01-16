@@ -42,10 +42,10 @@ fluidPage(
             <br></br>
             
       <li style='color: #cfabed; font-weight: bold'>Can the manuscript pass the transparency assessment if the research study was not pre-registered?</li>
-      <b>Yes</b>, this is not a requirement for study design analysis.
+      <b>Yes</b>, you are only required to declare whether or not the design and analysis plan for the study were preregistered.
             <br></br>
       <li style='color: #cfabed; font-weight: bold'> If the research study was preregistered but there were deviations in the design and/or analysis can the preregistration guidelines be met?</li>
-      <b>Yes</b>, but the deviations need to be transparently reported in the manuscript and you can confirm that in this app when requested.
+      <b>Yes</b>, but the deviations need to be reported in the manuscript, and you can confirm that in this app when requested.
                   <br></br>
       </h5>
       </ol>
