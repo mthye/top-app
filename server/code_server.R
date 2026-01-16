@@ -344,7 +344,7 @@ observeEvent(input$next3b, {
         codeValues$Q3b[4] == "Code is contained in the paper",
         "manuscript",
         if_else(
-          codeValues$Q3b[3] == "Technical barrier only",
+          codeValues$Q3b[3] == "Technical barrier",
           "tech_barrier",
           if_else(
             codeValues$Q3b[3] == "Author preference",
@@ -471,7 +471,7 @@ observeEvent(input$next3b, {
     codeValues$code_barrier = 2
   } 
   
-  # 4. There is an invalid barrier  (technical barrier only)
+  # 4. There is an invalid barrier  (technical barrier)
   if (codeValues$Q3b_tech_barrier == 1 &
       codeValues$code_barrier == 2 &
       codeValues$warning_incomplete_Q3b == 2 &
@@ -485,7 +485,7 @@ observeEvent(input$next3b, {
       session = session,
       inputId = "barrierApprovalQ3b1",
       title = "Warning",
-      text = HTML(paste0("You have indicated that code is not available due to a 'Technical barrier only' which is not an eligible reason for restricting public availability of code. <br><br>
+      text = HTML(paste0("You have indicated that code is not available due to a 'Technical barrier' which is not an eligible reason for restricting public availability of code. <br><br>
                         If you are encountering a technical barrier to sharing code, please contact our transparency team for guidance:
                         <a href='mailto:transparency.cortex@ed.ac.uk?subject=", URLencode(paste0("TOP App Support ", input$ms_id), reserved = TRUE),"'
                        style='color:fuchsia;'>transparency.cortex@ed.ac.uk</a>")),

@@ -360,7 +360,7 @@ observeEvent(input$next2b, {
         dataValues$Q2b[5] == "Data is contained in the paper",
         "manuscript",
         if_else(
-          dataValues$Q2b[4] == "Technical barrier only",
+          dataValues$Q2b[4] == "Technical barrier",
           "tech_barrier",
           if_else(
             dataValues$Q2b[4] == "Author preference",
@@ -484,7 +484,7 @@ observeEvent(input$next2b, {
     dataValues$data_barrier = 2
   } 
   
-  # 4. There is an invalid barrier (technical barrier only)
+  # 4. There is an invalid barrier (technical barrier)
   if (dataValues$Q2b_tech_barrier == 1 &
       dataValues$data_barrier == 2 &
       dataValues$warning_incomplete_Q2b == 2 & 
@@ -498,7 +498,7 @@ observeEvent(input$next2b, {
       session = session,
       inputId = "barrierApprovalQ2b1",
       title = "Warning",
-      text = HTML(paste0("You have indicated that data are not available due to a 'Technical barrier only' which is not an eligible reason for restricting public availability of data. <br><br>
+      text = HTML(paste0("You have indicated that data are not available due to a 'Technical barrier' which is not an eligible reason for restricting public availability of data. <br><br>
                           If you are encountering a technical barrier to sharing data, please contact our transparency team for guidance:
                           <a href='mailto:transparency.cortex@ed.ac.uk?subject=", URLencode(paste0("TOP App Support ", input$ms_id), reserved = TRUE),"' 
                          style='color:fuchsia;'>transparency.cortex@ed.ac.uk</a>")),

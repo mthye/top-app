@@ -55,11 +55,8 @@ dataReason <- c(
   "N/A - ALL data are publicly available",
   "Legal barrier only",
   "Ethical barrier only",
-  "Technical barrier only",
   "Legal and ethical barrier",
-  "Legal and technical barrier",
-  "Ethical and technical barrier",
-  "Legal, ethical and technical barrier",
+  "Technical barrier",
   "Author preference"
 )
 
@@ -139,11 +136,8 @@ codeReason <- c(
   "N/A - ALL code is publicly available",
   "Legal barrier only",
   "Ethical barrier only",
-  "Technical barrier only",
   "Legal and ethical barrier",
-  "Legal and technical barrier",
-  "Ethical and technical barrier",
-  "Legal, ethical and technical barrier",
+  "Technical barrier",
   "Author preference"
 )
 
@@ -196,11 +190,8 @@ matsReason <- c(
   "N/A - ALL materials are publicly available",
   "Legal barrier only",
   "Ethical barrier only",
-  "Technical barrier only",
   "Legal and ethical barrier",
-  "Legal and technical barrier",
-  "Ethical and technical barrier",
-  "Legal, ethical and technical barrier",
+  "Technical barrier",
   "Author preference"
 )
 

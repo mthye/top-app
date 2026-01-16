@@ -395,7 +395,7 @@ observeEvent(input$next4b, {
         matsValues$Q4b[4] == "Materials are contained in the paper",
         "manuscript",
         if_else(
-          matsValues$Q4b[3] == "Technical barrier only",
+          matsValues$Q4b[3] == "Technical barrier",
           "tech_barrier",
           if_else(
             matsValues$Q4b[3] == "Author preference",
@@ -523,7 +523,7 @@ observeEvent(input$next4b, {
     matsValues$mats_barrier = 2
   } 
 
-  # 4. There is an invalid barrier (technical barrier only)
+  # 4. There is an invalid barrier (technical barrier)
   if (matsValues$Q4b_tech_barrier == 1 &
       matsValues$mats_barrier == 2 &
       matsValues$warning_incomplete_Q4b == 2 &
@@ -537,7 +537,7 @@ observeEvent(input$next4b, {
       session = session,
       inputId = "barrierApprovalQ4b1",
       title = "Warning",
-      text = HTML(paste0("You have indicated that materials are not available due to a 'Technical barrier only' which is not an eligible reason for restricting public availability of materials. <br><br>
+      text = HTML(paste0("You have indicated that materials are not available due to a 'Technical barrier' which is not an eligible reason for restricting public availability of materials. <br><br>
                           If you are encountering a technical barrier to sharing materials, please contact our transparency team for guidance:
                           <a href='mailto:transparency.cortex@ed.ac.uk?subject=", URLencode(paste0("TOP App Support ", input$ms_id), reserved = TRUE),"' 
                          style='color:fuchsia;'>transparency.cortex@ed.ac.uk</a>")),
